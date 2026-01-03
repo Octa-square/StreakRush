@@ -430,7 +430,7 @@ body::before {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 1;
+  flex: 0 0 auto; /* Don't grow, just fit content */
   min-width: 0;
 }
 
@@ -469,6 +469,7 @@ body::before {
   justify-content: center;
   font-size: 22px;
   cursor: pointer;
+  flex-shrink: 0; /* Never shrink - always visible */
   flex-shrink: 0;
   transition: background 0.2s ease;
 }
@@ -8290,11 +8291,16 @@ h1, h2, h3, h4, h5, h6 {
 .ambient-sounds-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 4px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 20px;
-  padding: 4px 8px;
+  padding: 4px 6px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 200px;
 }
 
 .ambient-btn {

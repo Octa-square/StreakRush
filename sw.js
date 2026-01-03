@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cognixis-v17';
+const CACHE_NAME = 'cognixis-v19';
 const urlsToCache = [
   '/',
   '/index.html',

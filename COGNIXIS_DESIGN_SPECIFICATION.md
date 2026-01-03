@@ -31,19 +31,6 @@
   - Top-left: `#00d4ff`, 1.2px radius, 80% opacity
   - Top-right: `#f72585`, 1.5px radius, 80% opacity
 
-#### Logo Text "CogniXis"
-- **Font:** Orbitron, sans-serif
-- **The X is WHITE:** The "X" in "CogniXis" is always displayed in white (#FFFFFF) to stand out
-- **CSS Implementation:**
-  ```css
-  .logo-text span, .app-name span {
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF !important;
-  }
-  ```
-- **HTML Structure:** `Cogni<span>X</span>is`
-
-
 #### App Icon Specifications
 | Platform | Size | Format | Purpose |
 |----------|------|--------|---------|
@@ -287,54 +274,7 @@
 | Height | 42px |
 | Shadow | `drop-shadow(0 2px 8px rgba(255, 107, 53, 0.4))` |
 
-### 6.5 Ambient Focus Sounds Bar
-
-Located between the logo and settings button, providing background sounds for brain concentration.
-
-#### Sound Types
-| Button | Icon | Sound Type | Scientific Benefit |
-|--------|------|------------|-------------------|
-| Rain | 🌧️ | Pink noise (lowpass filtered) | Masks distractions, promotes calm focus |
-| Focus | 🎵 | Binaural beats (10Hz alpha) | Boosts memory, increases attention span |
-| Forest | 🌲 | Brown noise (wind/trees) | Lowers cortisol, improves cognitive performance |
-
-#### Container Specifications
-| Property | Value |
-|----------|-------|
-| Background | `rgba(255, 255, 255, 0.05)` |
-| Border Radius | 20px |
-| Padding | 4px 8px |
-| Border | `1px solid rgba(255, 255, 255, 0.1)` |
-| Gap | 6px |
-
-#### Sound Button Specifications
-| Property | Value |
-|----------|-------|
-| Size | 32×32px |
-| Border Radius | 50% |
-| Font Size | 16px |
-| Inactive Opacity | 0.6 |
-| Active Background | `linear-gradient(135deg, var(--primary), var(--secondary))` |
-| Active Animation | `ambientPulse 2s ease-in-out infinite` |
-
-#### Volume Slider
-| Property | Value |
-|----------|-------|
-| Width | 50px |
-| Height | 4px |
-| Thumb Size | 14px |
-| Thumb Color | `var(--primary)` |
-| Track Background | `rgba(255, 255, 255, 0.2)` |
-
-#### Audio Implementation (Web Audio API)
-- **Pink noise** for rain: Generated buffer with lowpass filter at 400Hz
-- **Binaural beats**: 200Hz base + 210Hz (10Hz difference = alpha waves for focus)
-- **Brown noise** for forest: Deeper, natural sound
-- Volume saved to localStorage as `cognixis_ambient_sounds`
-- Sounds persist across page navigation and gameplay
-- Preference remembers which sounds are active after refresh
-
-### 6.6 Settings Button
+### 6.5 Settings Button
 | Property | Value |
 |----------|-------|
 | Width | 42px |
@@ -503,14 +443,6 @@ Located between the logo and settings button, providing background sounds for br
 | Free Games | 15 |
 | Total Games | 60 |
 | Games Per Batch | 12 |
-
-#### Free Games Access (Important)
-- **All 15 free games are ALWAYS visible** to non-subscribers
-- **NO padlock** (🔒) displayed on free games 1-15
-- Free users can play any of the 15 games in any order
-- Only games 16-60 (premium) show padlock for non-subscribers
-- All games show "Play" button, not locked state
-- Premium users have access to all 60 games
 
 ---
 
