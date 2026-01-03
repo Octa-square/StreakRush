@@ -6091,3 +6091,418 @@ body::before {
   opacity: 0.8;
 }
 
+/* ========================================
+   RESPONSIVE DESIGN - ALL DEVICES
+   ======================================== */
+
+/* Safe Areas for notched devices (iPhone X+, Android with punch-hole) */
+.screen {
+  padding-top: max(env(safe-area-inset-top), 10px);
+  padding-bottom: max(calc(var(--nav-height) + env(safe-area-inset-bottom)), 80px);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.bottom-nav {
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(var(--nav-height) + env(safe-area-inset-bottom));
+}
+
+/* Game screen needs different padding */
+#game-screen {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.game-header {
+  padding-top: max(env(safe-area-inset-top), 10px);
+}
+
+/* ---- SMALL PHONES (iPhone SE, older Androids) ---- */
+@media (max-height: 600px) {
+  :root {
+    --nav-height: 60px;
+    --header-height: 50px;
+  }
+  
+  .home-header {
+    padding: 10px 15px;
+  }
+  
+  .streak-badge {
+    padding: 8px 15px;
+    font-size: 0.85rem;
+  }
+  
+  .challenge-card {
+    padding: 15px;
+  }
+  
+  .challenge-title {
+    font-size: 1.3rem;
+  }
+  
+  .begin-challenge-btn {
+    padding: 12px 25px;
+    font-size: 0.95rem;
+  }
+  
+  .bottom-nav button {
+    font-size: 0.7rem;
+  }
+  
+  .nav-icon {
+    font-size: 1.2rem;
+  }
+  
+  /* Game area adjustments */
+  .game-zone {
+    padding: 10px;
+  }
+  
+  .sequence-display, .flash-display {
+    padding: 25px 20px !important;
+    min-height: 80px !important;
+  }
+  
+  .color-btn {
+    width: 60px !important;
+    height: 60px !important;
+    margin: 5px !important;
+  }
+}
+
+/* ---- MEDIUM PHONES (iPhone 12/13/14, Pixel, Galaxy S) ---- */
+@media (min-height: 601px) and (max-height: 800px) {
+  .challenge-card {
+    padding: 20px;
+  }
+  
+  .game-zone {
+    padding: 15px;
+  }
+}
+
+/* ---- LARGE PHONES / SMALL TABLETS ---- */
+@media (min-height: 801px) {
+  .home-content {
+    padding-top: 20px;
+  }
+  
+  .challenge-card {
+    padding: 25px;
+  }
+  
+  .game-zone {
+    padding: 20px;
+  }
+}
+
+/* ---- WIDTH-BASED: Very narrow screens ---- */
+@media (max-width: 320px) {
+  .home-header {
+    padding: 8px 10px;
+  }
+  
+  .app-name {
+    font-size: 1.1rem;
+  }
+  
+  .streak-badge {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .challenge-title {
+    font-size: 1.2rem;
+  }
+  
+  .begin-challenge-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .game-instruction {
+    font-size: 0.8rem !important;
+    padding: 8px !important;
+  }
+  
+  .sequence-display, .flash-display {
+    font-size: 1.2rem !important;
+    padding: 20px !important;
+  }
+  
+  .color-btn {
+    width: 55px !important;
+    height: 55px !important;
+    margin: 4px !important;
+  }
+  
+  .bottom-nav button {
+    padding: 8px 4px;
+  }
+  
+  .nav-text {
+    font-size: 0.65rem;
+  }
+}
+
+/* ---- WIDTH-BASED: Small phones (360px) ---- */
+@media (min-width: 321px) and (max-width: 375px) {
+  .color-btn {
+    width: 65px !important;
+    height: 65px !important;
+  }
+  
+  .game-instruction {
+    font-size: 0.85rem !important;
+  }
+}
+
+/* ---- WIDTH-BASED: Standard phones (376-414px) ---- */
+@media (min-width: 376px) and (max-width: 414px) {
+  .color-btn {
+    width: 70px !important;
+    height: 70px !important;
+  }
+}
+
+/* ---- WIDTH-BASED: Large phones (415px+) ---- */
+@media (min-width: 415px) {
+  .home-content, .results-content, .pre-challenge-content {
+    max-width: 450px;
+    margin: 0 auto;
+  }
+  
+  .game-zone {
+    max-width: 450px;
+    margin: 0 auto;
+  }
+  
+  .color-btn {
+    width: 80px !important;
+    height: 80px !important;
+  }
+}
+
+/* ---- TABLETS (768px+) ---- */
+@media (min-width: 768px) {
+  .home-content, .results-content, .pre-challenge-content {
+    max-width: 550px;
+  }
+  
+  .game-zone {
+    max-width: 550px;
+  }
+  
+  .challenge-card {
+    padding: 30px;
+  }
+  
+  .challenge-title {
+    font-size: 1.8rem;
+  }
+  
+  .begin-challenge-btn {
+    padding: 18px 40px;
+    font-size: 1.2rem;
+  }
+}
+
+/* ---- LANDSCAPE MODE ---- */
+@media (orientation: landscape) and (max-height: 500px) {
+  .screen {
+    padding-top: max(env(safe-area-inset-top), 5px);
+  }
+  
+  .home-header {
+    padding: 5px 15px;
+  }
+  
+  .streak-badge {
+    display: none;
+  }
+  
+  .challenge-card {
+    padding: 10px 15px;
+  }
+  
+  .bottom-nav {
+    height: 50px;
+  }
+  
+  .nav-text {
+    display: none;
+  }
+  
+  .nav-icon {
+    font-size: 1.5rem;
+  }
+  
+  /* Game adjustments for landscape */
+  .game-zone {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .sequence-display, .flash-display {
+    min-height: 60px !important;
+    padding: 15px !important;
+  }
+  
+  .color-grid {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+  
+  .color-btn {
+    width: 50px !important;
+    height: 50px !important;
+  }
+}
+
+/* ---- ANDROID SPECIFIC FIXES ---- */
+@supports (-webkit-touch-callout: none) {
+  /* iOS only styles */
+}
+
+@supports not (-webkit-touch-callout: none) {
+  /* Android only styles */
+  body {
+    overscroll-behavior: none;
+  }
+  
+  .screen {
+    padding-top: max(env(safe-area-inset-top), 24px); /* Android status bar */
+  }
+}
+
+/* ---- NOTCH / DYNAMIC ISLAND SUPPORT ---- */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .home-header {
+    padding-top: max(env(safe-area-inset-top), 10px);
+  }
+  
+  .game-header {
+    padding-top: max(env(safe-area-inset-top), 10px);
+  }
+  
+  .bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom), 5px);
+  }
+}
+
+/* ---- DARK MODE SUPPORT ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #0d0d1a;
+    --bg-secondary: #1a1a2e;
+  }
+}
+
+/* ---- REDUCE MOTION FOR ACCESSIBILITY ---- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---- TOUCH IMPROVEMENTS ---- */
+button, .clickable, [onclick] {
+  touch-action: manipulation;
+  -webkit-touch-callout: none;
+}
+
+/* Prevent text selection during gameplay */
+.game-zone, .sequence-game, .number-flash-game {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* ---- FIX INPUT ZOOM ON iOS ---- */
+input, select, textarea {
+  font-size: 16px !important; /* Prevents iOS zoom */
+}
+
+/* ---- SCROLLABLE AREAS ---- */
+.scrollable-content {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* ---- FLEX CENTERING HELPERS ---- */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- GAME ELEMENTS - CONSISTENT SIZING ---- */
+.game-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.game-instruction {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.sequence-display, .flash-display {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  justify-items: center;
+  width: 100%;
+  max-width: 300px;
+  margin-top: 15px;
+}
+
+/* ---- RESULTS SCREEN ALIGNMENT ---- */
+.results-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+}
+
+.score-display {
+  text-align: center;
+  width: 100%;
+}
+
+.results-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 350px;
+  margin-top: 20px;
+}
+

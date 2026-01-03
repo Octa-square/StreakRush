@@ -1,4 +1,4 @@
-const CACHE_NAME = 'streakrush-v51';
+const CACHE_NAME = 'streakrush-v52';
 const urlsToCache = [
   '/',
   '/index.html',
