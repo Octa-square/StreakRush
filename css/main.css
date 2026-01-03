@@ -230,7 +230,7 @@ html {
 body {
   font-family: var(--font-body);
   background: var(--bg-primary);
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   min-height: 100vh;
   min-height: 100dvh;
   overflow: hidden;
@@ -372,9 +372,12 @@ body::before {
   background-clip: text;
 }
 
-.logo-text span {
-  color: var(--text-primary);
-  -webkit-text-fill-color: var(--text-primary);
+/* White X in logo */
+.logo-text span,
+.app-name span {
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 .loader-bar {
@@ -497,7 +500,7 @@ body::before {
 .header-stat-value {
   font-size: 14px;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* Loading screen logo */
@@ -708,7 +711,7 @@ body::before {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* ========================================
@@ -776,7 +779,7 @@ body::before {
   background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
@@ -1022,7 +1025,7 @@ body::before {
 }
 
 .timer-value {
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   transition: color 0.3s;
 }
 
@@ -1340,7 +1343,7 @@ body::before {
   background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
 }
@@ -1505,7 +1508,7 @@ body::before {
   background: var(--bg-card);
   border: 2px solid var(--accent-blue);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   outline: none;
 }
 
@@ -1723,7 +1726,7 @@ body::before {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   margin-top: 4px;
 }
 
@@ -2062,7 +2065,7 @@ body::before {
   left: 50%;
   transform: translateX(-50%);
   font-size: 32px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
   z-index: 10;
 }
@@ -2270,7 +2273,7 @@ body::before {
   font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 16px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .stats-section-merged .stats-brain-card {
@@ -2296,7 +2299,7 @@ body::before {
 .stats-mastery-compact h3 {
   font-size: 1rem;
   margin-bottom: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .mastery-row {
@@ -2498,7 +2501,7 @@ body::before {
 .screen-header .screen-title {
   font-family: var(--font-display);
   font-size: 1.1rem;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   margin: 0;
 }
 
@@ -2569,7 +2572,7 @@ body::before {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -3069,7 +3072,7 @@ body::before {
 .memory-category-name {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .memory-category-bar {
@@ -3206,7 +3209,7 @@ body::before {
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* Home Streak Badge */
@@ -3416,7 +3419,7 @@ body::before {
   background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 16px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -3656,7 +3659,7 @@ body::before {
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   line-height: 1.2;
 }
 
@@ -3842,7 +3845,7 @@ body::before {
   background: var(--bg-card);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   cursor: pointer;
   transition: transform 0.1s, background 0.2s;
 }
@@ -3893,7 +3896,7 @@ body::before {
   background: var(--bg-card);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   cursor: pointer;
   transition: transform 0.1s;
 }
@@ -3978,7 +3981,7 @@ body::before {
   background: var(--bg-card);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   cursor: pointer;
 }
 
@@ -4139,7 +4142,7 @@ body::before {
 .motivational-quote .quote-text {
   font-size: 0.95rem;
   font-style: italic;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   line-height: 1.5;
   margin: 0;
 }
@@ -4205,7 +4208,7 @@ body::before {
 
 .game-benefits-text {
   font-size: 0.95rem;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   line-height: 1.5;
   margin: 0;
 }
@@ -4223,7 +4226,7 @@ body::before {
 }
 
 .back-link:hover {
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* Game Quote Box on Home Screen */
@@ -4239,7 +4242,7 @@ body::before {
 .game-quote-text {
   font-size: 0.85rem;
   font-style: italic;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   line-height: 1.4;
   margin: 0 0 4px 0;
 }
@@ -4432,7 +4435,7 @@ body::before {
 
 .step-text {
   font-size: 0.95rem;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   line-height: 1.4;
 }
 
@@ -4494,7 +4497,7 @@ body::before {
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 20px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .instructions-demo {
@@ -4561,7 +4564,7 @@ body::before {
 
 .skip-button:hover {
   background: var(--bg-secondary);
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .ready-button {
@@ -4610,7 +4613,7 @@ body::before {
   background: var(--bg-secondary);
   border: 2px solid transparent;
   border-radius: 10px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   font-size: 0.85rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -4761,7 +4764,7 @@ body::before {
   background: var(--bg-secondary);
   border: 2px solid var(--text-muted);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   font-family: var(--font-display);
   font-size: 1.5rem;
   text-align: center;
@@ -5099,7 +5102,7 @@ body::before {
 .benefit-item {
   padding: 10px 0;
   font-size: 1rem;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -5223,7 +5226,7 @@ body::before {
   height: 36px;
   border-radius: 50%;
   font-size: 18px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -5251,7 +5254,7 @@ body::before {
 
 .setting-row span {
   font-size: 1rem;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .settings-theme-grid {
@@ -5358,7 +5361,7 @@ body::before {
 .diff-name {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -5399,7 +5402,7 @@ body::before {
 .settings-action-btn span:first-child {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .settings-action-btn .action-desc {
@@ -5496,7 +5499,7 @@ body::before {
 
 .reset-confirm-buttons .cancel-btn {
   background: var(--bg-secondary);
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .reset-confirm-buttons .confirm-btn {
@@ -5541,7 +5544,7 @@ body::before {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.1);
   border: none;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   font-size: 20px;
   display: flex;
   align-items: center;
@@ -5568,7 +5571,7 @@ body::before {
   background: rgba(255, 255, 255, 0.05);
   border: 2px solid transparent;
   border-radius: 14px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -5652,7 +5655,7 @@ body::before {
 .language-btn-text {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .language-btn-arrow {
@@ -5713,7 +5716,7 @@ html[dir="rtl"] .back-link {
   background: var(--bg-card);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   font-size: 0.95rem;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -5744,7 +5747,7 @@ html[dir="rtl"] .back-link {
 
 .progress-text {
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .progress-threshold {
@@ -5934,7 +5937,7 @@ html[dir="rtl"] .back-link {
 }
 
 .game-instruction-box strong {
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* ========================================
@@ -5964,7 +5967,7 @@ html[dir="rtl"] .back-link {
   font-weight: 600;
   text-align: center;
   line-height: 1.2;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* ========================================
@@ -5991,7 +5994,7 @@ html[dir="rtl"] .back-link {
 .progress-header h3 {
   font-size: 1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   margin: 0;
   display: flex;
   align-items: center;
@@ -6138,7 +6141,7 @@ html[dir="rtl"] .back-link {
 .progress-stat .stat-value {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* Increment animation */
@@ -6472,7 +6475,7 @@ html[dir="rtl"] .back-link {
 .game-name {
   font-size: 0.65rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6596,7 +6599,7 @@ html[dir="rtl"] .back-link {
 .commitment-question {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   margin: 24px 0;
 }
 
@@ -6622,7 +6625,7 @@ html[dir="rtl"] .back-link {
 
 .commitment-btn.secondary {
   background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .commitment-btn .btn-main {
@@ -7041,7 +7044,7 @@ html[dir="rtl"] .back-link {
   font-family: var(--font-display);
   font-size: 3.5rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   margin: 25px 0 8px;
 }
 
@@ -7277,7 +7280,7 @@ html[dir="rtl"] .back-link {
   font-family: var(--font-display);
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
   margin-bottom: 8px;
 }
 
@@ -7339,7 +7342,7 @@ html[dir="rtl"] .back-link {
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .diff-details {
@@ -7381,7 +7384,7 @@ html[dir="rtl"] .back-link {
   font-family: var(--font-display);
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 .skip-count {
@@ -7559,7 +7562,7 @@ html[dir="rtl"] .back-link {
 
 .toast-message {
   font-weight: 500;
-  color: var(--text-primary);
+  color: #FFFFFF !important;
 }
 
 /* Skipped Games Section */
