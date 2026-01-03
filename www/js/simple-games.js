@@ -1400,7 +1400,7 @@ const SimpleGames = {
         <div class="game-instruction" style="text-align: center; padding: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.9rem; color: #aaa;">
           📝 Watch the flashing colors, then tap them in the SAME ORDER!
         </div>
-        <div class="sequence-display" id="sequence-display" style="font-size: 1.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 80px; transition: background 0.2s;">Watch the sequence...</div>
+        <div class="sequence-display" id="sequence-display" style="font-size: 1.5rem; text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 120px; transition: all 0.15s ease; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div style="font-size: 2rem;">🌈</div><div>Get ready...</div></div>
         <div class="color-grid" id="color-grid" style="display: none;"></div>
         <div class="sequence-level" style="text-align: center; margin-top: 15px; font-size: 1.1rem;">Level: <span id="seq-level">1</span></div>
       </div>
@@ -1424,25 +1424,35 @@ const SimpleGames = {
     };
     
     const playSequence = async () => {
-      display.textContent = '👀 Watch carefully...';
+      display.innerHTML = '<div style="font-size: 2rem;">👀</div><div>Get ready...</div>';
       display.style.background = 'rgba(255,255,255,0.1)';
+      display.style.transform = 'scale(1)';
       grid.style.display = 'none';
       
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 1000));
       
       for (let i = 0; i < sequence.length; i++) {
-        display.style.background = colors[sequence[i]];
-        display.textContent = `${i + 1} of ${sequence.length}`;
-        if (typeof Sounds !== 'undefined') Sounds.tap();
-        await new Promise(r => setTimeout(r, 600));
-        display.style.background = 'rgba(255,255,255,0.1)';
-        display.textContent = '';
-        await new Promise(r => setTimeout(r, 300));
+        const colorIdx = sequence[i];
+        // Flash the color BIG and BRIGHT
+        display.style.background = colors[colorIdx];
+        display.style.transform = 'scale(1.1)';
+        display.style.boxShadow = `0 0 40px ${colors[colorIdx]}`;
+        display.innerHTML = `<div style="font-size: 3rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">${colorNames[colorIdx].toUpperCase()}</div><div style="font-size: 1rem; opacity: 0.8;">${i + 1} of ${sequence.length}</div>`;
+        if (typeof Sounds !== 'undefined' && Sounds.click) Sounds.click();
+        await new Promise(r => setTimeout(r, 800));
+        
+        // Flash off
+        display.style.background = 'rgba(30,30,40,0.9)';
+        display.style.transform = 'scale(1)';
+        display.style.boxShadow = 'none';
+        display.innerHTML = '';
+        await new Promise(r => setTimeout(r, 400));
       }
       
-      await new Promise(r => setTimeout(r, 400));
-      display.textContent = '👆 YOUR TURN! Tap the colors!';
-      display.style.background = 'linear-gradient(135deg, #22c55e22, #3b82f622)';
+      await new Promise(r => setTimeout(r, 500));
+      display.innerHTML = '<div style="font-size: 1.5rem;">👆 YOUR TURN!</div><div style="font-size: 1rem; margin-top: 5px;">Tap the colors in order</div>';
+      display.style.background = 'linear-gradient(135deg, #22c55e44, #3b82f644)';
+      display.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.3)';
       grid.style.display = 'grid';
       grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
       grid.style.justifyItems = 'center';
@@ -1452,7 +1462,7 @@ const SimpleGames = {
     
     const handleColorClick = (colorIndex) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       playerSequence.push(colorIndex);
       const btn = grid.children[colorIndex];
@@ -1583,7 +1593,7 @@ const SimpleGames = {
       if (!canFlip || !SimpleGames.isActive || card.classList.contains('flipped') || card.classList.contains('matched')) return;
       
       SimpleGames.startQuestionTimer();
-      Sounds.tap();
+      Sounds.click();
       card.innerHTML = card.dataset.emoji;
       card.classList.add('flipped');
       card.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
@@ -1674,7 +1684,7 @@ const SimpleGames = {
     
     const handleShapeClick = (shapeIndex) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       playerSequence.push(shapeIndex);
       const pos = playerSequence.length - 1;
@@ -1765,7 +1775,7 @@ const SimpleGames = {
     
     const checkWord = (word, btn) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       const expectedWord = chain[SimpleGames.gameData.currentIndex];
       
@@ -1852,7 +1862,7 @@ const SimpleGames = {
     
     const checkAnswer = (answer) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       if (answer === missingItem) {
         SimpleGames.addScore(25);
@@ -1940,7 +1950,7 @@ const SimpleGames = {
     
     const placeItem = (cell) => {
       if (!SimpleGames.isActive || SimpleGames.gameData.currentItem >= SimpleGames.gameData.itemsToPlace.length) return;
-      Sounds.tap();
+      Sounds.click();
       
       const currentIcon = SimpleGames.gameData.itemsToPlace[SimpleGames.gameData.currentItem];
       const correctIndex = Object.entries(positions).find(([_, icon]) => icon === currentIcon)?.[0];
@@ -2029,7 +2039,7 @@ const SimpleGames = {
     
     const selectEmoji = (emoji, btn) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       const expectedEmoji = story[SimpleGames.gameData.userOrder.length];
       
@@ -2100,7 +2110,7 @@ const SimpleGames = {
     
     const checkAnswer = (item, btn) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       if (item === currentPattern.odd) {
         btn.style.background = '#22c55e';
@@ -2286,7 +2296,7 @@ const SimpleGames = {
     
     const checkName = (selected, correct) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       if (selected === correct) {
         SimpleGames.addScore(25);
@@ -2370,7 +2380,7 @@ const SimpleGames = {
     
     const checkCell = (pos) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       const cell = display.children[pos];
       const expectedNum = SimpleGames.gameData.expectedNext;
@@ -2609,7 +2619,7 @@ const SimpleGames = {
     
     const checkColor = (selected) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       if (selected === currentColor) {
         SimpleGames.addScore(25);
@@ -2666,7 +2676,7 @@ const SimpleGames = {
     
     const checkAnswer = (selected, correct) => {
       if (!SimpleGames.isActive) return;
-      Sounds.tap();
+      Sounds.click();
       
       if (selected === correct) {
         SimpleGames.addScore(25);
