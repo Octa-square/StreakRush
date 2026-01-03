@@ -657,14 +657,21 @@ body::before {
    ======================================== */
 #game-screen {
   background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0 !important;
 }
 
 .game-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: calc(var(--safe-top) + 16px) 20px 16px;
+  padding: 16px 20px 16px;
+  padding-top: max(env(safe-area-inset-top, 20px) + 16px, 50px);
   background: var(--bg-secondary);
+  flex-shrink: 0;
 }
 
 .game-score, .game-timer {
@@ -722,6 +729,11 @@ body::before {
   position: relative;
   overflow: hidden;
   touch-action: manipulation;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+  background: var(--bg-primary);
 }
 
 /* ========================================
