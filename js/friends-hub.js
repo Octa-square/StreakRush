@@ -15,12 +15,12 @@ const FriendsHub = {
   
   // Check if user has admin access
   hasAdminAccess: () => {
-    return localStorage.getItem('streakrush_friends_admin') === 'true';
+    return localStorage.getItem('cognixis_friends_admin') === 'true';
   },
   
   // Unlock admin access
   unlockAdmin: () => {
-    localStorage.setItem('streakrush_friends_admin', 'true');
+    localStorage.setItem('cognixis_friends_admin', 'true');
     return true;
   },
   
@@ -205,19 +205,19 @@ const FriendsHub = {
       updatedAt: Date.now()
     };
     
-    localStorage.setItem(`streakrush_room_${FriendsHub.roomCode}`, JSON.stringify(roomData));
+    localStorage.setItem(`cognixis_room_${FriendsHub.roomCode}`, JSON.stringify(roomData));
   },
   
   // Load room from localStorage
   loadRoom: (roomCode) => {
-    const data = localStorage.getItem(`streakrush_room_${roomCode}`);
+    const data = localStorage.getItem(`cognixis_room_${roomCode}`);
     if (!data) return null;
     
     const room = JSON.parse(data);
     
     // Check if room is stale (older than 1 hour)
     if (Date.now() - room.updatedAt > 3600000) {
-      localStorage.removeItem(`streakrush_room_${roomCode}`);
+      localStorage.removeItem(`cognixis_room_${roomCode}`);
       return null;
     }
     
@@ -404,7 +404,7 @@ const SocialFeatures = {
   // ========================================
   
   Challenges: {
-    STORAGE_KEY: 'streakrush_challenges',
+    STORAGE_KEY: 'cognixis_challenges',
     
     // Get all challenges
     getAll: () => {
@@ -590,7 +590,7 @@ const SocialFeatures = {
   // ========================================
   
   DailyChallenge: {
-    STORAGE_KEY: 'streakrush_daily_challenge',
+    STORAGE_KEY: 'cognixis_daily_challenge',
     
     // Get today's challenge
     get: () => {
@@ -641,7 +641,7 @@ const SocialFeatures = {
       const user = Storage.getUser();
       
       // Get or create daily scores
-      const key = `streakrush_daily_scores_${daily.dayOfYear}`;
+      const key = `cognixis_daily_scores_${daily.dayOfYear}`;
       const scores = JSON.parse(localStorage.getItem(key) || '[]');
       
       // Add user score
@@ -668,7 +668,7 @@ const SocialFeatures = {
     
     // Get daily leaderboard (simulated with some fake players)
     getLeaderboard: (dayOfYear) => {
-      const key = `streakrush_daily_scores_${dayOfYear}`;
+      const key = `cognixis_daily_scores_${dayOfYear}`;
       let scores = JSON.parse(localStorage.getItem(key) || '[]');
       
       // Add simulated players if empty

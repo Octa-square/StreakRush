@@ -167,7 +167,7 @@ const CommitmentScreen = {
           </div>
           <div class="review">
             <div class="stars">⭐⭐⭐⭐⭐</div>
-            <p>"Best brain training app I've ever used. Worth every penny."</p>
+            <p>"Best brain game app I've ever used. Worth every penny."</p>
             <span class="reviewer">— Mike T.</span>
           </div>
         </div>

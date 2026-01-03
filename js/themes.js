@@ -1,143 +1,99 @@
 // ========================================
-// STREAKRUSH - THEME SYSTEM
-// 4 Different Themes
+// COGNIXIS - 4 THEME SYSTEM
+// Cyber Neural, Neon Nights, Gradient Fusion, Dark Matter
 // ========================================
 
 const Themes = {
-  current: 'fire',
+  current: 'cyber-neural',
   
   themes: {
-    // Dark Themes
-    fire: {
-      name: 'Fire Rush 🔥',
-      mode: 'dark',
-      primary: '#0d0d1a',
-      secondary: '#1a1a2e',
-      card: '#1f1f3a',
-      accent1: '#ff6b35',
-      accent2: '#f72585',
-      textPrimary: '#ffffff',
-      textSecondary: '#a0a0c0',
-      gradient: 'linear-gradient(135deg, #ff6b35 0%, #f72585 100%)',
-      glow: 'rgba(255, 107, 53, 0.4)'
+    'cyber-neural': {
+      name: 'Cyber Neural ⚡',
+      description: 'Default futuristic theme',
+      primary: '#00D4FF',
+      secondary: '#8B7FFF',
+      accent: '#FF3D9A'
     },
-    ocean: {
-      name: 'Ocean Wave 🌊',
-      mode: 'dark',
-      primary: '#0a1628',
-      secondary: '#0f2540',
-      card: '#163050',
-      accent1: '#00d4ff',
-      accent2: '#0099cc',
-      textPrimary: '#ffffff',
-      textSecondary: '#8ab4d4',
-      gradient: 'linear-gradient(135deg, #00d4ff 0%, #0099cc 100%)',
-      glow: 'rgba(0, 212, 255, 0.4)'
+    'neon-nights': {
+      name: 'Neon Nights 🌃',
+      description: 'Vibrant party mode',
+      primary: '#00F0FF',
+      secondary: '#B362FF',
+      accent: '#FF1F8F'
     },
-    forest: {
-      name: 'Forest Zen 🌿',
-      mode: 'dark',
-      primary: '#0d1a0d',
-      secondary: '#1a2e1a',
-      card: '#1f3a1f',
-      accent1: '#4ade80',
-      accent2: '#22c55e',
-      textPrimary: '#ffffff',
-      textSecondary: '#8ac08a',
-      gradient: 'linear-gradient(135deg, #4ade80 0%, #22c55e 100%)',
-      glow: 'rgba(74, 222, 128, 0.4)'
+    'gradient-fusion': {
+      name: 'Gradient Fusion 🌈',
+      description: 'Premium gradient experience',
+      primary: '#00D4FF',
+      secondary: '#8B7FFF',
+      accent: '#FF3D9A'
     },
-    galaxy: {
-      name: 'Galaxy Mode 🌌',
-      mode: 'dark',
-      primary: '#0d0d1f',
-      secondary: '#1a1a3a',
-      card: '#2a2a5a',
-      accent1: '#a855f7',
-      accent2: '#7c3aed',
-      textPrimary: '#ffffff',
-      textSecondary: '#b0a0d0',
-      gradient: 'linear-gradient(135deg, #a855f7 0%, #7c3aed 100%)',
-      glow: 'rgba(168, 85, 247, 0.4)'
-    },
-    // Light Themes
-    light: {
-      name: 'Light Mode ☀️',
-      mode: 'light',
-      primary: '#f5f5f7',
-      secondary: '#ffffff',
-      card: '#e8e8ed',
-      accent1: '#ff6b35',
-      accent2: '#f72585',
-      textPrimary: '#1a1a2e',
-      textSecondary: '#6b6b8a',
-      gradient: 'linear-gradient(135deg, #ff6b35 0%, #f72585 100%)',
-      glow: 'rgba(255, 107, 53, 0.3)'
-    },
-    lightBlue: {
-      name: 'Clean Blue 💎',
-      mode: 'light',
-      primary: '#f0f7ff',
-      secondary: '#ffffff',
-      card: '#e3edf7',
-      accent1: '#2563eb',
-      accent2: '#0099cc',
-      textPrimary: '#1e3a5f',
-      textSecondary: '#5a7a9a',
-      gradient: 'linear-gradient(135deg, #2563eb 0%, #0099cc 100%)',
-      glow: 'rgba(37, 99, 235, 0.3)'
+    'dark-matter': {
+      name: 'Dark Matter 🌑',
+      description: 'Deep space aesthetic',
+      primary: '#4DD0E1',
+      secondary: '#7C4DFF',
+      accent: '#FF4081'
     }
   },
   
   // Initialize theme
   init: () => {
-    const saved = localStorage.getItem('streakrush_theme');
+    const saved = localStorage.getItem('cognixis_theme');
     if (saved && Themes.themes[saved]) {
       Themes.current = saved;
+    } else {
+      // Auto-detect initial theme
+      Themes.autoTheme();
     }
     Themes.apply(Themes.current);
   },
   
   // Apply a theme
   apply: (themeName) => {
-    const theme = Themes.themes[themeName];
-    if (!theme) return;
+    if (!Themes.themes[themeName]) {
+      themeName = 'cyber-neural';
+    }
     
     Themes.current = themeName;
-    localStorage.setItem('streakrush_theme', themeName);
+    localStorage.setItem('cognixis_theme', themeName);
     
-    const root = document.documentElement;
-    root.style.setProperty('--bg-primary', theme.primary);
-    root.style.setProperty('--bg-secondary', theme.secondary);
-    root.style.setProperty('--bg-card', theme.card);
-    root.style.setProperty('--accent-orange', theme.accent1);
-    root.style.setProperty('--accent-pink', theme.accent2);
-    root.style.setProperty('--text-primary', theme.textPrimary);
-    root.style.setProperty('--text-secondary', theme.textSecondary);
-    root.style.setProperty('--gradient-fire', theme.gradient);
-    root.style.setProperty('--shadow-glow-orange', `0 0 30px ${theme.glow}`);
+    // Set data-theme attribute on document root
+    document.documentElement.setAttribute('data-theme', themeName);
     
-    // Set data attribute for CSS targeting
-    document.body.setAttribute('data-theme-mode', theme.mode);
+    // Update theme buttons in settings if they exist
+    Themes.updateThemeButtons();
     
-    // Update body background
-    document.body.style.background = theme.primary;
+    console.log(`Theme applied: ${themeName}`);
   },
   
-  // Check if current theme is light mode
-  isLightMode: () => {
-    const theme = Themes.themes[Themes.current];
-    return theme?.mode === 'light';
-  },
-  
-  // Toggle between dark and light
-  toggleMode: () => {
-    if (Themes.isLightMode()) {
-      Themes.apply('fire'); // Switch to dark
+  // Auto-detect context and switch theme
+  autoTheme: () => {
+    const hour = new Date().getHours();
+    const isPartyMode = window.location.pathname.includes('/party') || 
+                        document.querySelector('.party-mode-screen.active');
+    const isPremium = localStorage.getItem('cognixis_premium') === 'true';
+    
+    if (isPartyMode) {
+      Themes.current = 'neon-nights'; // Energetic for parties
+    } else if (isPremium) {
+      Themes.current = 'gradient-fusion'; // Premium feel
+    } else if (hour >= 20 || hour <= 6) {
+      Themes.current = 'dark-matter'; // Night mode
     } else {
-      Themes.apply('light'); // Switch to light
+      Themes.current = 'cyber-neural'; // Default
     }
-    return Themes.themes[Themes.current].name;
+    
+    return Themes.current;
+  },
+  
+  // Update theme button states in settings
+  updateThemeButtons: () => {
+    const buttons = document.querySelectorAll('.settings-theme-btn');
+    buttons.forEach(btn => {
+      const theme = btn.getAttribute('data-theme');
+      btn.classList.toggle('active', theme === Themes.current);
+    });
   },
   
   // Get theme list for UI
@@ -145,6 +101,7 @@ const Themes = {
     return Object.keys(Themes.themes).map(key => ({
       id: key,
       name: Themes.themes[key].name,
+      description: Themes.themes[key].description,
       active: key === Themes.current
     }));
   },
@@ -156,6 +113,14 @@ const Themes = {
     const nextIndex = (currentIndex + 1) % keys.length;
     Themes.apply(keys[nextIndex]);
     return Themes.themes[keys[nextIndex]].name;
+  },
+  
+  // Get current theme info
+  getCurrent: () => {
+    return {
+      id: Themes.current,
+      ...Themes.themes[Themes.current]
+    };
   }
 };
 

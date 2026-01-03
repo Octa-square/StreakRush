@@ -1,7 +1,7 @@
 {
   "name": "CogniXis",
   "short_name": "CogniXis",
-  "description": "Feed Your Brain - 60-second memory challenges. Train your brain, climb the leaderboard!",
+  "description": "Feed Your Brain - 60-second brain games. Challenge yourself, climb the leaderboard!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a1a",

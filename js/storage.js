@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - LOCAL STORAGE MANAGER
+// COGNIXIS - LOCAL STORAGE MANAGER
 // ========================================
 
 const Storage = {
@@ -9,12 +9,37 @@ const Storage = {
   DEMO_MODE: false,  // <-- Set to true to test premium features
   
   KEYS: {
-    USER: 'streakrush_user',
-    STATS: 'streakrush_stats',
-    BESTS: 'streakrush_bests',
-    INVENTORY: 'streakrush_inventory',
-    LEADERBOARD: 'streakrush_leaderboard',
-    SETTINGS: 'streakrush_settings'
+    USER: 'cognixis_user',
+    STATS: 'cognixis_stats',
+    BESTS: 'cognixis_bests',
+    INVENTORY: 'cognixis_inventory',
+    LEADERBOARD: 'cognixis_leaderboard',
+    SETTINGS: 'cognixis_settings'
+  },
+  
+  // Migration from old streakrush keys (run once)
+  migrateFromStreakrush: () => {
+    if (localStorage.getItem('cognixis_migration_done')) return;
+    
+    const oldToNew = {
+      'streakrush_user': 'cognixis_user',
+      'streakrush_stats': 'cognixis_stats',
+      'streakrush_bests': 'cognixis_bests',
+      'streakrush_inventory': 'cognixis_inventory',
+      'streakrush_leaderboard': 'cognixis_leaderboard',
+      'streakrush_settings': 'cognixis_settings'
+    };
+    
+    for (const [oldKey, newKey] of Object.entries(oldToNew)) {
+      const value = localStorage.getItem(oldKey);
+      if (value !== null) {
+        localStorage.setItem(newKey, value);
+        localStorage.removeItem(oldKey);
+      }
+    }
+    
+    localStorage.setItem('cognixis_migration_done', 'true');
+    console.log('✅ Migrated localStorage from streakrush to cognixis');
   },
   
   // Default user data (DEMO MODE gives premium + host access + coins)
@@ -109,6 +134,9 @@ const Storage = {
   
   // Initialize all storage with defaults if empty
   init: () => {
+    // First, migrate any old streakrush data
+    Storage.migrateFromStreakrush();
+    
     if (!localStorage.getItem(Storage.KEYS.USER)) {
       Storage.set(Storage.KEYS.USER, Storage.defaultUser());
     }
@@ -335,7 +363,7 @@ const Storage = {
   
   // Get memory performance profile by category
   getMemoryProfile: () => {
-    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
     const profile = {};
     
     for (const [category, gameNames] of Object.entries(Storage.MEMORY_CATEGORIES)) {
@@ -395,7 +423,7 @@ const Storage = {
   
   // Track reaction time for speed games
   trackReactionTime: (gameId, reactionTimeMs) => {
-    const key = `streakrush_reaction_${gameId}`;
+    const key = `cognixis_reaction_${gameId}`;
     const history = JSON.parse(localStorage.getItem(key) || '[]');
     
     history.push({
@@ -426,7 +454,7 @@ const Storage = {
   
   // Get reaction time history for a game
   getReactionHistory: (gameId) => {
-    const key = `streakrush_reaction_${gameId}`;
+    const key = `cognixis_reaction_${gameId}`;
     const history = JSON.parse(localStorage.getItem(key) || '[]');
     
     if (history.length === 0) {

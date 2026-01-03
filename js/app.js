@@ -123,7 +123,7 @@ const App = {
   renderHomeScreen: () => {
     const user = Storage.getUser();
     const highestUnlocked = UnlockSystem.getHighestUnlocked();
-    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
     
     // Update header stats (brain score and streak)
     const headerBrainScore = document.getElementById('header-brain-score');
@@ -144,11 +144,11 @@ const App = {
     
     if (streakText && streakFlames && streakBadge) {
       if (currentStreak > 0) {
-        streakText.textContent = `${currentStreak}-Game Win Streak!`;
+        streakText.textContent = `${currentStreak} Games Mastered! 🧠`;
         streakFlames.textContent = Streak.getFlames(currentStreak);
         streakBadge.style.display = 'flex';
       } else {
-        streakText.textContent = 'Start Your Win Streak!';
+        streakText.textContent = 'Ready to Play! 🎮';
         streakFlames.textContent = '🎯';
         streakBadge.style.display = 'flex';
       }
@@ -222,46 +222,87 @@ const App = {
     App.renderCompletedGames(scores, highestUnlocked, user.isPremium);
   },
   
-  // Render completed games that can be replayed
+  // Track how many games are currently shown
+  gamesShown: 12,
+  
+  // Render games list with pass/fail colors
   renderCompletedGames: (scores, highestUnlocked, isPremium) => {
     const section = document.getElementById('completed-section');
     const grid = document.getElementById('completed-games-grid');
+    const sectionTitle = document.getElementById('completed-section-title');
+    const sectionSubtitle = document.getElementById('completed-section-subtitle');
     
     if (!section || !grid) return;
     
-    const completedCount = highestUnlocked - 1;
+    // Update section title
+    if (sectionTitle) sectionTitle.textContent = 'Games';
+    if (sectionSubtitle) sectionSubtitle.textContent = 'Tap to play any game';
     
-    if (completedCount > 0) {
+    // Determine max games to show
+    const maxGames = isPremium ? 60 : 15;
+    const totalGames = Math.min(highestUnlocked, maxGames);
+    
+    if (totalGames > 0) {
       section.style.display = 'block';
       grid.innerHTML = '';
       
-      // Show completed games (limit to last 10 for scrolling)
-      const startFrom = Math.max(1, completedCount - 9);
+      // Show games up to current limit
+      const showCount = Math.min(App.gamesShown, totalGames);
       
-      for (let i = startFrom; i <= completedCount; i++) {
+      for (let i = 1; i <= showCount; i++) {
         const game = getGameById(i);
         if (!game) continue;
         
-        // For free users, only show games 1-10
-        if (!isPremium && i > 10) break;
-        
         const score = scores[i];
-        const scoreText = score ? `${score.percentage}%` : '-';
+        const hasPlayed = score && score.percentage !== undefined;
+        // Use the 'passed' flag from latest attempt (not just percentage check)
+        const passed = hasPlayed && score.passed === true;
+        const failed = hasPlayed && score.passed === false;
+        
+        // Determine card state
+        let cardClass = 'game-card';
+        if (passed) cardClass += ' game-passed';
+        if (failed) cardClass += ' game-failed';
+        if (!hasPlayed && i < highestUnlocked) cardClass += ' game-unlocked';
+        if (i >= highestUnlocked) cardClass += ' game-locked';
+        
+        const scoreText = hasPlayed ? `${score.percentage}%` : (i < highestUnlocked ? 'Play' : '🔒');
         
         const card = document.createElement('div');
-        card.className = 'completed-game-card';
-      card.innerHTML = `
-          <span class="completed-icon">${game.icon}</span>
-          <span class="completed-name">${game.name}</span>
-          <span class="completed-score">${scoreText}</span>
-      `;
-      
-      card.addEventListener('click', () => {
-        Sounds.click();
-          App.playGame(game, true); // true = replay mode
-        });
+        card.className = cardClass;
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', `Game ${i}: ${game.name}${hasPlayed ? `, score ${score.percentage}%` : ''}`);
+        card.innerHTML = `
+          <span class="game-number">${i}</span>
+          <span class="game-icon">${game.icon}</span>
+          <span class="game-name">${game.name}</span>
+          <span class="game-score ${passed ? 'score-pass' : ''} ${failed ? 'score-fail' : ''}">${scoreText}</span>
+        `;
+        
+        // Only allow click if unlocked
+        if (i < highestUnlocked || (i === highestUnlocked && i <= maxGames)) {
+          card.addEventListener('click', () => {
+            Sounds.click();
+            // Show instructions first, then play
+            App.showGameInstructions(game);
+          });
+        }
         
         grid.appendChild(card);
+      }
+      
+      // Add "Load More" button if there are more games
+      if (showCount < totalGames) {
+        const loadMoreBtn = document.createElement('button');
+        loadMoreBtn.className = 'load-more-btn';
+        loadMoreBtn.innerHTML = `Load More Games (${totalGames - showCount} remaining)`;
+        loadMoreBtn.addEventListener('click', () => {
+          Sounds.click();
+          App.gamesShown += 12;
+          App.renderCompletedGames(scores, highestUnlocked, isPremium);
+        });
+        grid.appendChild(loadMoreBtn);
       }
     } else {
       section.style.display = 'none';
@@ -304,7 +345,7 @@ const App = {
     }
     
     // Still show completed games for replay
-    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
     App.renderCompletedGames(scores, 21, false);
   },
   
@@ -345,33 +386,225 @@ const App = {
     // Populate game info
     document.getElementById('instructions-icon').textContent = game.icon;
     document.getElementById('instructions-title').textContent = game.name;
-    document.getElementById('instructions-category').textContent = game.category;
     
-    // Populate benefits
-    const benefitsText = document.getElementById('game-benefits-text');
-    if (benefitsText) {
-      benefitsText.textContent = game.benefits || 'Builds discipline, focus, and mental strength through consistent practice.';
+    // Generate visual preview
+    const previewBox = document.getElementById('game-preview');
+    if (previewBox) {
+      previewBox.innerHTML = App.generateGamePreview(game);
     }
     
-    // Populate instructions
-    document.getElementById('instructions-text').textContent = game.instruction;
-    
-    // Populate quote
-    const fullQuote = typeof getGameQuote === 'function' ? getGameQuote(game) : (game.quote || '"Discipline is the bridge between goals and accomplishment." — Jim Rohn');
-    const authorMatch = fullQuote.match(/— (.+)$/);
-    const author = authorMatch ? authorMatch[1] : '';
-    const quote = fullQuote.replace(/— .+$/, '').trim();
-    
-    const quoteText = document.getElementById('instr-quote-text');
-    const quoteAuthor = document.getElementById('instr-quote-author');
-    if (quoteText) quoteText.textContent = quote;
-    if (quoteAuthor) quoteAuthor.textContent = author ? `— ${author}` : '';
+    // Generate step-by-step instructions
+    const stepsBox = document.getElementById('instruction-steps');
+    if (stepsBox) {
+      const steps = App.getGameSteps(game);
+      stepsBox.innerHTML = steps.map((step, i) => `
+        <div class="instruction-step" data-step="${i}">
+          <div class="step-number">${i + 1}</div>
+          <div class="step-content">
+            <div class="step-text">${step.text}</div>
+            ${step.example ? `<div class="step-example">${step.example}</div>` : ''}
+          </div>
+        </div>
+      `).join('');
+      
+      // Animate steps one by one
+      App.animateInstructionSteps();
+    }
     
     // Stop quote rotation when leaving home
     App.stopQuoteRotation();
     
     // Show instructions screen
     UI.showScreen('instructions');
+  },
+  
+  // Generate visual preview for each game type
+  generateGamePreview: (game) => {
+    const gameType = game.name.toLowerCase().replace(/\s+/g, '');
+    
+    // Game-specific previews
+    const previews = {
+      'colorsequence': `
+        <div class="preview-sequence">
+          <div class="preview-item" style="background: #ef4444;">🔴</div>
+          <div class="preview-item" style="background: #3b82f6;">🔵</div>
+          <div class="preview-item" style="background: #22c55e;">🟢</div>
+        </div>
+        <div class="preview-correct">✓ Tap in same order</div>
+      `,
+      'numberflash': `
+        <div class="preview-sequence">
+          <div class="preview-item" style="background: var(--accent-primary); color: white;">7</div>
+          <div class="preview-item" style="background: var(--accent-primary); color: white;">2</div>
+          <div class="preview-item" style="background: var(--accent-primary); color: white;">9</div>
+        </div>
+        <div class="preview-correct">✓ Type: 729</div>
+      `,
+      'reactiontest': `
+        <div class="preview-sequence">
+          <div class="preview-item" style="background: #22c55e; width: 80px; height: 80px; border-radius: 50%;">TAP!</div>
+        </div>
+        <div class="preview-correct">✓ Tap when GREEN</div>
+      `,
+      'cardmatchrush': `
+        <div class="preview-sequence">
+          <div class="preview-item" style="background: var(--bg-card);">🃏</div>
+          <div class="preview-item" style="background: var(--bg-card);">🃏</div>
+          <div class="preview-item" style="background: #22c55e;">🎴</div>
+          <div class="preview-item" style="background: #22c55e;">🎴</div>
+        </div>
+        <div class="preview-correct">✓ Match pairs</div>
+      `,
+      'shapeshifter': `
+        <div class="preview-sequence">
+          <div class="preview-item" style="background: #3b82f6;">▲</div>
+          <div class="preview-item" style="background: #22c55e;">●</div>
+          <div class="preview-item" style="background: #f59e0b;">■</div>
+        </div>
+        <div class="preview-correct">✓ Same or Different?</div>
+      `,
+      'speedmath': `
+        <div class="preview-sequence" style="flex-direction: column; gap: 8px;">
+          <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">7 + 5 = ?</div>
+          <div class="preview-item" style="background: #22c55e; color: white; width: auto; padding: 0 20px;">12</div>
+        </div>
+        <div class="preview-correct">✓ Quick calculation</div>
+      `,
+      'worldcapitals': `
+        <div class="preview-sequence" style="flex-direction: column; gap: 8px;">
+          <div style="font-size: 1.2rem; color: var(--text-primary);">🇫🇷 France</div>
+          <div class="preview-item" style="background: #22c55e; color: white; width: auto; padding: 0 20px;">Paris</div>
+        </div>
+        <div class="preview-correct">✓ Name the capital</div>
+      `,
+      'wordchain': `
+        <div class="preview-sequence" style="flex-direction: column; gap: 4px;">
+          <div style="font-size: 1rem; color: var(--text-secondary);">CAT → TAP → ...</div>
+          <div class="preview-item" style="background: #22c55e; color: white; width: auto; padding: 0 20px;">PEN</div>
+        </div>
+        <div class="preview-correct">✓ Start with last letter</div>
+      `
+    };
+    
+    // Default preview for games without specific design
+    const defaultPreview = `
+      <div class="preview-sequence">
+        <div class="preview-item" style="background: var(--accent-primary); font-size: 2rem;">${game.icon}</div>
+      </div>
+      <div style="margin-top: 12px; font-size: 0.9rem; color: var(--text-secondary);">
+        ${game.instruction || 'Follow the prompts and respond quickly!'}
+      </div>
+    `;
+    
+    return previews[gameType] || defaultPreview;
+  },
+  
+  // Get step-by-step instructions for each game
+  getGameSteps: (game) => {
+    const gameType = game.name.toLowerCase().replace(/\s+/g, '');
+    
+    const gameSteps = {
+      'colorsequence': [
+        { text: 'Watch the colors flash in sequence', example: '🔴 → 🔵 → 🟢' },
+        { text: 'Memorize the order they appear' },
+        { text: 'Tap the colors in the SAME order', example: 'Tap: Red, Blue, Green' },
+        { text: 'Sequences get longer as you progress!' }
+      ],
+      'numberflash': [
+        { text: 'Numbers will flash on screen briefly', example: '7 → 2 → 9' },
+        { text: 'Remember the digits in order' },
+        { text: 'Type the complete number', example: 'Enter: 729' },
+        { text: 'More digits = harder levels!' }
+      ],
+      'reactiontest': [
+        { text: 'A circle will appear on screen' },
+        { text: 'Wait for it to turn GREEN', example: '⚪ → 🟢' },
+        { text: 'Tap as FAST as possible when green' },
+        { text: 'Don\'t tap on RED - that\'s a penalty!' }
+      ],
+      'cardmatchrush': [
+        { text: 'Cards are face down on the board' },
+        { text: 'Tap two cards to flip them' },
+        { text: 'Find matching pairs', example: '🎴🎴 = Match!' },
+        { text: 'Clear all pairs to win!' }
+      ],
+      'shapeshifter': [
+        { text: 'Two shapes will appear' },
+        { text: 'Compare them quickly' },
+        { text: 'Tap SAME if they match' },
+        { text: 'Tap DIFFERENT if they don\'t match' }
+      ],
+      'speedmath': [
+        { text: 'A math problem appears', example: '7 + 5 = ?' },
+        { text: 'Calculate the answer quickly' },
+        { text: 'Tap the correct answer' },
+        { text: 'Speed matters - be quick!' }
+      ],
+      'worldcapitals': [
+        { text: 'A country name appears', example: '🇫🇷 France' },
+        { text: 'Think of its capital city' },
+        { text: 'Select the correct capital', example: 'Paris ✓' },
+        { text: 'Learn geography while playing!' }
+      ],
+      'wordchain': [
+        { text: 'See the starting word', example: 'CAT' },
+        { text: 'Find a word starting with the last letter', example: 'T → TAP' },
+        { text: 'Continue the chain!' },
+        { text: 'Keep the chain going as long as possible' }
+      ]
+    };
+    
+    // Default steps
+    const defaultSteps = [
+      { text: game.instruction || 'Follow the prompts on screen' },
+      { text: 'Respond as quickly as you can' },
+      { text: 'Score points for correct answers' },
+      { text: 'Reach 70% accuracy to pass!' }
+    ];
+    
+    return gameSteps[gameType] || defaultSteps;
+  },
+  
+  // Animate instruction steps one by one
+  animateInstructionSteps: () => {
+    const steps = document.querySelectorAll('.instruction-step');
+    let currentStep = 0;
+    
+    // Clear any existing animation
+    if (App.instructionStepTimer) {
+      clearInterval(App.instructionStepTimer);
+    }
+    
+    // Animate steps sequentially
+    const animateNext = () => {
+      if (currentStep > 0 && steps[currentStep - 1]) {
+        steps[currentStep - 1].classList.remove('active');
+        steps[currentStep - 1].classList.add('completed');
+      }
+      
+      if (currentStep < steps.length) {
+        steps[currentStep].classList.add('active');
+        currentStep++;
+      } else {
+        // Loop back
+        steps.forEach(step => {
+          step.classList.remove('active', 'completed');
+        });
+        currentStep = 0;
+      }
+    };
+    
+    // Start animation
+    animateNext();
+    App.instructionStepTimer = setInterval(animateNext, 1500);
+  },
+  
+  // Stop instruction animation
+  stopInstructionAnimation: () => {
+    if (App.instructionStepTimer) {
+      clearInterval(App.instructionStepTimer);
+      App.instructionStepTimer = null;
+    }
   },
   
   // Begin the next challenge (show instructions first)
@@ -391,6 +624,7 @@ const App = {
     // Ready button on instructions screen (starts game)
     document.getElementById('ready-button')?.addEventListener('click', () => {
       Sounds.click();
+      App.stopInstructionAnimation(); // Stop the step animation
       if (App.currentGame) {
         App.playGame(App.currentGame);
       }
@@ -399,6 +633,7 @@ const App = {
     // Back from instructions button
     document.getElementById('back-from-instructions')?.addEventListener('click', () => {
       Sounds.click();
+      App.stopInstructionAnimation(); // Stop the step animation
       UI.showScreen('home');
       App.renderHomeScreen();
     });
@@ -438,29 +673,23 @@ const App = {
       // Check if user passed the last game
       const lastGameId = App.currentGame?.id;
       if (lastGameId) {
-        const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
-        const lastScore = scores[lastGameId];
+        const nextGameId = lastGameId + 1;
+        const nextGame = getGameById(nextGameId);
         
-        if (lastScore && lastScore.percentage >= 70) {
-          // User passed - advance to next game
-          const nextGameId = lastGameId + 1;
-          const nextGame = getGameById(nextGameId);
+        if (nextGame) {
+          // Check if need premium (after game 15)
+          const user = Storage.getUser();
+          if (!user.isPremium && nextGameId > 15) {
+            // Show commitment screen
+            UI.showScreen('home');
+            App.showCommitmentScreen();
+            return;
+          }
           
-          if (nextGame) {
-            // Check if need premium (after game 20)
-            const user = Storage.getUser();
-            if (!user.isPremium && nextGameId > 20) {
-              // Show commitment screen
-              UI.showScreen('home');
-              App.showCommitmentScreen();
-              return;
-            }
-            
-            // Start next game directly
-            App.currentGame = nextGame;
-            App.playGame(nextGame);
-        return;
-      }
+          // Start next game directly - no need to go home first!
+          App.currentGame = nextGame;
+          App.playGame(nextGame);
+          return;
         }
       }
     
@@ -552,7 +781,7 @@ const App = {
     // Settings sound toggle
     document.getElementById('settings-sound-toggle')?.addEventListener('change', (e) => {
       Sounds.enabled = e.target.checked;
-      localStorage.setItem('streakrush_sound', e.target.checked);
+      localStorage.setItem('cognixis_sound', e.target.checked);
       if (e.target.checked) Sounds.click();
     });
     
@@ -571,14 +800,14 @@ const App = {
     document.querySelectorAll('.difficulty-option').forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.classList.contains('locked')) {
-          Sounds.error();
+          Sounds.wrong();
           UI.showToast('🔒 Unlock with Premium to access difficulty modes', 'info');
           return;
         }
         Sounds.click();
         document.querySelectorAll('.difficulty-option').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        localStorage.setItem('streakrush_difficulty', btn.dataset.difficulty);
+        localStorage.setItem('cognixis_difficulty', btn.dataset.difficulty);
       });
     });
     
@@ -587,6 +816,14 @@ const App = {
       Sounds.click();
       App.showResetConfirmation();
     });
+    
+    // DEV MODE: Premium toggle button - REMOVE BEFORE PRODUCTION
+    document.getElementById('toggle-premium-btn')?.addEventListener('click', () => {
+      Sounds.click();
+      App.toggleDevPremium();
+    });
+    App.updateDevPremiumUI(); // Initialize UI state
+    // END DEV MODE
     
     // Streak loss play button
     document.getElementById('streak-loss-play')?.addEventListener('click', () => {
@@ -669,7 +906,7 @@ const App = {
   
   // Update profile stats dynamically
   updateProfileStats: () => {
-    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
     const highestUnlocked = UnlockSystem.getHighestUnlocked();
     const user = Storage.getUser();
     
@@ -760,7 +997,7 @@ const App = {
     // Update toggle states
     const soundToggle = document.getElementById('settings-sound-toggle');
     if (soundToggle) {
-      soundToggle.checked = localStorage.getItem('streakrush_sound') !== 'false';
+      soundToggle.checked = localStorage.getItem('cognixis_sound') !== 'false';
     }
     
     // Update language button display
@@ -805,7 +1042,7 @@ const App = {
     
     // Confirm button
     document.getElementById('reset-confirm').addEventListener('click', () => {
-      Sounds.error();
+      Sounds.wrong();
       App.resetAllProgress();
       modal.remove();
     });
@@ -820,12 +1057,17 @@ const App = {
   
   // Reset all progress
   resetAllProgress: () => {
-    // Clear all game-related storage
-    localStorage.removeItem('streakrush_game_scores');
-    localStorage.removeItem('streakrush_game_attempts');
-    localStorage.removeItem('streakrush_skipped_games');
+    console.log('Resetting all progress...');
     
-    // Reset user data but keep name and settings
+    // Clear all game-related storage
+    localStorage.removeItem('cognixis_game_scores');
+    localStorage.removeItem('cognixis_game_attempts');
+    localStorage.removeItem('cognixis_skipped_games');
+    localStorage.removeItem('cognixis_brain_score');
+    localStorage.removeItem('cognixis_coins');
+    localStorage.removeItem('cognixis_powerups');
+    
+    // Reset user data but keep name, premium status, and settings
     const user = Storage.getUser();
     const resetUser = {
       name: user.name,
@@ -839,17 +1081,30 @@ const App = {
       lastPlayed: null,
       joinDate: user.joinDate
     };
-    localStorage.setItem('streakrush_user', JSON.stringify(resetUser));
+    localStorage.setItem('cognixis_user', JSON.stringify(resetUser));
     
-    // Close settings and refresh
+    // Reset the games shown counter
+    App.gamesShown = 12;
+    
+    // Close settings modal
     App.closeSettingsModal();
-    UI.showToast('✅ Progress reset successfully', 'success');
+    
+    // Show success toast
+    if (typeof UI !== 'undefined' && UI.showToast) {
+      UI.showToast('✅ Progress reset successfully', 'success');
+    } else {
+      alert('Progress reset successfully!');
+    }
+    
+    // Refresh home screen
     App.renderHomeScreen();
+    
+    console.log('Progress reset complete!');
   },
   
   // Update theme buttons
   updateThemeButtons: () => {
-    const currentTheme = localStorage.getItem('streakrush_theme') || 'fire';
+    const currentTheme = localStorage.getItem('cognixis_theme') || 'cyber-neural';
     document.querySelectorAll('.settings-theme-btn').forEach(btn => {
       btn.classList.toggle('active', btn.dataset.theme === currentTheme);
     });
@@ -862,7 +1117,52 @@ const App = {
         .then(reg => console.log('SW registered'))
         .catch(err => console.log('SW failed'));
     }
+  },
+  
+  // ========================================
+  // DEV MODE FUNCTIONS - REMOVE BEFORE PRODUCTION DEPLOY
+  // ========================================
+  
+  // Toggle premium status for testing
+  toggleDevPremium: () => {
+    const user = Storage.getUser();
+    user.isPremium = !user.isPremium;
+    localStorage.setItem('cognixis_user', JSON.stringify(user));
+    
+    App.updateDevPremiumUI();
+    App.renderHomeScreen();
+    
+    UI.showToast(user.isPremium ? '👑 Premium ENABLED (Demo)' : '🔒 Premium DISABLED', 'success');
+  },
+  
+  // Update the premium toggle UI state
+  updateDevPremiumUI: () => {
+    const user = Storage.getUser();
+    const btn = document.getElementById('toggle-premium-btn');
+    const toggleText = document.getElementById('premium-toggle-text');
+    const statusText = document.getElementById('premium-status-text');
+    const premiumBanner = document.getElementById('premium-banner');
+    
+    if (btn && toggleText && statusText) {
+      if (user.isPremium) {
+        btn.classList.add('active');
+        toggleText.textContent = '🔓 Disable Premium (Demo)';
+        statusText.textContent = 'Currently: 👑 PREMIUM USER';
+      } else {
+        btn.classList.remove('active');
+        toggleText.textContent = '🔓 Enable Premium (Demo)';
+        statusText.textContent = 'Currently: Free User';
+      }
+    }
+    
+    // Hide/show premium banner based on status
+    if (premiumBanner) {
+      premiumBanner.style.display = user.isPremium ? 'none' : 'block';
+    }
   }
+  // ========================================
+  // END DEV MODE FUNCTIONS
+  // ========================================
 };
 
 // Initialize when DOM is ready

@@ -17,13 +17,13 @@ const Sounds = {
     }
     
     // Load preference
-    Sounds.enabled = localStorage.getItem('streakrush_sound') !== 'false';
+    Sounds.enabled = localStorage.getItem('cognixis_sound') !== 'false';
   },
   
   // Toggle sound
   toggle: () => {
     Sounds.enabled = !Sounds.enabled;
-    localStorage.setItem('streakrush_sound', Sounds.enabled);
+    localStorage.setItem('cognixis_sound', Sounds.enabled);
     return Sounds.enabled;
   },
   

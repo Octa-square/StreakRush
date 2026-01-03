@@ -39,7 +39,7 @@ const RoomManager = {
   // Get player name from storage
   getPlayerName: () => {
     const user = Storage.getUser ? Storage.getUser() : {};
-    return user.name || localStorage.getItem('streakrush_player_name') || 'Player';
+    return user.name || localStorage.getItem('cognixis_player_name') || 'Player';
   },
   
   // Create new room (HOST)

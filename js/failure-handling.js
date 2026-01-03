@@ -26,26 +26,26 @@ const FailureHandling = {
   
   incrementAttempts: (gameId) => {
     const attempts = JSON.parse(
-      localStorage.getItem('streakrush_game_attempts') || '{}'
+      localStorage.getItem('cognixis_game_attempts') || '{}'
     );
     attempts[gameId] = (attempts[gameId] || 0) + 1;
-    localStorage.setItem('streakrush_game_attempts', JSON.stringify(attempts));
+    localStorage.setItem('cognixis_game_attempts', JSON.stringify(attempts));
     return attempts[gameId];
   },
   
   getAttempts: (gameId) => {
     const attempts = JSON.parse(
-      localStorage.getItem('streakrush_game_attempts') || '{}'
+      localStorage.getItem('cognixis_game_attempts') || '{}'
     );
     return attempts[gameId] || 0;
   },
   
   resetAttempts: (gameId) => {
     const attempts = JSON.parse(
-      localStorage.getItem('streakrush_game_attempts') || '{}'
+      localStorage.getItem('cognixis_game_attempts') || '{}'
     );
     delete attempts[gameId];
-    localStorage.setItem('streakrush_game_attempts', JSON.stringify(attempts));
+    localStorage.setItem('cognixis_game_attempts', JSON.stringify(attempts));
   },
   
   // ========================================
@@ -53,19 +53,19 @@ const FailureHandling = {
   // ========================================
   
   getSkipTokens: () => {
-    return parseInt(localStorage.getItem('streakrush_skip_tokens') || '0');
+    return parseInt(localStorage.getItem('cognixis_skip_tokens') || '0');
   },
   
   addSkipTokens: (count) => {
     const current = FailureHandling.getSkipTokens();
-    localStorage.setItem('streakrush_skip_tokens', (current + count).toString());
+    localStorage.setItem('cognixis_skip_tokens', (current + count).toString());
   },
   
   useSkipToken: (gameId) => {
     const tokens = FailureHandling.getSkipTokens();
     if (tokens <= 0) return false;
     
-    localStorage.setItem('streakrush_skip_tokens', (tokens - 1).toString());
+    localStorage.setItem('cognixis_skip_tokens', (tokens - 1).toString());
     FailureHandling.markAsSkipped(gameId);
     FailureHandling.resetAttempts(gameId);
     
@@ -76,7 +76,7 @@ const FailureHandling = {
   checkSkipTokenReward: () => {
     const user = Storage.getUser();
     const consecutiveWins = user.consecutiveWins || 0;
-    const tokensAwarded = parseInt(localStorage.getItem('streakrush_tokens_awarded') || '0');
+    const tokensAwarded = parseInt(localStorage.getItem('cognixis_tokens_awarded') || '0');
     
     // Award 1 token per 5 consecutive wins
     const shouldHaveTokens = Math.floor(consecutiveWins / FAILURE_CONFIG.gamesPerSkipToken);
@@ -84,7 +84,7 @@ const FailureHandling = {
     if (shouldHaveTokens > tokensAwarded) {
       const newTokens = shouldHaveTokens - tokensAwarded;
       FailureHandling.addSkipTokens(newTokens);
-      localStorage.setItem('streakrush_tokens_awarded', shouldHaveTokens.toString());
+      localStorage.setItem('cognixis_tokens_awarded', shouldHaveTokens.toString());
       return newTokens; // Return number of tokens just earned
     }
     
@@ -97,43 +97,43 @@ const FailureHandling = {
   
   markAsSkipped: (gameId) => {
     const skipped = JSON.parse(
-      localStorage.getItem('streakrush_skipped_games') || '[]'
+      localStorage.getItem('cognixis_skipped_games') || '[]'
     );
     if (!skipped.includes(gameId)) {
       skipped.push(gameId);
-      localStorage.setItem('streakrush_skipped_games', JSON.stringify(skipped));
+      localStorage.setItem('cognixis_skipped_games', JSON.stringify(skipped));
     }
     
     // Also update the game scores to mark as skipped
-    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
     scores[gameId] = scores[gameId] || {};
     scores[gameId].skipped = true;
     scores[gameId].skippedAt = new Date().toISOString();
-    localStorage.setItem('streakrush_game_scores', JSON.stringify(scores));
+    localStorage.setItem('cognixis_game_scores', JSON.stringify(scores));
   },
   
   unmarkAsSkipped: (gameId) => {
     const skipped = JSON.parse(
-      localStorage.getItem('streakrush_skipped_games') || '[]'
+      localStorage.getItem('cognixis_skipped_games') || '[]'
     );
     const index = skipped.indexOf(gameId);
     if (index > -1) {
       skipped.splice(index, 1);
-      localStorage.setItem('streakrush_skipped_games', JSON.stringify(skipped));
+      localStorage.setItem('cognixis_skipped_games', JSON.stringify(skipped));
     }
     
     // Update game scores
-    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
     if (scores[gameId]) {
       delete scores[gameId].skipped;
       delete scores[gameId].skippedAt;
-      localStorage.setItem('streakrush_game_scores', JSON.stringify(scores));
+      localStorage.setItem('cognixis_game_scores', JSON.stringify(scores));
     }
   },
   
   getSkippedGames: () => {
     return JSON.parse(
-      localStorage.getItem('streakrush_skipped_games') || '[]'
+      localStorage.getItem('cognixis_skipped_games') || '[]'
     );
   },
   
@@ -357,8 +357,8 @@ const FailureHandling = {
     if (typeof Sounds !== 'undefined' && Sounds.click) Sounds.click();
     
     // Store easy mode flag
-    sessionStorage.setItem('streakrush_easy_mode', 'true');
-    sessionStorage.setItem('streakrush_easy_mode_game', gameId.toString());
+    sessionStorage.setItem('cognixis_easy_mode', 'true');
+    sessionStorage.setItem('cognixis_easy_mode_game', gameId.toString());
     
     // Start game with easy mode config
     if (typeof Game !== 'undefined' && Game.startSimpleGame) {
@@ -377,12 +377,12 @@ const FailureHandling = {
   },
   
   isEasyMode: () => {
-    return sessionStorage.getItem('streakrush_easy_mode') === 'true';
+    return sessionStorage.getItem('cognixis_easy_mode') === 'true';
   },
   
   clearEasyMode: () => {
-    sessionStorage.removeItem('streakrush_easy_mode');
-    sessionStorage.removeItem('streakrush_easy_mode_game');
+    sessionStorage.removeItem('cognixis_easy_mode');
+    sessionStorage.removeItem('cognixis_easy_mode_game');
     if (typeof Game !== 'undefined') {
       Game.easyMode = false;
     }

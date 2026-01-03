@@ -6,7 +6,7 @@ const LANG_EN = {
   // App metadata
   meta: {
     appName: "CogniXis",
-    tagline: "Train your memory, one game at a time",
+    tagline: "Challenge your mind, one game at a time",
     direction: "ltr"
   },
   
@@ -218,7 +218,7 @@ const LANG_EN = {
   // Onboarding
   onboarding: {
     welcome: "Welcome to",
-    trainYourBrain: "Train Your Brain",
+    trainYourBrain: "Feed Your Brain",
     freeGames: "First 15 games are FREE!",
     scientificGames: "Scientifically-designed games",
     howItWorks: "How it works",

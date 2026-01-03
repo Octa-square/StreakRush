@@ -4,13 +4,13 @@
 // ========================================
 
 const Onboarding = {
-  STORAGE_KEY: 'streakrush_onboarding_complete',
+  STORAGE_KEY: 'cognixis_onboarding_complete',
   currentScreen: 0,
   
   screens: [
     {
       id: 'welcome',
-      title: '🧠 Train Your Brain',
+      title: '🧠 Feed Your Brain',
       content: `
         <p class="onboarding-intro">Scientifically-designed games to boost:</p>
         <ul class="benefits-list">
@@ -20,7 +20,7 @@ const Onboarding = {
           <li><span class="benefit-icon">🧩</span> Pattern Recognition</li>
           <li><span class="benefit-icon">🔢</span> Mental Math</li>
         </ul>
-        <p class="onboarding-tagline">Your brain is a muscle. Train it daily.</p>
+        <p class="onboarding-tagline">Fun games that challenge your mind.</p>
       `
     },
     {
@@ -141,7 +141,7 @@ const Onboarding = {
             </button>
           ` : '<div></div>'}
           <button class="onboarding-btn primary" id="onboarding-next">
-            ${isLast ? 'Start Training 🔥' : 'Next →'}
+            ${isLast ? 'Start Playing 🎮' : 'Next →'}
           </button>
         </div>
 
@@ -291,7 +291,7 @@ const Onboarding = {
 
     // Show welcome toast
     if (typeof UI !== 'undefined') {
-      UI.showToast(`Welcome, ${name}! Let's train your brain 🧠`, 'success');
+      UI.showToast(`Welcome, ${name}! Let's play! 🎮`, 'success');
     }
 
     // Render home screen

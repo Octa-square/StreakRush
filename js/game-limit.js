@@ -9,7 +9,7 @@ const GameLimit = {
   
   // Get total games played (all-time)
   getGamesPlayed: () => {
-    const data = localStorage.getItem('streakrush_games_played');
+    const data = localStorage.getItem('cognixis_games_played');
     if (!data) return { count: 0, games: [] };
     return JSON.parse(data);
   },
@@ -21,7 +21,7 @@ const GameLimit = {
     if (!current.games.includes(gameId)) {
       current.games.push(gameId);
     }
-    localStorage.setItem('streakrush_games_played', JSON.stringify(current));
+    localStorage.setItem('cognixis_games_played', JSON.stringify(current));
     return current.count;
   },
   

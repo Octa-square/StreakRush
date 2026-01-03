@@ -47,7 +47,7 @@ const GAMES = [
     difficulty: 'easy',
     timeLimit: 60,
     instruction: 'Tap as FAST as possible when the circle turns green! Don\'t tap on red!',
-    benefits: 'Trains reflexes, hand-eye coordination, and impulse control.',
+    benefits: 'Boosts reflexes, hand-eye coordination, and impulse control.',
     technique: 'Focus Tip: Keep your eyes on the center and let your peripheral vision detect the color change.',
     pointsCorrect: 25,
     pointsWrong: -15
@@ -227,7 +227,7 @@ const GAMES = [
     difficulty: 'medium',
     timeLimit: 60,
     instruction: 'Remember the position of numbers on a grid, then recreate it!',
-    benefits: 'Combines spatial and numerical memory for enhanced brain training.',
+    benefits: 'Combines spatial and numerical memory for enhanced brain power.',
     technique: 'Path Tip: Trace a path through numbers like reading a book - creates order from chaos.',
     pointsCorrect: 25,
     pointsWrong: -15
@@ -238,7 +238,7 @@ const GAMES = [
   // Medium Difficulty - Variety Across Categories
   // ==========================================
   
-  // GAME 16: Dual N-Back (Pattern) - Classic brain training
+  // GAME 16: Dual N-Back (Pattern) - Classic brain game
   {
     id: 16,
     name: 'Dual N-Back',
@@ -247,7 +247,7 @@ const GAMES = [
     difficulty: 'hard',
     timeLimit: 60,
     instruction: 'Remember both position AND letter from N steps back!',
-    benefits: 'The gold standard for working memory training - proven to increase fluid intelligence.',
+    benefits: 'The gold standard for working memory improvement - proven to increase fluid intelligence.',
     technique: 'Stream Tip: Mentally repeat "position: center, letter: K" as each item appears.',
     pointsCorrect: 30,
     pointsWrong: -20
@@ -292,7 +292,7 @@ const GAMES = [
     difficulty: 'medium',
     timeLimit: 60,
     instruction: 'Tap the COLOR of the word, not what it says! (Stroop Test)',
-    benefits: 'Trains cognitive flexibility and inhibitory control.',
+    benefits: 'Builds cognitive flexibility and inhibitory control.',
     technique: 'Blur Tip: Slightly unfocus your eyes to see color before reading the word.',
     pointsCorrect: 25,
     pointsWrong: -15
@@ -477,7 +477,7 @@ const GAMES = [
     difficulty: 'hard',
     timeLimit: 90,
     instruction: 'Track position, color, AND sound from N steps back!',
-    benefits: 'Maximum working memory challenge - elite brain training.',
+    benefits: 'Maximum working memory challenge - elite brain challenge.',
     technique: 'Focus Tip: Start with N=1 and only increase when you hit 80% accuracy.',
     pointsCorrect: 35,
     pointsWrong: -20
@@ -657,7 +657,7 @@ const GAMES = [
     difficulty: 'hard',
     timeLimit: 60,
     instruction: 'Track two things at once - tap when EITHER matches!',
-    benefits: 'Trains divided attention and multitasking abilities.',
+    benefits: 'Improves divided attention and multitasking abilities.',
     technique: 'Peripheral Tip: Don\'t focus on one thing - use soft focus to see both.',
     pointsCorrect: 30,
     pointsWrong: -20
@@ -812,7 +812,7 @@ const GAMES = [
     difficulty: 'hard',
     timeLimit: 60,
     instruction: 'Tap only the target shape while ignoring distractors!',
-    benefits: 'Trains selective attention and distractor suppression.',
+    benefits: 'Sharpens selective attention and distractor suppression.',
     technique: 'Tunnel Tip: Imagine tunnel vision - only the target matters.',
     pointsCorrect: 25,
     pointsWrong: -20
@@ -917,8 +917,8 @@ const GAMES = [
     difficulty: 'expert',
     timeLimit: 120,
     instruction: 'The final test! Combines ALL memory types in one epic challenge.',
-    benefits: 'The ultimate test of your enhanced memory abilities - you\'ve trained for this!',
-    technique: 'Calm Tip: You\'ve practiced all these skills. Trust your training and stay calm.',
+    benefits: 'The ultimate test of your enhanced memory abilities - you\'ve got this!',
+    technique: 'Calm Tip: You\'ve practiced all these skills. Trust your skills and stay calm.',
     pointsCorrect: 50,
     pointsWrong: -25
   }

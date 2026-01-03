@@ -29,7 +29,7 @@ const I18n = {
   // Initialize i18n system
   init: () => {
     // Check for saved language preference
-    const saved = localStorage.getItem('streakrush_language');
+    const saved = localStorage.getItem('cognixis_language');
     
     if (saved && I18n.languages[saved]) {
       I18n.currentLanguage = saved;
@@ -113,7 +113,7 @@ const I18n = {
     }
     
     I18n.currentLanguage = langCode;
-    localStorage.setItem('streakrush_language', langCode);
+    localStorage.setItem('cognixis_language', langCode);
     
     // Load new translations
     I18n.loadLanguage(langCode);

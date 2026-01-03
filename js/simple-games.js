@@ -1,7 +1,51 @@
 // ========================================
-// STREAKRUSH - 60 BRAIN TRAINING GAMES
-// Scientifically-designed memory challenges!
+// COGNIXIS - 60 BRAIN GAMES
+// Fun brain challenges!
 // ========================================
+
+// Helper function to get current theme colors
+const getThemeColor = (varName) => {
+  return getComputedStyle(document.documentElement).getPropertyValue(`--${varName}`).trim() || '#00D4FF';
+};
+
+// Theme-aware colors object (updates when accessed)
+const ThemeColors = {
+  get primary() { return getThemeColor('primary'); },
+  get secondary() { return getThemeColor('secondary'); },
+  get accent() { return getThemeColor('accent'); },
+  get success() { return getThemeColor('success'); },
+  get error() { return getThemeColor('error'); },
+  get warning() { return getThemeColor('warning'); },
+  get bgPrimary() { return getThemeColor('bg-primary'); },
+  get bgSecondary() { return getThemeColor('bg-secondary'); },
+  get bgCard() { return getThemeColor('bg-card'); }
+};
+
+// Question Manager to prevent duplicates
+class QuestionManager {
+  constructor(questionPool) {
+    this.allQuestions = [...questionPool];
+    this.availableQuestions = [...questionPool];
+    this.usedQuestions = [];
+  }
+  
+  getNextQuestion() {
+    if (this.availableQuestions.length === 0) {
+      this.availableQuestions = [...this.allQuestions];
+      this.usedQuestions = [];
+    }
+    const index = Math.floor(Math.random() * this.availableQuestions.length);
+    const question = this.availableQuestions[index];
+    this.availableQuestions.splice(index, 1);
+    this.usedQuestions.push(question);
+    return question;
+  }
+  
+  reset() {
+    this.availableQuestions = [...this.allQuestions];
+    this.usedQuestions = [];
+  }
+}
 
 const SimpleGames = {
   score: 0,
@@ -17,6 +61,8 @@ const SimpleGames = {
   wrongAnswers: 0,
   reactionTimes: [], // Track reaction times for speed bonus
   questionStartTime: 0, // When current question started
+  isProcessingClick: false, // Prevent double-tap bug
+  questionManagers: {}, // Store question managers per game
   
   // NEW SCORING SYSTEM
   SCORING: {
@@ -57,8 +103,20 @@ const SimpleGames = {
     SimpleGames.isActive = true;
     SimpleGames.gameType = gameId;
     SimpleGames.gameData = {};
+    SimpleGames.isProcessingClick = false; // Reset click protection
     SimpleGames.clearTimers();
     gameArea.innerHTML = '';
+  },
+  
+  // Debounce helper to prevent double-tap
+  debounceClick: (callback, delay = 300) => {
+    if (SimpleGames.isProcessingClick) return false;
+    SimpleGames.isProcessingClick = true;
+    callback();
+    setTimeout(() => {
+      SimpleGames.isProcessingClick = false;
+    }, delay);
+    return true;
   },
   
   // Start timing a question
@@ -213,8 +271,8 @@ const SimpleGames = {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
-      border: 2px solid #ff6b35;
+      background: var(--bg-secondary);
+      border: 2px solid var(--primary);
       border-radius: 20px;
       padding: 24px 28px;
       max-width: 90%;
@@ -226,14 +284,14 @@ const SimpleGames = {
     `;
     
     overlay.innerHTML = `
-      <div style="color: #ef4444; font-size: 1.2rem; margin-bottom: 12px;">❌ Not quite!</div>
-      <div style="color: #22c55e; font-size: 1.3rem; font-weight: 600; margin-bottom: 16px;">✓ ${answer}</div>
+      <div style="color: var(--error); font-size: 1.2rem; margin-bottom: 12px;">❌ Not quite!</div>
+      <div style="color: var(--success); font-size: 1.3rem; font-weight: 600; margin-bottom: 16px;">✓ ${answer}</div>
       <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
-        <div style="color: #ffd700; font-size: 0.85rem; margin-bottom: 6px;">💡 Fun Fact</div>
-        <div style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.5;">${funFact}</div>
+        <div style="color: var(--warning); font-size: 0.85rem; margin-bottom: 6px;">💡 Fun Fact</div>
+        <div style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5;">${funFact}</div>
       </div>
       <button id="continue-after-explanation" style="
-        background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+        background: var(--gradient-primary);
         border: none;
         color: white;
         padding: 14px 40px;
@@ -401,6 +459,7 @@ const SimpleGames = {
   // ========================================
   game1_WorldCapitals: (zone) => {
     const capitals = [
+      // Original 21 countries
       { country: 'France', capital: 'Paris', wrong: ['London', 'Berlin', 'Madrid'], fact: 'Paris is called "The City of Light" because it was one of the first cities to adopt gas street lighting in the 1800s.' },
       { country: 'Japan', capital: 'Tokyo', wrong: ['Seoul', 'Beijing', 'Bangkok'], fact: 'Tokyo is the world\'s most populous metropolitan area with over 37 million people - more than Canada!' },
       { country: 'Australia', capital: 'Canberra', wrong: ['Sydney', 'Melbourne', 'Perth'], fact: 'Canberra was purpose-built as the capital in 1913 because Sydney and Melbourne couldn\'t agree on which should be the capital.' },
@@ -420,7 +479,39 @@ const SimpleGames = {
       { country: 'Argentina', capital: 'Buenos Aires', wrong: ['Córdoba', 'Rosario', 'Mendoza'], fact: 'Buenos Aires means "Good Airs" and has the widest avenue in the world - 9 de Julio Avenue has 16 lanes!' },
       { country: 'Kenya', capital: 'Nairobi', wrong: ['Mombasa', 'Kisumu', 'Nakuru'], fact: 'Nairobi has a national park within city limits where you can see lions with skyscrapers in the background!' },
       { country: 'Thailand', capital: 'Bangkok', wrong: ['Chiang Mai', 'Phuket', 'Pattaya'], fact: 'Bangkok\'s full ceremonial name has 168 letters, making it the longest city name in the world!' },
-      { country: 'Poland', capital: 'Warsaw', wrong: ['Krakow', 'Gdansk', 'Wroclaw'], fact: 'Warsaw was 85% destroyed in WWII but was meticulously rebuilt. Its Old Town is a UNESCO World Heritage Site.' }
+      { country: 'Poland', capital: 'Warsaw', wrong: ['Krakow', 'Gdansk', 'Wroclaw'], fact: 'Warsaw was 85% destroyed in WWII but was meticulously rebuilt. Its Old Town is a UNESCO World Heritage Site.' },
+      // EXPANDED: 30 more countries (total: 51)
+      { country: 'United Kingdom', capital: 'London', wrong: ['Manchester', 'Birmingham', 'Edinburgh'], fact: 'London is one of only two cities to host the Olympics three times (1908, 1948, 2012).' },
+      { country: 'South Korea', capital: 'Seoul', wrong: ['Busan', 'Incheon', 'Daegu'], fact: 'Seoul has the world\'s fastest internet and one of the most advanced public transportation systems.' },
+      { country: 'Indonesia', capital: 'Jakarta', wrong: ['Bali', 'Surabaya', 'Bandung'], fact: 'Indonesia is moving its capital from Jakarta to Nusantara because Jakarta is sinking into the sea!' },
+      { country: 'Netherlands', capital: 'Amsterdam', wrong: ['Rotterdam', 'The Hague', 'Utrecht'], fact: 'Amsterdam has more bicycles than people and more canals than Venice.' },
+      { country: 'Sweden', capital: 'Stockholm', wrong: ['Gothenburg', 'Malmö', 'Uppsala'], fact: 'Stockholm is built on 14 islands connected by 57 bridges. The city has no ugly buildings by law!' },
+      { country: 'Norway', capital: 'Oslo', wrong: ['Bergen', 'Trondheim', 'Stavanger'], fact: 'Oslo is one of the most expensive cities in the world and hosts the Nobel Peace Prize ceremony.' },
+      { country: 'Denmark', capital: 'Copenhagen', wrong: ['Aarhus', 'Odense', 'Aalborg'], fact: 'Copenhagen is one of the happiest and most bike-friendly cities in the world.' },
+      { country: 'Finland', capital: 'Helsinki', wrong: ['Turku', 'Tampere', 'Oulu'], fact: 'Helsinki has 10 million sauna sessions per day in a country of 5.5 million people!' },
+      { country: 'Switzerland', capital: 'Bern', wrong: ['Zurich', 'Geneva', 'Basel'], fact: 'Bern means "bear" and the city has kept bears since 1513. It\'s not the largest city - Zurich is bigger!' },
+      { country: 'Austria', capital: 'Vienna', wrong: ['Salzburg', 'Innsbruck', 'Graz'], fact: 'Vienna has been rated the world\'s most livable city multiple times and invented the croissant!' },
+      { country: 'Belgium', capital: 'Brussels', wrong: ['Antwerp', 'Ghent', 'Bruges'], fact: 'Brussels is the de facto capital of the European Union and famous for chocolate, waffles, and beer.' },
+      { country: 'Portugal', capital: 'Lisbon', wrong: ['Porto', 'Faro', 'Braga'], fact: 'Lisbon is older than Rome and one of the oldest cities in Western Europe, dating back over 3,000 years.' },
+      { country: 'Greece', capital: 'Athens', wrong: ['Thessaloniki', 'Piraeus', 'Patras'], fact: 'Athens is one of the oldest cities in the world and birthplace of democracy, philosophy, and the Olympics.' },
+      { country: 'Ireland', capital: 'Dublin', wrong: ['Cork', 'Galway', 'Limerick'], fact: 'Dublin means "Black Pool" in Irish and is home to the world-famous Guinness brewery.' },
+      { country: 'Czech Republic', capital: 'Prague', wrong: ['Brno', 'Ostrava', 'Plzen'], fact: 'Prague Castle is the largest ancient castle in the world, covering 18 acres!' },
+      { country: 'Hungary', capital: 'Budapest', wrong: ['Debrecen', 'Szeged', 'Pécs'], fact: 'Budapest was created by uniting three cities (Buda, Pest, Óbuda) in 1873 and has Europe\'s largest thermal bath system.' },
+      { country: 'Ukraine', capital: 'Kyiv', wrong: ['Kharkiv', 'Odesa', 'Lviv'], fact: 'Kyiv is over 1,500 years old and was the capital of Kievan Rus, a powerful medieval state.' },
+      { country: 'Romania', capital: 'Bucharest', wrong: ['Cluj-Napoca', 'Timișoara', 'Iași'], fact: 'Bucharest has the second-largest building in the world by surface area - the Palace of Parliament.' },
+      { country: 'Morocco', capital: 'Rabat', wrong: ['Casablanca', 'Marrakech', 'Fez'], fact: 'Rabat was chosen over the larger Casablanca as Morocco\'s capital for its strategic coastal location.' },
+      { country: 'Vietnam', capital: 'Hanoi', wrong: ['Ho Chi Minh City', 'Da Nang', 'Hue'], fact: 'Hanoi is over 1,000 years old and was known as Thang Long, meaning "Ascending Dragon."' },
+      { country: 'Philippines', capital: 'Manila', wrong: ['Cebu', 'Davao', 'Quezon City'], fact: 'Manila is one of the most densely populated cities in the world with over 70,000 people per square kilometer.' },
+      { country: 'Malaysia', capital: 'Kuala Lumpur', wrong: ['Penang', 'Johor Bahru', 'Malacca'], fact: 'Kuala Lumpur means "Muddy Confluence" and was once home to the world\'s tallest buildings - the Petronas Towers.' },
+      { country: 'Singapore', capital: 'Singapore', wrong: ['Changi', 'Sentosa', 'Jurong'], fact: 'Singapore is a city-state where the capital and country are the same! It\'s also one of only three city-states in the world.' },
+      { country: 'New Zealand', capital: 'Wellington', wrong: ['Auckland', 'Christchurch', 'Queenstown'], fact: 'Wellington is the world\'s southernmost national capital and one of the windiest cities on Earth.' },
+      { country: 'Colombia', capital: 'Bogotá', wrong: ['Medellín', 'Cali', 'Cartagena'], fact: 'Bogotá is one of the highest capital cities in the world at 2,640 meters above sea level.' },
+      { country: 'Peru', capital: 'Lima', wrong: ['Cusco', 'Arequipa', 'Trujillo'], fact: 'Lima is called the "City of Kings" and rarely sees rain, making it one of the driest capital cities.' },
+      { country: 'Chile', capital: 'Santiago', wrong: ['Valparaíso', 'Concepción', 'Antofagasta'], fact: 'Santiago is surrounded by the Andes Mountains and has some of the best air quality of any major South American city.' },
+      { country: 'Venezuela', capital: 'Caracas', wrong: ['Maracaibo', 'Valencia', 'Barquisimeto'], fact: 'Caracas is located in a valley at 900 meters elevation, giving it spring-like weather year-round.' },
+      { country: 'Ecuador', capital: 'Quito', wrong: ['Guayaquil', 'Cuenca', 'Manta'], fact: 'Quito is the second-highest capital city in the world and the closest to the equator.' },
+      { country: 'Cuba', capital: 'Havana', wrong: ['Santiago de Cuba', 'Varadero', 'Cienfuegos'], fact: 'Havana\'s old town is a UNESCO World Heritage Site and famous for its vintage 1950s American cars.' },
+      { country: 'Pakistan', capital: 'Islamabad', wrong: ['Karachi', 'Lahore', 'Faisalabad'], fact: 'Islamabad is a planned city built in the 1960s, replacing Karachi as the capital.' }
     ];
     
     let usedQuestions = [];
@@ -433,7 +524,7 @@ const SimpleGames = {
         <div class="quiz-timer-bar"><div class="quiz-timer-fill" id="timer-fill"></div></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%); border-radius: 20px; padding: 20px;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px;';
     
     const askQuestion = () => {
       if (!SimpleGames.isActive) return;
@@ -480,23 +571,31 @@ const SimpleGames = {
         `;
         
         btn.onclick = () => {
+          // Prevent double-tap by checking if already processing
+          if (btn.disabled || SimpleGames.isProcessingClick) return;
+          SimpleGames.isProcessingClick = true;
+          
           clearTimeout(questionTimer);
+          
+          // Disable all buttons immediately
+          optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
           
           if (opt === q.capital) {
             SimpleGames.addScore(SimpleGames.SCORING.correctAnswer);
-            btn.style.background = '#22c55e';
-            optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+            btn.style.background = ThemeColors.success;
             
             // Update correct count and move to next question
             document.getElementById('q-correct').textContent = SimpleGames.correctAnswers;
-            setTimeout(askQuestion, 800); // Faster pace - no cap!
+            setTimeout(() => {
+              SimpleGames.isProcessingClick = false;
+              askQuestion();
+            }, 800);
           } else {
             SimpleGames.loseScore(Math.abs(SimpleGames.SCORING.wrongAnswer));
-            btn.style.background = '#ef4444';
+            btn.style.background = ThemeColors.error;
             // Show correct answer
             optionsDiv.querySelectorAll('button').forEach(b => {
-              if (b.textContent === q.capital) b.style.background = '#22c55e';
-              b.disabled = true;
+              if (b.textContent === q.capital) b.style.background = ThemeColors.success;
             });
             
             // Show explanation with fun fact (timer paused)
@@ -512,7 +611,7 @@ const SimpleGames = {
       
       // Timer for each question (5 seconds)
       const timerFill = document.getElementById('timer-fill');
-      timerFill.style.cssText = 'height: 100%; width: 100%; background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%); transition: width 5s linear;';
+      timerFill.style.cssText = 'height: 100%; width: 100%; background: var(--gradient-primary); transition: width 5s linear;';
       setTimeout(() => timerFill.style.width = '0%', 50);
       
       const questionTimer = setTimeout(() => {
@@ -520,7 +619,7 @@ const SimpleGames = {
         SimpleGames.loseScore(Math.abs(SimpleGames.SCORING.wrongAnswer));
         optionsDiv.querySelectorAll('button').forEach(b => {
           b.disabled = true;
-          if (b.textContent === q.capital) b.style.background = '#22c55e';
+          if (b.textContent === q.capital) b.style.background = ThemeColors.success;
         });
         
         // Show explanation for timeout with fun fact
@@ -573,7 +672,7 @@ const SimpleGames = {
         <div class="flag-options" id="flag-options"></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     const showFlag = () => {
       if (!SimpleGames.isActive) return;
@@ -619,10 +718,10 @@ const SimpleGames = {
         btn.onclick = () => {
           if (country === correct.country) {
             SimpleGames.addScore(30);
-            btn.style.background = '#22c55e';
+            btn.style.background = ThemeColors.success;
           } else {
             SimpleGames.loseScore(20);
-            btn.style.background = '#ef4444';
+            btn.style.background = ThemeColors.error;
           }
           optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
           setTimeout(showFlag, 1000);
@@ -671,7 +770,7 @@ const SimpleGames = {
         <div class="sort-options" id="sort-options"></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #059669 0%, #047857 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     const optionsDiv = document.getElementById('sort-options');
     optionsDiv.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;';
@@ -704,12 +803,12 @@ const SimpleGames = {
         btn.onclick = () => {
           if (cont === currentCountry.continent) {
             SimpleGames.addScore(20);
-            btn.style.background = '#22c55e';
+            btn.style.background = ThemeColors.success;
           } else {
             SimpleGames.loseScore(15);
-            btn.style.background = '#ef4444';
+            btn.style.background = ThemeColors.error;
             optionsDiv.querySelectorAll('button').forEach(b => {
-              if (b.textContent === currentCountry.continent) b.style.background = '#22c55e';
+              if (b.textContent === currentCountry.continent) b.style.background = ThemeColors.success;
             });
           }
           optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
@@ -733,7 +832,7 @@ const SimpleGames = {
         <div class="math-streak">Streak: <span id="math-streak">0</span></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     let streak = 0;
     
@@ -787,7 +886,7 @@ const SimpleGames = {
           border: none;
           border-radius: 15px;
           background: white;
-          color: #0284c7;
+          color: var(--bg-secondary);
           cursor: pointer;
         `;
         
@@ -844,7 +943,7 @@ const SimpleGames = {
         <div class="pop-score">Correct: <span id="pop-correct">0</span></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     let correct = 0;
     
@@ -877,10 +976,10 @@ const SimpleGames = {
           if (country === bigger) {
             correct++;
             SimpleGames.addScore(25);
-            btn.style.background = '#22c55e';
+            btn.style.background = ThemeColors.success;
           } else {
             SimpleGames.loseScore(20);
-            btn.style.background = '#ef4444';
+            btn.style.background = ThemeColors.error;
           }
           document.getElementById('pop-correct').textContent = correct;
           choicesDiv.querySelectorAll('button').forEach(b => b.disabled = true);
@@ -903,14 +1002,14 @@ const SimpleGames = {
         <div class="reaction-time" id="reaction-time">Best: ---ms</div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #1f2937 0%, #111827 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     const circle = document.getElementById('reaction-circle');
     circle.style.cssText = `
       width: 200px;
       height: 200px;
       border-radius: 50%;
-      background: #ef4444;
+      background: var(--error);
       margin: 40px auto;
       display: flex;
       align-items: center;
@@ -932,14 +1031,14 @@ const SimpleGames = {
       canTap = false;
       tooEarly = false;
       circle.textContent = 'WAIT...';
-      circle.style.background = '#ef4444';
+      circle.style.background = ThemeColors.error;
       
       const delay = 1000 + Math.random() * 3000;
       
       SimpleGames.timeouts.push(setTimeout(() => {
         if (!SimpleGames.isActive || tooEarly) return;
         circle.textContent = 'TAP!';
-        circle.style.background = '#22c55e';
+        circle.style.background = ThemeColors.success;
         canTap = true;
         startTime = Date.now();
         
@@ -947,7 +1046,7 @@ const SimpleGames = {
         SimpleGames.timeouts.push(setTimeout(() => {
           if (canTap) {
             circle.textContent = 'TOO SLOW!';
-            circle.style.background = '#f97316';
+            circle.style.background = ThemeColors.warning;
             SimpleGames.loseScore(15);
             canTap = false;
             setTimeout(startRound, 1500);
@@ -962,7 +1061,7 @@ const SimpleGames = {
       if (!canTap) {
         tooEarly = true;
         circle.textContent = 'TOO EARLY!';
-        circle.style.background = '#f97316';
+        circle.style.background = ThemeColors.warning;
         SimpleGames.loseScore(20);
         setTimeout(startRound, 1500);
         return;
@@ -1004,7 +1103,7 @@ const SimpleGames = {
         <div class="memory-level">Level: <span id="memory-level">1</span></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #4f46e5 0%, #3730a3 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     const colors = ['#ef4444', '#22c55e', '#3b82f6', '#eab308'];
     const grid = document.getElementById('memory-grid');
@@ -1124,7 +1223,7 @@ const SimpleGames = {
         <button class="scramble-clear" id="scramble-clear">Clear</button>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #0d9488 0%, #0f766e 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     let currentWord = '';
     let currentAnswer = '';
@@ -1156,7 +1255,7 @@ const SimpleGames = {
           border: none;
           border-radius: 10px;
           background: white;
-          color: #0f766e;
+          color: var(--bg-secondary);
           cursor: pointer;
         `;
         
@@ -1236,7 +1335,7 @@ const SimpleGames = {
         <div class="tf-streak">Streak: <span id="tf-streak">0</span></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     let streak = 0;
     
@@ -1261,8 +1360,8 @@ const SimpleGames = {
       
       trueBtn.disabled = false;
       falseBtn.disabled = false;
-      trueBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 15px; background: #22c55e; color: white; cursor: pointer; margin: 10px;';
-      falseBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 15px; background: #ef4444; color: white; cursor: pointer; margin: 10px;';
+      trueBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 15px; background: var(--success); color: white; cursor: pointer; margin: 10px;';
+      falseBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 15px; background: var(--error); color: white; cursor: pointer; margin: 10px;';
       
       const handleAnswer = (userAnswer) => {
         trueBtn.disabled = true;
@@ -1322,7 +1421,7 @@ const SimpleGames = {
         <div class="ultimate-progress">Correct: <span id="ultimate-score">0</span></div>
       </div>
     `;
-    zone.style.cssText = 'background: linear-gradient(180deg, #7c3aed 0%, #4c1d95 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    zone.style.cssText = 'background: var(--bg-secondary); border-radius: 20px; padding: 20px; text-align: center;';
     
     const askQuestion = () => {
       if (!SimpleGames.isActive) return;
@@ -1363,12 +1462,12 @@ const SimpleGames = {
           if (opt === q.a) {
             correctCount++;
             SimpleGames.addScore(30);
-            btn.style.background = '#22c55e';
+            btn.style.background = ThemeColors.success;
           } else {
             SimpleGames.loseScore(20);
-            btn.style.background = '#ef4444';
+            btn.style.background = ThemeColors.error;
             optsDiv.querySelectorAll('button').forEach(b => {
-              if (b.textContent === q.a) b.style.background = '#22c55e';
+              if (b.textContent === q.a) b.style.background = ThemeColors.success;
             });
           }
           document.getElementById('ultimate-score').textContent = correctCount;
@@ -1379,7 +1478,7 @@ const SimpleGames = {
       });
     };
     
-    document.querySelector('.ultimate-header').style.cssText = 'font-size: 1.3rem; font-weight: bold; color: #fbbf24; margin-bottom: 15px;';
+    document.querySelector('.ultimate-header').style.cssText = 'font-size: 1.3rem; font-weight: bold; color: var(--warning); margin-bottom: 15px;';
     askQuestion();
   },
 
@@ -1396,13 +1495,10 @@ const SimpleGames = {
     let level = 1;
     
     zone.innerHTML = `
-      <div class="sequence-game">
-        <div class="game-instruction" style="text-align: center; padding: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.9rem; color: #aaa;">
-          📝 Watch the flashing colors, then tap them in the SAME ORDER!
-        </div>
-        <div class="sequence-display" id="sequence-display" style="font-size: 1.5rem; text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 120px; transition: all 0.15s ease; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div style="font-size: 2rem;">🎨</div><div>Get ready...</div></div>
+      <div class="sequence-game" style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+        <div class="sequence-display" id="sequence-display" style="font-size: 1.5rem; text-align: center; padding: 30px 25px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 100px; width: 100%; max-width: 320px; transition: all 0.15s ease; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div style="font-size: 2rem;">🎨</div><div>Get ready...</div></div>
         <div class="color-grid" id="color-grid" style="display: none;"></div>
-        <div class="sequence-level" style="text-align: center; margin-top: 15px; font-size: 1.1rem;">Level: <span id="seq-level">1</span></div>
+        <div class="sequence-level" style="text-align: center; font-size: 1rem; color: #888;">Level: <span id="seq-level">1</span></div>
       </div>
     `;
     
@@ -1451,7 +1547,7 @@ const SimpleGames = {
       
       await new Promise(r => setTimeout(r, 500));
       display.innerHTML = '<div style="font-size: 1.5rem;">👆 YOUR TURN!</div><div style="font-size: 1rem; margin-top: 5px;">Tap the colors in order</div>';
-      display.style.background = 'linear-gradient(135deg, #22c55e44, #3b82f644)';
+      display.style.background = 'linear-gradient(135deg, rgba(var(--primary-rgb), 0.3), rgba(var(--secondary-rgb), 0.3))';
       display.style.boxShadow = '0 0 20px rgba(34, 197, 94, 0.3)';
       grid.style.display = 'grid';
       grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
@@ -1482,11 +1578,11 @@ const SimpleGames = {
         const correctColors = sequence.map(i => `<span style="display: inline-block; width: 30px; height: 30px; background: ${colors[i]}; border-radius: 50%; margin: 3px;"></span>`).join('');
         
         display.innerHTML = `
-          <div style="color: #ef4444; font-size: 1.3rem; margin-bottom: 10px;">✗ Wrong color!</div>
+          <div style="color: var(--error); font-size: 1.3rem; margin-bottom: 10px;">✗ Wrong color!</div>
           <div style="font-size: 0.9rem; color: #888; margin-bottom: 10px;">You tapped: <span style="display: inline-block; width: 25px; height: 25px; background: ${colors[colorIndex]}; border-radius: 50%; vertical-align: middle;"></span></div>
           <div style="font-size: 1rem; margin-bottom: 10px;">Correct sequence was:</div>
           <div style="margin-bottom: 15px;">${correctColors}</div>
-          <button id="continue-btn" style="padding: 12px 30px; background: #3b82f6; color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer;">
+          <button id="continue-btn" style="padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer;">
             Tap to Continue
           </button>
         `;
@@ -1507,7 +1603,7 @@ const SimpleGames = {
         SimpleGames.addScore(25 + (level * 5));
         level++;
         document.getElementById('seq-level').textContent = level;
-        display.innerHTML = '<div style="color: #22c55e; font-size: 2rem;">✓ Correct!</div>';
+        display.innerHTML = '<div style="color: var(--success); font-size: 2rem;">✓ Correct!</div>';
         display.style.background = 'rgba(34, 197, 94, 0.2)';
         grid.style.display = 'none';
         addToSequence();
@@ -1531,7 +1627,7 @@ const SimpleGames = {
           📝 Watch the numbers flash, then type them in ORDER!
         </div>
         <div class="flash-display" id="flash-display" style="font-size: 3rem; text-align: center; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 100px;"></div>
-        <input type="text" id="number-input" placeholder="Type the numbers you saw..." style="display: none; width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #3b82f6; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;" inputmode="numeric">
+        <input type="text" id="number-input" placeholder="Type the numbers you saw..." style="display: none; width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid var(--primary); border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;" inputmode="numeric">
         <div class="flash-level" style="margin-top: 15px; text-align: center;">Digits: <span id="digit-count">3</span></div>
       </div>
     `;
@@ -1572,7 +1668,7 @@ const SimpleGames = {
           level++;
           document.getElementById('digit-count').textContent = level;
           // Show success briefly then continue
-          display.innerHTML = '<div style="color: #22c55e; font-size: 2rem;">✓ Correct!</div>';
+          display.innerHTML = '<div style="color: var(--success); font-size: 2rem;">✓ Correct!</div>';
           input.style.display = 'none';
           setTimeout(showNumbers, 800);
         } else {
@@ -1583,10 +1679,10 @@ const SimpleGames = {
           
           // Show what the correct answer was and wait for tap
           display.innerHTML = `
-            <div style="color: #ef4444; font-size: 1.5rem; margin-bottom: 10px;">✗ Wrong!</div>
-            <div style="font-size: 1rem; color: #888; margin-bottom: 15px;">You typed: <span style="color: #ef4444;">${answer || '(nothing)'}</span></div>
-            <div style="font-size: 1.2rem; margin-bottom: 15px;">Correct was: <span style="color: #22c55e; font-weight: bold; font-size: 2rem;">${correct}</span></div>
-            <button id="continue-btn" style="padding: 12px 30px; background: #3b82f6; color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer;">
+            <div style="color: var(--error); font-size: 1.5rem; margin-bottom: 10px;">✗ Wrong!</div>
+            <div style="font-size: 1rem; color: var(--text-muted); margin-bottom: 15px;">You typed: <span style="color: var(--error);">${answer || '(nothing)'}</span></div>
+            <div style="font-size: 1.2rem; margin-bottom: 15px;">Correct was: <span style="color: var(--success); font-weight: bold; font-size: 2rem;">${correct}</span></div>
+            <button id="continue-btn" style="padding: 12px 30px; background: var(--primary); color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer;">
               Tap to Continue
             </button>
           `;
@@ -1631,7 +1727,7 @@ const SimpleGames = {
       card.dataset.index = i;
       card.dataset.emoji = emoji;
       card.innerHTML = '❓';
-      card.style.cssText = 'aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: linear-gradient(135deg, #1e3a5f, #0d1b2a); border-radius: 12px; cursor: pointer; transition: transform 0.3s;';
+      card.style.cssText = 'aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: var(--bg-secondary); border-radius: 12px; cursor: pointer; transition: transform 0.3s;';
       card.onclick = () => flipCard(card);
       grid.appendChild(card);
     });
@@ -1643,7 +1739,7 @@ const SimpleGames = {
       Sounds.click();
       card.innerHTML = card.dataset.emoji;
       card.classList.add('flipped');
-      card.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+      card.style.background = `linear-gradient(135deg, ${ThemeColors.primary}, ${ThemeColors.secondary})`;
       flipped.push(card);
       
       if (flipped.length === 2) {
@@ -1669,7 +1765,7 @@ const SimpleGames = {
             flipped.forEach(c => {
               c.innerHTML = '❓';
               c.classList.remove('flipped');
-              c.style.background = 'linear-gradient(135deg, #1e3a5f, #0d1b2a)';
+              c.style.background = 'var(--bg-secondary)';
             });
             flipped = [];
             canFlip = true;
@@ -1827,7 +1923,7 @@ const SimpleGames = {
       const expectedWord = chain[SimpleGames.gameData.currentIndex];
       
       if (word === expectedWord) {
-        btn.style.background = '#22c55e';
+        btn.style.background = ThemeColors.success;
         btn.disabled = true;
         SimpleGames.gameData.currentIndex++;
         
@@ -2091,7 +2187,7 @@ const SimpleGames = {
       const expectedEmoji = story[SimpleGames.gameData.userOrder.length];
       
       if (emoji === expectedEmoji) {
-        btn.style.background = '#22c55e';
+        btn.style.background = ThemeColors.success;
         btn.disabled = true;
         SimpleGames.gameData.userOrder.push(emoji);
         
@@ -2160,12 +2256,12 @@ const SimpleGames = {
       Sounds.click();
       
       if (item === currentPattern.odd) {
-        btn.style.background = '#22c55e';
+        btn.style.background = ThemeColors.success;
         SimpleGames.addScore(25);
         patternsFound++;
         document.getElementById('pattern-count').textContent = patternsFound;
       } else {
-        btn.style.background = '#ef4444';
+        btn.style.background = ThemeColors.error;
         SimpleGames.loseScore(15);
         SimpleGames.showExplanation(currentPattern.odd, `The pattern was: ${currentPattern.rule}`, () => {});
       }
@@ -2471,8 +2567,8 @@ const SimpleGames = {
         <div class="nback-info" style="text-align: center; margin-bottom: 15px;">N = <span id="n-value">1</span></div>
         <div class="nback-grid" id="nback-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 240px; margin: 0 auto;"></div>
         <div class="nback-buttons" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-          <button id="nback-position" style="padding: 15px 30px; font-size: 1.1rem; background: #3b82f6; border: none; border-radius: 10px; color: white; cursor: pointer;">Position Match</button>
-          <button id="nback-letter" style="padding: 15px 30px; font-size: 1.1rem; background: #8b5cf6; border: none; border-radius: 10px; color: white; cursor: pointer;">Letter Match</button>
+          <button id="nback-position" style="padding: 15px 30px; font-size: 1.1rem; background: var(--primary); border: none; border-radius: 10px; color: white; cursor: pointer;">Position Match</button>
+          <button id="nback-letter" style="padding: 15px 30px; font-size: 1.1rem; background: var(--secondary); border: none; border-radius: 10px; color: white; cursor: pointer;">Letter Match</button>
         </div>
         <div class="nback-score" style="margin-top: 15px; text-align: center;">Correct: <span id="nback-correct">0</span></div>
       </div>
@@ -2508,7 +2604,7 @@ const SimpleGames = {
       sequence.push({ pos: currentPos, letter: currentLetter });
       
       // Show current
-      grid.children[currentPos].style.background = '#3b82f6';
+      grid.children[currentPos].style.background = ThemeColors.primary;
       grid.children[currentPos].textContent = currentLetter;
       
       position++;
@@ -2550,7 +2646,7 @@ const SimpleGames = {
     zone.innerHTML = `
       <div class="typing-game">
         <div class="word-display" id="word-display" style="font-size: 2.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; letter-spacing: 5px;"></div>
-        <input type="text" id="type-input" placeholder="Type here..." style="width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #3b82f6; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;">
+        <input type="text" id="type-input" placeholder="Type here..." style="width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid var(--primary); border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;">
         <div class="typing-score" style="margin-top: 15px; text-align: center;">Words: <span id="words-typed">0</span></div>
       </div>
     `;
@@ -2586,7 +2682,7 @@ const SimpleGames = {
       <div class="backwards-game">
         <div class="word-display" id="word-display" style="font-size: 2.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px;"></div>
         <div class="instruction" style="text-align: center; margin: 15px 0; color: rgba(255,255,255,0.7);">Spell it BACKWARDS!</div>
-        <input type="text" id="backwards-input" placeholder="Type backwards..." style="width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #f59e0b; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center;">
+        <input type="text" id="backwards-input" placeholder="Type backwards..." style="width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid var(--warning); border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center;">
         <div class="backwards-score" style="margin-top: 15px; text-align: center;">Correct: <span id="backwards-count">0</span></div>
       </div>
     `;
@@ -2857,8 +2953,8 @@ style.textContent = `
     z-index: 100;
   }
   
-  .score-popup.positive { color: #22c55e; }
-  .score-popup.negative { color: #ef4444; }
+  .score-popup.positive { color: var(--success); }
+  .score-popup.negative { color: var(--error); }
   
   @keyframes popUp {
     0% { opacity: 1; transform: translateY(0) scale(1); }

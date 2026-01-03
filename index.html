@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#0a0a1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="description" content="CogniXis - Feed Your Brain. 60-second memory challenges. Train your brain, climb the leaderboard!">
+    <meta name="description" content="CogniXis - Feed Your Brain. 60-second brain games. Challenge yourself, climb the leaderboard!">
     
-    <title>CogniXis 🧠</title>
+    <title>CogniXis</title>
     
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="logo.svg">
@@ -41,36 +41,14 @@
                     <span class="app-name">CogniXis</span>
                 </div>
                 <!-- Brain Score Display (between logo and settings) -->
-                <div class="header-stats" id="header-stats">
-                    <div class="header-stat">
-                        <span class="header-stat-icon">🧠</span>
-                        <span class="header-stat-value" id="header-brain-score">0</span>
-                    </div>
-                    <div class="header-stat">
-                        <span class="header-stat-icon">🔥</span>
-                        <span class="header-stat-value" id="header-streak">0</span>
-                    </div>
-                </div>
                 <button class="settings-button" id="open-settings">⚙️</button>
             </div>
 
             <div class="home-content">
-                <!-- Win Streak Badge -->
+                <!-- Brain Progress Badge -->
                 <div class="streak-badge" id="streak-badge">
                     <span class="streak-flames" id="home-streak-flames">🔥</span>
-                    <span class="streak-text" id="home-streak-text">0-Game Win Streak</span>
-                </div>
-
-                <!-- Party Mode Banner -->
-                <div class="party-mode-banner" id="party-mode-banner" onclick="PartyUI.showPartyMode()">
-                    <div class="banner-content">
-                        <div class="banner-icon">🎉</div>
-                        <div class="banner-text">
-                            <div class="banner-title">Play with Friends!</div>
-                            <div class="banner-subtitle">2x XP in Party Mode</div>
-                        </div>
-                        <div class="banner-arrow">→</div>
-                    </div>
+                    <span class="streak-text" id="home-streak-text">Ready to Play!</span>
                 </div>
 
                 <!-- Progress Display -->
@@ -78,6 +56,18 @@
                     <div class="journey-step" id="journey-step">Game 1 of 10</div>
                     <div class="journey-bar">
                         <div class="journey-fill" id="journey-fill" style="width: 10%"></div>
+                    </div>
+                </div>
+
+                <!-- Premium Banner (for non-premium users) -->
+                <div class="premium-banner" id="premium-banner">
+                    <div class="premium-banner-content">
+                        <span class="premium-icon">👑</span>
+                        <div class="premium-text">
+                            <span class="premium-title">Unlock All 60 Games</span>
+                            <span class="premium-subtitle">One-time purchase • Forever access</span>
+                        </div>
+                        <span class="premium-arrow">→</span>
                     </div>
                 </div>
 
@@ -92,12 +82,6 @@
                     <div class="instruction-box">
                         <h3>📖 How to Play</h3>
                         <p id="next-game-instruction">Name the capital of each country. Quick - 5 seconds per question!</p>
-                    </div>
-                    
-                    <!-- Motivational Quote for current game -->
-                    <div class="game-quote-box" id="game-quote-box">
-                        <p class="game-quote-text" id="game-quote-text">"The world is a book, and those who do not travel read only one page."</p>
-                        <p class="game-quote-author" id="game-quote-author">— Saint Augustine</p>
                     </div>
                     
                     <div class="game-requirements">
@@ -120,10 +104,10 @@
                     </div>
                 </div>
 
-                <!-- Completed Games (Replay Section) -->
+                <!-- Games Section -->
                 <div class="completed-section" id="completed-section" style="display: none;">
-                    <h3>Completed Games</h3>
-                    <p class="completed-hint">Tap to replay any completed game</p>
+                    <h3 id="completed-section-title">Games</h3>
+                    <p class="completed-hint" id="completed-section-subtitle">Tap to play any game</p>
                     <div class="completed-games-grid" id="completed-games-grid">
                         <!-- Populated by JS -->
                     </div>
@@ -135,9 +119,9 @@
                     <span class="nav-icon">🏠</span>
                     <span class="nav-label">Home</span>
                 </button>
-                <button class="nav-item" data-screen="stats">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-label">Stats</span>
+                <button class="nav-item" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
                 </button>
                 <button class="nav-item" data-screen="leaderboard">
                     <span class="nav-icon">🏆</span>
@@ -209,42 +193,49 @@
                 <div class="game-info-header">
                     <div class="game-info-icon" id="instructions-icon">🌍</div>
                     <h1 class="game-info-title" id="instructions-title">World Capitals</h1>
-                    <span class="game-info-category" id="instructions-category">Discipline</span>
                 </div>
                 
-                <!-- Why This Game Helps -->
-                <div class="game-benefits-box">
-                    <h3>🎯 Why This Helps You</h3>
-                    <p class="game-benefits-text" id="game-benefits-text">
-                        Builds geographic knowledge, improves memory recall, and expands your worldview.
-                    </p>
+                <!-- Visual Game Preview -->
+                <div class="game-preview-box" id="game-preview-box">
+                    <div class="preview-title">👁️ Game Preview</div>
+                    <div class="game-preview" id="game-preview">
+                        <!-- Dynamic preview will be inserted here -->
+                    </div>
                 </div>
                 
-                <!-- How to Play -->
-                <div class="instructions-box">
-                    <h3>📖 How to Play</h3>
-                    <p class="instructions-text" id="instructions-text">
-                        Name the capital of each country. Quick - 5 seconds per question!
-                    </p>
-                    <ul class="instructions-tips" id="instructions-tips">
-                        <li>✓ Correct answer = +25 points</li>
-                        <li>✗ Wrong answer = -15 points</li>
-                        <li>⏱ 60 seconds total</li>
-                        <li>🎯 Score 70% to advance</li>
-                    </ul>
+                <!-- Step-by-Step Instructions -->
+                <div class="instructions-steps-box">
+                    <div class="steps-title">📖 How to Play</div>
+                    <div class="instruction-steps" id="instruction-steps">
+                        <!-- Dynamic steps will be inserted here -->
+                    </div>
                 </div>
                 
-                <!-- Motivational Quote -->
-                <div class="motivational-quote" id="motivational-quote">
-                    <p class="quote-text" id="instr-quote-text">"The journey of a thousand miles begins with a single step."</p>
-                    <p class="quote-author" id="instr-quote-author">— Lao Tzu</p>
+                <!-- Scoring Info -->
+                <div class="scoring-info-box">
+                    <div class="scoring-item scoring-correct">
+                        <span class="scoring-icon">✓</span>
+                        <span class="scoring-text">Correct = +25 pts</span>
+                    </div>
+                    <div class="scoring-item scoring-wrong">
+                        <span class="scoring-icon">✗</span>
+                        <span class="scoring-text">Wrong = -15 pts</span>
+                    </div>
+                    <div class="scoring-item scoring-time">
+                        <span class="scoring-icon">⏱</span>
+                        <span class="scoring-text">60 seconds</span>
+                    </div>
+                    <div class="scoring-item scoring-goal">
+                        <span class="scoring-icon">🎯</span>
+                        <span class="scoring-text">70% to pass</span>
+                    </div>
                 </div>
                 
                 <!-- Start Buttons -->
                 <div class="instructions-buttons">
-                    <button class="ready-button pulse" id="ready-button">START GAME</button>
+                    <button class="ready-button pulse" id="ready-button">I'M READY! 🚀</button>
                 </div>
-                <button class="back-link" id="back-from-instructions">← Back to Home</button>
+                <button class="back-link" id="back-from-instructions">← Back</button>
             </div>
         </div>
 
@@ -330,7 +321,7 @@
                     <div class="result-stat">
                         <span class="result-stat-icon">🔥</span>
                         <span class="result-stat-value" id="streak-update">0</span>
-                        <span class="result-stat-label">Win Streak</span>
+                        <span class="result-stat-label">Games Won</span>
                     </div>
                 </div>
 
@@ -496,9 +487,9 @@
                     <span class="nav-icon">🏠</span>
                     <span class="nav-label">Home</span>
                 </button>
-                <button class="nav-item active" data-screen="stats">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-label">Stats</span>
+                <button class="nav-item active" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
                 </button>
                 <button class="nav-item" data-screen="leaderboard">
                     <span class="nav-icon">🏆</span>
@@ -511,26 +502,96 @@
             </nav>
         </div>
 
-        <!-- Leaderboard Screen -->
+        <!-- Leaderboard Screen (with Stats) -->
         <div id="leaderboard-screen" class="screen">
             <div class="screen-header">
-                <h1>🏆 Leaderboard</h1>
+                <h1>🏆 Ranks & Stats</h1>
             </div>
             
-            <div class="leaderboard-tabs">
-                <button class="tab-button active" data-tab="global">Global</button>
-                <button class="tab-button" data-tab="friends">Friends</button>
-                <button class="tab-button" data-tab="local">Local</button>
-            </div>
+            <div class="ranks-content">
+                <!-- Leaderboard Section -->
+                <div class="leaderboard-section">
+                    <div class="leaderboard-tabs">
+                        <button class="tab-button active" data-tab="global">Global</button>
+                        <button class="tab-button" data-tab="friends">Friends</button>
+                    </div>
 
-            <div class="leaderboard-list" id="leaderboard-list">
-                <!-- Populated by JS -->
-            </div>
+                    <div class="leaderboard-list" id="leaderboard-list">
+                        <!-- Populated by JS -->
+                    </div>
 
-            <div class="user-rank-bar" id="user-rank-bar">
-                <span class="user-rank">#234</span>
-                <span class="user-name">You</span>
-                <span class="user-score">847</span>
+                    <div class="user-rank-bar" id="user-rank-bar">
+                        <span class="user-rank">#234</span>
+                        <span class="user-name">You</span>
+                        <span class="user-score">847</span>
+                    </div>
+                </div>
+
+                <!-- Stats Section -->
+                <div class="stats-section-merged">
+                    <h2 class="section-title">📊 Your Stats</h2>
+                    
+                    <!-- Brain Score -->
+                    <div class="stats-brain-card">
+                        <div class="stats-brain-header">
+                            <span class="stats-brain-emoji" id="ranks-brain-emoji">🧠</span>
+                            <div class="stats-brain-info">
+                                <span class="stats-brain-score" id="ranks-brain-score">0</span>
+                                <span class="stats-brain-level" id="ranks-brain-level">Beginner</span>
+                            </div>
+                        </div>
+                        <div class="stats-brain-bar">
+                            <div class="stats-brain-fill" id="ranks-brain-fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Overview Stats -->
+                    <div class="stats-overview">
+                        <div class="stats-overview-item">
+                            <span class="stats-overview-value" id="ranks-total-games">0</span>
+                            <span class="stats-overview-label">Games</span>
+                        </div>
+                        <div class="stats-overview-item">
+                            <span class="stats-overview-value" id="ranks-avg-score">0%</span>
+                            <span class="stats-overview-label">Avg Score</span>
+                        </div>
+                        <div class="stats-overview-item">
+                            <span class="stats-overview-value" id="ranks-best-streak">0</span>
+                            <span class="stats-overview-label">Best Streak</span>
+                        </div>
+                        <div class="stats-overview-item">
+                            <span class="stats-overview-value" id="ranks-pass-rate">0%</span>
+                            <span class="stats-overview-label">Pass Rate</span>
+                        </div>
+                    </div>
+
+                    <!-- Strengths & Weaknesses -->
+                    <div class="stats-strengths">
+                        <div class="strength-card">
+                            <span class="strength-icon">💪</span>
+                            <span class="strength-label">Strongest</span>
+                            <span class="strength-value" id="ranks-strongest">--</span>
+                        </div>
+                        <div class="weakness-card">
+                            <span class="strength-icon">📈</span>
+                            <span class="strength-label">Improve</span>
+                            <span class="strength-value" id="ranks-weakest">--</span>
+                        </div>
+                    </div>
+
+                    <!-- Mastery Distribution -->
+                    <div class="stats-mastery-compact">
+                        <h3>⭐ Mastery</h3>
+                        <div class="mastery-row">
+                            <span class="mastery-badge platinum">💎 <span id="ranks-platinum">0</span></span>
+                            <span class="mastery-badge gold">🥇 <span id="ranks-gold">0</span></span>
+                            <span class="mastery-badge silver">🥈 <span id="ranks-silver">0</span></span>
+                            <span class="mastery-badge bronze">🥉 <span id="ranks-bronze">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-spacer"></div>
             </div>
 
             <nav class="bottom-nav">
@@ -538,9 +599,9 @@
                     <span class="nav-icon">🏠</span>
                     <span class="nav-label">Home</span>
                 </button>
-                <button class="nav-item" data-screen="stats">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-label">Stats</span>
+                <button class="nav-item" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
                 </button>
                 <button class="nav-item active" data-screen="leaderboard">
                     <span class="nav-icon">🏆</span>
@@ -759,9 +820,9 @@
                     <span class="nav-icon">🏠</span>
                     <span class="nav-label">Home</span>
                 </button>
-                <button class="nav-item" data-screen="stats">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-label">Stats</span>
+                <button class="nav-item" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
                 </button>
                 <button class="nav-item" data-screen="leaderboard">
                     <span class="nav-icon">🏆</span>
@@ -776,9 +837,10 @@
 
         <!-- Friends Hub Screen -->
         <div id="friends-hub-screen" class="screen">
-            <div class="screen-header">
-                <button class="back-button" id="friends-back-button">← Back</button>
-                <h1>🎮 Friends Hub</h1>
+            <div class="screen-header friends-hub-header">
+                <button class="back-button" id="friends-back-button">←</button>
+                <h1>🎮 Party Mode</h1>
+                <div class="header-spacer"></div>
             </div>
 
             <div class="friends-hub-content" id="friends-hub-content">
@@ -943,34 +1005,23 @@
                 
                 <div class="settings-section">
                     <h3>🎨 Theme</h3>
-                    <p class="settings-section-subtitle">Dark Themes</p>
+                    <p class="settings-section-subtitle">Choose your vibe</p>
                     <div class="settings-theme-grid">
-                        <button class="settings-theme-btn active" data-theme="fire">
-                            <span class="theme-preview fire"></span>
-                            <span>Fire Rush</span>
+                        <button class="settings-theme-btn active" data-theme="cyber-neural">
+                            <span class="theme-preview cyber-neural"></span>
+                            <span>Cyber Neural ⚡</span>
                         </button>
-                        <button class="settings-theme-btn" data-theme="ocean">
-                            <span class="theme-preview ocean"></span>
-                            <span>Ocean Wave</span>
+                        <button class="settings-theme-btn" data-theme="neon-nights">
+                            <span class="theme-preview neon-nights"></span>
+                            <span>Neon Nights 🌃</span>
                         </button>
-                        <button class="settings-theme-btn" data-theme="forest">
-                            <span class="theme-preview forest"></span>
-                            <span>Forest Zen</span>
+                        <button class="settings-theme-btn" data-theme="gradient-fusion">
+                            <span class="theme-preview gradient-fusion"></span>
+                            <span>Gradient Fusion 🌈</span>
                         </button>
-                        <button class="settings-theme-btn" data-theme="galaxy">
-                            <span class="theme-preview galaxy"></span>
-                            <span>Galaxy Mode</span>
-                        </button>
-                    </div>
-                    <p class="settings-section-subtitle">Light Themes</p>
-                    <div class="settings-theme-grid">
-                        <button class="settings-theme-btn" data-theme="light">
-                            <span class="theme-preview light"></span>
-                            <span>Light Mode</span>
-                        </button>
-                        <button class="settings-theme-btn" data-theme="lightBlue">
-                            <span class="theme-preview lightBlue"></span>
-                            <span>Clean Blue</span>
+                        <button class="settings-theme-btn" data-theme="dark-matter">
+                            <span class="theme-preview dark-matter"></span>
+                            <span>Dark Matter 🌑</span>
                         </button>
                     </div>
                 </div>
@@ -1013,6 +1064,16 @@
                     </button>
                 </div>
                 
+                <!-- DEV MODE: Remove this section before production deploy -->
+                <div class="settings-section dev-section" id="dev-settings">
+                    <h3>🛠️ Developer Mode</h3>
+                    <p class="dev-warning">⚠️ For testing only - Remove before deploy</p>
+                    <button class="settings-action-btn premium-toggle" id="toggle-premium-btn">
+                        <span id="premium-toggle-text">🔓 Enable Premium (Demo)</span>
+                        <span class="action-desc" id="premium-status-text">Currently: Free User</span>
+                    </button>
+                </div>
+                <!-- END DEV MODE -->
                 
                 <div class="settings-footer">
                     <button class="settings-done-btn" id="settings-done">Done</button>

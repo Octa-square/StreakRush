@@ -6,12 +6,12 @@
 const Milestones = {
   // Storage keys for tracking which promos have been seen
   KEYS: {
-    HALFWAY_SEEN: 'streakrush_halfway_seen',
-    FIRST_GOLD_SEEN: 'streakrush_first_gold_seen',
-    STREAK_5_SEEN: 'streakrush_streak_5_seen',
-    STREAK_10_SEEN: 'streakrush_streak_10_seen',
-    STREAK_25_SEEN: 'streakrush_streak_25_seen',
-    FIRST_PERFECT_SEEN: 'streakrush_first_perfect_seen'
+    HALFWAY_SEEN: 'cognixis_halfway_seen',
+    FIRST_GOLD_SEEN: 'cognixis_first_gold_seen',
+    STREAK_5_SEEN: 'cognixis_streak_5_seen',
+    STREAK_10_SEEN: 'cognixis_streak_10_seen',
+    STREAK_25_SEEN: 'cognixis_streak_25_seen',
+    FIRST_PERFECT_SEEN: 'cognixis_first_perfect_seen'
   },
 
   // Check if a milestone has been seen
@@ -123,7 +123,7 @@ const Milestones = {
         <span class="progress-text">10 / 20</span>
       </div>
       <button class="milestone-btn primary" onclick="Milestones.closeModal()">
-        Continue Training 💪
+        Continue Playing 💪
       </button>
     `);
   },
@@ -137,7 +137,7 @@ const Milestones = {
       <p class="milestone-sub">Premium users compete for Gold on <strong>345 more games</strong>.</p>
       <div class="milestone-buttons">
         <button class="milestone-btn secondary" onclick="Milestones.closeModal()">
-          Keep Training
+          Keep Playing
         </button>
         <button class="milestone-btn primary" onclick="Milestones.showPremiumInfo()">
           Learn More

@@ -241,13 +241,13 @@ const Game = {
     if (modeIndicator) modeIndicator.style.display = 'none';
     
     // Record score and check unlock (with mastery tier)
-    // In easy mode, use 60% pass threshold but cap at Bronze mastery
+    // Pass correctAnswers for proper percentage calculation
     const unlockResult = UnlockSystem.recordGameScore(
       Game.currentGame.id,
       finalScore,
       maxPossible,
       scoreData.totalQuestions,
-      isEasyMode ? easyModePassThreshold : null // Custom pass threshold for easy mode
+      scoreData.correctAnswers // Pass correct answers for accurate scoring
     );
     
     // Cap mastery tier at Bronze for easy mode
@@ -364,7 +364,17 @@ const Game = {
     const questionsEl = document.getElementById('questions-answered');
     const bonusBreakdown = document.getElementById('bonus-breakdown');
     
-    questionsEl.textContent = `${results.questionsAnswered || questionsAnswered} questions • ${results.correctAnswers || 0} correct • ${results.accuracy || 0}% accuracy`;
+    const answered = results.questionsAnswered || questionsAnswered;
+    const correct = results.correctAnswers || 0;
+    const minRequired = UnlockSystem.MIN_QUESTIONS_TO_PASS || 6;
+    
+    // Show clear feedback about why they passed or failed
+    if (answered < minRequired) {
+      // Not enough questions answered
+      questionsEl.innerHTML = `<span style="color: #ef4444;">⚠️ Only ${answered} questions answered</span><br><span style="font-size: 0.85rem; color: #888;">Need at least ${minRequired} to pass</span>`;
+    } else {
+      questionsEl.textContent = `${answered} questions • ${correct} correct • ${results.accuracy || 0}% accuracy`;
+    }
     
     // Show bonuses if earned
     if (results.totalBonus > 0 && bonusBreakdown) {
