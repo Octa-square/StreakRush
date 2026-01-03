@@ -429,7 +429,7 @@ body::before {
 .app-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px; /* Reduced from 10px - closer to logo */
   flex: 0 0 auto; /* Don't grow, just fit content */
   min-width: 0;
 }
@@ -470,6 +470,7 @@ body::before {
   font-size: 22px;
   cursor: pointer;
   flex-shrink: 0; /* Never shrink - always visible */
+  margin-right: 8px; /* Move left slightly for better centering of sound bar */
   flex-shrink: 0;
   transition: background 0.2s ease;
 }
