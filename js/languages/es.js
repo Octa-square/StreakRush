@@ -4,7 +4,7 @@
 
 const LANG_ES = {
   meta: {
-    appName: "StreakRush",
+    appName: "CogniXis",
     tagline: "Entrena tu memoria, un juego a la vez",
     direction: "ltr"
   },

@@ -1,28 +1,29 @@
 {
-  "name": "streakrush",
+  "name": "cognixis",
   "version": "1.0.0",
-  "description": "60-second daily challenges. Build your streak!",
+  "description": "Feed Your Brain - 60-second memory challenges!",
   "main": "index.html",
   "scripts": {
     "start": "npx serve -s . -p 3000",
     "dev": "npx live-server --port=3000 --no-browser"
   },
   "keywords": [
+    "brain",
     "game",
     "pwa",
     "mobile",
-    "streak"
+    "memory"
   ],
   "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Octa-square/StreakRush.git"
+    "url": "git+https://github.com/Octa-square/CogniXis.git"
   },
   "bugs": {
-    "url": "https://github.com/Octa-square/StreakRush/issues"
+    "url": "https://github.com/Octa-square/CogniXis/issues"
   },
-  "homepage": "https://github.com/Octa-square/StreakRush#readme",
+  "homepage": "https://github.com/Octa-square/CogniXis#readme",
   "dependencies": {
     "@capacitor/android": "^8.0.0",
     "@capacitor/cli": "^8.0.0",

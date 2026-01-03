@@ -1,87 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <defs>
-    <!-- Fire gradient -->
-    <linearGradient id="fireGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" style="stop-color:#ff4500"/>
-      <stop offset="50%" style="stop-color:#ff6b35"/>
-      <stop offset="100%" style="stop-color:#ffd700"/>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a1a"/>
+      <stop offset="100%" style="stop-color:#1a1a2e"/>
     </linearGradient>
-    <!-- Inner flame gradient -->
-    <linearGradient id="innerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
-      <stop offset="0%" style="stop-color:#ff6b35"/>
-      <stop offset="100%" style="stop-color:#fff3cd"/>
-    </linearGradient>
-    <!-- Speed lines gradient -->
-    <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0"/>
-      <stop offset="50%" style="stop-color:#00d4ff"/>
-      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/>
-    </linearGradient>
-    <!-- Text gradient -->
-    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#ff6b35"/>
+    <linearGradient id="brainGradR192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7b68ee"/>
       <stop offset="100%" style="stop-color:#f72585"/>
     </linearGradient>
-    <!-- Glow filter -->
-    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
+    <linearGradient id="textGrad192" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="50%" style="stop-color:#7b68ee"/>
+      <stop offset="100%" style="stop-color:#f72585"/>
+    </linearGradient>
   </defs>
   
   <!-- Background -->
-  <rect width="192" height="192" rx="38" fill="#1a1a2e"/>
+  <rect width="192" height="192" rx="40" fill="url(#bgGrad)"/>
   
-  <!-- Subtle border glow -->
-  <rect x="2" y="2" width="188" height="188" rx="36" fill="none" stroke="url(#fireGrad)" stroke-width="1.5" opacity="0.4"/>
-  
-  <!-- Speed lines behind flame -->
-  <g opacity="0.5">
-    <rect x="18" y="50" width="30" height="4" rx="2" fill="url(#speedGrad)"/>
-    <rect x="14" y="62" width="36" height="3" rx="1.5" fill="url(#speedGrad)"/>
-    <rect x="20" y="74" width="26" height="4" rx="2" fill="url(#speedGrad)"/>
+  <!-- Brain Icon -->
+  <g transform="translate(46, 30) scale(1.2)">
+    <!-- Left hemisphere - Circuit -->
+    <path d="M40 80 C16 80 4 64 4 40 C4 16 20 4 40 4 L40 80" 
+          fill="none" stroke="#00d4ff" stroke-width="4"/>
+    
+    <!-- Circuit nodes -->
+    <circle cx="16" cy="28" r="4" fill="#00d4ff"/>
+    <circle cx="28" cy="20" r="4" fill="#00d4ff"/>
+    <circle cx="20" cy="48" r="4" fill="#00d4ff"/>
+    <circle cx="32" cy="64" r="4" fill="#00d4ff"/>
+    <circle cx="16" cy="60" r="3" fill="#00d4ff"/>
+    
+    <!-- Circuit lines -->
+    <line x1="16" y1="28" x2="28" y2="20" stroke="#00d4ff" stroke-width="3"/>
+    <line x1="16" y1="28" x2="20" y2="48" stroke="#00d4ff" stroke-width="3"/>
+    <line x1="20" y1="48" x2="32" y2="64" stroke="#00d4ff" stroke-width="3"/>
+    <line x1="16" y1="60" x2="20" y2="48" stroke="#00d4ff" stroke-width="2"/>
+    <line x1="16" y1="60" x2="32" y2="64" stroke="#00d4ff" stroke-width="2"/>
+    
+    <!-- Right hemisphere - Organic -->
+    <path d="M40 4 C60 4 76 16 76 40 C76 64 64 80 40 80 L40 4" 
+          fill="url(#brainGradR192)" opacity="0.9"/>
+    
+    <!-- Brain folds -->
+    <path d="M52 24 Q64 36 52 48 Q44 60 56 72" 
+          fill="none" stroke="#f72585" stroke-width="3" opacity="0.6"/>
+    <path d="M64 20 Q74 32 64 44 Q56 56 68 68" 
+          fill="none" stroke="#f72585" stroke-width="2.5" opacity="0.4"/>
   </g>
   
-  <!-- Main flame shape -->
-  <g filter="url(#glow)">
-    <!-- Outer flame -->
-    <path d="M96 18 
-             C74 42, 62 58, 62 82 
-             C62 110, 74 130, 96 130 
-             C118 130, 130 110, 130 82 
-             C130 58, 118 42, 96 18
-             M90 50 C80 65, 76 80, 90 100 C94 108, 98 108, 102 100 C116 80, 112 65, 102 50 C98 42, 94 42, 90 50" 
-          fill="url(#fireGrad)" 
-          fill-rule="evenodd"/>
-    
-    <!-- Inner bright flame -->
-    <path d="M96 46 
-             C84 62, 78 78, 82 100 
-             C86 115, 92 122, 96 122 
-             C100 122, 106 115, 110 100 
-             C114 78, 108 62, 96 46" 
-          fill="url(#innerFlame)"/>
-    
-    <!-- Flame highlight -->
-    <ellipse cx="92" cy="70" rx="5" ry="10" fill="#fff9e6" opacity="0.7"/>
-  </g>
-  
-  <!-- Streak number badge -->
-  <circle cx="138" cy="38" r="17" fill="#00d4ff"/>
-  <circle cx="138" cy="38" r="14" fill="#1a1a2e"/>
-  <circle cx="138" cy="38" r="12" fill="#00d4ff"/>
-  <text x="138" y="43" font-family="Arial Black, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e" text-anchor="middle">7</text>
-  
-  <!-- STREAKRUSH Text -->
-  <text x="96" y="158" font-family="Arial Black, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" letter-spacing="1">
-    <tspan fill="url(#textGrad)">STREAK</tspan><tspan fill="#ffffff">RUSH</tspan>
+  <!-- Text: CogniXis -->
+  <text x="96" y="150" text-anchor="middle" font-family="Arial Black, sans-serif" font-size="22" font-weight="900" fill="url(#textGrad192)">
+    CogniXis
   </text>
   
   <!-- Tagline -->
-  <text x="96" y="176" font-family="Arial, sans-serif" font-size="9" fill="#a0a0c0" text-anchor="middle" letter-spacing="1">
-    TRAIN YOUR BRAIN
+  <text x="96" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#ffffff" opacity="0.8" letter-spacing="2">
+    FEED YOUR BRAIN
   </text>
+  
+  <!-- Sparkles -->
+  <circle cx="50" cy="28" r="2" fill="#00d4ff" opacity="0.8"/>
+  <circle cx="145" cy="35" r="2.5" fill="#f72585" opacity="0.8"/>
 </svg>

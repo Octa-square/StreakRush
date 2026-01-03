@@ -1,6 +1,6 @@
 {
-  "appId": "com.streakrush.app",
-  "appName": "StreakRush",
+  "appId": "com.cognixis.app",
+  "appName": "CogniXis",
   "webDir": "www",
   "server": {
     "androidScheme": "https"

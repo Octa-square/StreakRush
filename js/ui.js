@@ -276,17 +276,17 @@ const UI = {
     const bests = Storage.getBests();
     const score = game ? (bests[`game-${game.id}`] || 0) : 0;
     
-    const gameName = game ? game.name : 'StreakRush';
+    const gameName = game ? game.name : 'CogniXis';
     
     const shareText = `🔥 I scored ${Utils.formatNumber(score)} on ${gameName}!\n` +
-                      `🎮 StreakRush - 60 Mini-Games\n` +
+                      `🎮 CogniXis - 60 Mini-Games\n` +
                       `🏆 ${user.streak} game streak!\n\n` +
                       `Can you beat my score? Play now!`;
     
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'StreakRush Score',
+          title: 'CogniXis Score',
           text: shareText
         });
       } catch (e) {

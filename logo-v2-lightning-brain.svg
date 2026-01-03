@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">
+  <defs>
+    <!-- Gradient: Cyan to Pink -->
+    <linearGradient id="brainGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#f72585"/>
+    </linearGradient>
+    <!-- Orange gradient for lightning -->
+    <linearGradient id="lightningGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700"/>
+      <stop offset="100%" style="stop-color:#ff6b35"/>
+    </linearGradient>
+    <!-- Text gradient -->
+    <linearGradient id="textGrad2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="50%" style="stop-color:#7b68ee"/>
+      <stop offset="100%" style="stop-color:#f72585"/>
+    </linearGradient>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="120" fill="#0a0a1a"/>
+  
+  <!-- Brain with Lightning -->
+  <g transform="translate(15, 12)">
+    <!-- Brain outline -->
+    <path d="M40 50 C15 50 5 40 5 25 C5 10 20 0 40 0 C60 0 75 10 75 25 C75 40 65 50 40 50" 
+          fill="none" stroke="url(#brainGrad2)" stroke-width="3"/>
+    
+    <!-- Brain left hemisphere -->
+    <path d="M40 0 C25 0 10 10 10 25 C10 38 20 48 40 48" 
+          fill="#00d4ff" opacity="0.2"/>
+    
+    <!-- Brain right hemisphere -->
+    <path d="M40 0 C55 0 70 10 70 25 C70 38 60 48 40 48" 
+          fill="#f72585" opacity="0.2"/>
+    
+    <!-- Brain fold details -->
+    <path d="M25 15 Q30 25 25 35" fill="none" stroke="#00d4ff" stroke-width="2" opacity="0.6"/>
+    <path d="M55 15 Q50 25 55 35" fill="none" stroke="#f72585" stroke-width="2" opacity="0.6"/>
+    <path d="M40 8 L40 42" fill="none" stroke="#7b68ee" stroke-width="1" opacity="0.4" stroke-dasharray="3,3"/>
+    
+    <!-- Lightning bolt through brain -->
+    <path d="M35 -5 L28 22 L38 20 L25 55 L45 25 L35 27 L48 -5" 
+          fill="url(#lightningGrad)" filter="url(#glow2)"/>
+    
+    <!-- Energy particles -->
+    <circle cx="15" cy="10" r="2" fill="#00d4ff" opacity="0.8">
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="65" cy="8" r="2" fill="#f72585" opacity="0.8">
+      <animate attributeName="opacity" values="0.3;0.8;0.3" dur="1.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="10" cy="35" r="1.5" fill="#7b68ee" opacity="0.6"/>
+    <circle cx="70" cy="38" r="1.5" fill="#ff6b35" opacity="0.6"/>
+  </g>
+  
+  <!-- Text: StreakRush with styled R -->
+  <text x="100" y="50" font-family="Arial Black, sans-serif" font-size="34" font-weight="900">
+    <tspan fill="url(#textGrad2)">Streak</tspan><tspan fill="#ff6b35">Rush</tspan>
+  </text>
+  
+  <!-- Speed lines behind Rush -->
+  <line x1="220" y1="32" x2="260" y2="32" stroke="#ff6b35" stroke-width="2" opacity="0.4"/>
+  <line x1="230" y1="38" x2="280" y2="38" stroke="#ff6b35" stroke-width="1.5" opacity="0.3"/>
+  <line x1="225" y1="55" x2="270" y2="55" stroke="#ff6b35" stroke-width="1.5" opacity="0.3"/>
+  
+  <!-- Tagline -->
+  <text x="100" y="72" font-family="Arial, sans-serif" font-size="11" font-weight="600" fill="#ffffff" letter-spacing="4">
+    FEED YOUR BRAIN
+  </text>
+  
+  <!-- Underline accent -->
+  <rect x="100" y="78" width="180" height="2" fill="url(#textGrad2)" opacity="0.6" rx="1"/>
+</svg>
+

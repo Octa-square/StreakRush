@@ -697,11 +697,11 @@ const PartyUI = {
   
   shareInvite: (code) => {
     const url = `${window.location.origin}${window.location.pathname}?party=${code}`;
-    const text = `🎉 Join my StreakRush party!\n\nRoom Code: ${code}\n${url}`;
+    const text = `🎉 Join my CogniXis party!\n\nRoom Code: ${code}\n${url}`;
     
     if (navigator.share) {
       navigator.share({
-        title: 'Join my StreakRush Party!',
+        title: 'Join my CogniXis Party!',
         text: text,
         url: url
       });
@@ -715,12 +715,12 @@ const PartyUI = {
     const rankings = RoomManager.calculateFinalRankings();
     const winner = rankings[0];
     
-    const text = `🏆 ${winner?.name || 'Player'} won our StreakRush party with ${winner?.totalScore || 0} points!\n\n` +
-                 `Play brain games with friends at StreakRush!`;
+    const text = `🏆 ${winner?.name || 'Player'} won our CogniXis party with ${winner?.totalScore || 0} points!\n\n` +
+                 `Play brain games with friends at CogniXis!`;
     
     if (navigator.share) {
       navigator.share({
-        title: 'StreakRush Party Results',
+        title: 'CogniXis Party Results',
         text: text
       });
     } else {

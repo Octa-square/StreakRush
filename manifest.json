@@ -1,11 +1,11 @@
 {
-  "name": "StreakRush",
-  "short_name": "StreakRush",
-  "description": "60-second memory challenges. Train your brain, climb the leaderboard!",
+  "name": "CogniXis",
+  "short_name": "CogniXis",
+  "description": "Feed Your Brain - 60-second memory challenges. Train your brain, climb the leaderboard!",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#ff6b35",
+  "background_color": "#0a0a1a",
+  "theme_color": "#7b68ee",
   "orientation": "portrait",
   "icons": [
     {

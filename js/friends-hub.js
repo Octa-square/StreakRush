@@ -567,11 +567,11 @@ const SocialFeatures = {
       const challenge = SocialFeatures.Challenges.send(gameId);
       if (!challenge) return;
       
-      const shareText = challenge.message + '\n\nPlay StreakRush to accept!';
+      const shareText = challenge.message + '\n\nPlay CogniXis to accept!';
       
       if (navigator.share) {
         try {
-          await navigator.share({ title: 'StreakRush Challenge', text: shareText });
+          await navigator.share({ title: 'CogniXis Challenge', text: shareText });
         } catch (e) {
           // User cancelled
         }

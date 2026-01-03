@@ -71,7 +71,7 @@ const I18n = {
   
   // Get default translations if none loaded
   getDefaultTranslations: () => ({
-    meta: { appName: 'StreakRush', direction: 'ltr' },
+    meta: { appName: 'CogniXis', direction: 'ltr' },
     common: { beginChallenge: 'BEGIN CHALLENGE' },
     nav: { home: 'Home', stats: 'Stats', ranks: 'Ranks', me: 'Me' }
   }),
@@ -183,7 +183,7 @@ const I18n = {
     if (Array.isArray(quotes) && quotes.length > 0) {
       return quotes[Math.floor(Math.random() * quotes.length)];
     }
-    return { text: "Train your brain!", author: "StreakRush" };
+    return { text: "Train your brain!", author: "CogniXis" };
   },
   
   // Format number according to locale

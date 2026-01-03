@@ -1,4 +1,4 @@
-const CACHE_NAME = 'streakrush-v62';
+const CACHE_NAME = 'cognixis-v1';
 const urlsToCache = [
   '/',
   '/index.html',

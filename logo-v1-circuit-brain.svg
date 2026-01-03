@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 120">
+  <defs>
+    <!-- Gradient for brain: Cyan to Purple -->
+    <linearGradient id="brainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="50%" style="stop-color:#7b68ee"/>
+      <stop offset="100%" style="stop-color:#f72585"/>
+    </linearGradient>
+    <!-- Text gradient -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff"/>
+      <stop offset="40%" style="stop-color:#7b68ee"/>
+      <stop offset="100%" style="stop-color:#f72585"/>
+    </linearGradient>
+    <!-- Glow effect -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="120" fill="#0a0a1a"/>
+  
+  <!-- Split Brain Icon -->
+  <g transform="translate(20, 15)">
+    <!-- Left side: Circuit pattern -->
+    <path d="M35 45 C15 45 5 35 5 25 C5 15 15 5 30 5 C35 5 38 8 38 8 L38 42 C38 42 37 45 35 45" 
+          fill="none" stroke="#00d4ff" stroke-width="2"/>
+    <!-- Circuit lines on left -->
+    <circle cx="12" cy="20" r="2" fill="#00d4ff"/>
+    <circle cx="20" cy="12" r="2" fill="#00d4ff"/>
+    <circle cx="28" cy="35" r="2" fill="#00d4ff"/>
+    <circle cx="15" cy="38" r="2" fill="#00d4ff"/>
+    <line x1="12" y1="20" x2="20" y2="20" stroke="#00d4ff" stroke-width="1.5"/>
+    <line x1="20" y1="12" x2="20" y2="20" stroke="#00d4ff" stroke-width="1.5"/>
+    <line x1="20" y1="20" x2="28" y2="35" stroke="#00d4ff" stroke-width="1.5"/>
+    <line x1="15" y1="38" x2="28" y2="35" stroke="#00d4ff" stroke-width="1.5"/>
+    <circle cx="8" cy="30" r="1.5" fill="#00d4ff"/>
+    <line x1="8" y1="30" x2="15" y2="38" stroke="#00d4ff" stroke-width="1"/>
+    
+    <!-- Right side: Organic brain with flame -->
+    <path d="M42 8 C55 5 70 15 70 25 C70 35 60 45 45 45 C43 45 42 42 42 42 L42 8" 
+          fill="url(#brainGrad)" opacity="0.9"/>
+    <!-- Brain folds -->
+    <path d="M50 15 Q55 20 50 25 Q45 30 50 35" fill="none" stroke="#f72585" stroke-width="1.5" opacity="0.7"/>
+    <path d="M58 12 Q63 18 58 24 Q53 30 58 36" fill="none" stroke="#f72585" stroke-width="1.5" opacity="0.7"/>
+    
+    <!-- Flame on top -->
+    <path d="M38 5 Q42 -5 46 5 Q50 -8 55 3 Q52 8 48 5 Q44 10 38 5" 
+          fill="#ff6b35" filter="url(#glow)"/>
+    <path d="M42 3 Q45 -2 48 3 Q46 6 42 3" fill="#ffd700"/>
+    
+    <!-- Small sparkles -->
+    <circle cx="25" cy="2" r="1" fill="#00d4ff" opacity="0.8"/>
+    <circle cx="60" cy="0" r="1.5" fill="#f72585" opacity="0.8"/>
+  </g>
+  
+  <!-- Text: StreakRush -->
+  <text x="95" y="52" font-family="Arial Black, sans-serif" font-size="36" font-weight="900" fill="url(#textGrad)">
+    Streak<tspan fill="#ff6b35">Rush</tspan>
+  </text>
+  
+  <!-- Tagline -->
+  <text x="95" y="75" font-family="Arial, sans-serif" font-size="12" font-weight="500" fill="#ffffff" letter-spacing="3">
+    TRAIN YOUR BRAIN
+  </text>
+  
+  <!-- Decorative streak line -->
+  <line x1="95" y1="82" x2="250" y2="82" stroke="url(#textGrad)" stroke-width="2" opacity="0.5"/>
+</svg>
+
