@@ -963,6 +963,17 @@
                 </div>
                 
                 <div class="settings-section">
+                    <h3>🌍 Language</h3>
+                    <button class="language-btn" id="language-selector-btn" onclick="I18n.showLanguageSelector()">
+                        <div class="language-btn-left">
+                            <span class="language-btn-flag" id="current-lang-flag">🇬🇧</span>
+                            <span class="language-btn-text" id="current-lang-name">English</span>
+                        </div>
+                        <span class="language-btn-arrow">→</span>
+                    </button>
+                </div>
+                
+                <div class="settings-section">
                     <h3>🎮 Difficulty</h3>
                     <div class="difficulty-options">
                         <button class="difficulty-option active" data-difficulty="normal">
@@ -1000,6 +1011,12 @@
         <div id="toast" class="toast"></div>
     </div>
 
+    <!-- Language Files -->
+    <script src="js/languages/en.js?v=1"></script>
+    <script src="js/languages/es.js?v=1"></script>
+    <script src="js/languages/fr.js?v=1"></script>
+    <script src="js/i18n.js?v=1"></script>
+    
     <script src="js/utils.js?v=5"></script>
     <script src="js/storage.js?v=5"></script>
     <script src="js/streak.js?v=5"></script>

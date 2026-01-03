@@ -1,8 +1,12 @@
-const CACHE_NAME = 'streakrush-v60';
+const CACHE_NAME = 'streakrush-v61';
 const urlsToCache = [
   '/',
   '/index.html',
   '/css/main.css',
+  '/js/languages/en.js',
+  '/js/languages/es.js',
+  '/js/languages/fr.js',
+  '/js/i18n.js',
   '/js/utils.js',
   '/js/storage.js',
   '/js/streak.js',

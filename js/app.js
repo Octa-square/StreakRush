@@ -762,6 +762,15 @@ const App = {
     if (soundToggle) {
       soundToggle.checked = localStorage.getItem('streakrush_sound') !== 'false';
     }
+    
+    // Update language button display
+    if (typeof I18n !== 'undefined') {
+      const langInfo = I18n.getCurrentLanguageInfo();
+      const langFlag = document.getElementById('current-lang-flag');
+      const langName = document.getElementById('current-lang-name');
+      if (langFlag) langFlag.textContent = langInfo?.flag || '🇬🇧';
+      if (langName) langName.textContent = langInfo?.native || 'English';
+    }
   },
   
   // Close settings modal
