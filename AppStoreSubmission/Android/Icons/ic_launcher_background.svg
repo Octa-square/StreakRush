@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="432" height="432" viewBox="0 0 432 432">
+  <!-- Android Adaptive Icon Background -->
+  
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0E1A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#151B2E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="432" height="432" fill="url(#bgGradient)"/>
+  
+  <!-- Subtle decorative elements -->
+  <circle cx="216" cy="216" r="180" fill="none" stroke="#00D4FF" stroke-width="1" opacity="0.1"/>
+  <circle cx="216" cy="216" r="200" fill="none" stroke="#8B7FFF" stroke-width="1" opacity="0.08"/>
+  
+  <!-- Corner accents -->
+  <circle cx="50" cy="50" r="30" fill="#00D4FF" opacity="0.05"/>
+  <circle cx="382" cy="382" r="30" fill="#8B7FFF" opacity="0.05"/>
+</svg>
+

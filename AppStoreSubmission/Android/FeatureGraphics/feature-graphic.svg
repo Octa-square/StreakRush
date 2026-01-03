@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="500" viewBox="0 0 1024 500">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0A0E1A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#151B2E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0A0E1A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00D4FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8B7FFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF3D9A;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="10" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1024" height="500" fill="url(#bgGrad)"/>
+  
+  <!-- Grid lines (subtle) -->
+  <g opacity="0.1">
+    <line x1="0" y1="125" x2="1024" y2="125" stroke="#00D4FF" stroke-width="1"/>
+    <line x1="0" y1="250" x2="1024" y2="250" stroke="#00D4FF" stroke-width="1"/>
+    <line x1="0" y1="375" x2="1024" y2="375" stroke="#00D4FF" stroke-width="1"/>
+    <line x1="256" y1="0" x2="256" y2="500" stroke="#8B7FFF" stroke-width="1"/>
+    <line x1="512" y1="0" x2="512" y2="500" stroke="#8B7FFF" stroke-width="1"/>
+    <line x1="768" y1="0" x2="768" y2="500" stroke="#8B7FFF" stroke-width="1"/>
+  </g>
+  
+  <!-- Decorative circles -->
+  <circle cx="100" cy="100" r="60" fill="none" stroke="#00D4FF" stroke-width="1" opacity="0.2"/>
+  <circle cx="924" cy="400" r="80" fill="none" stroke="#8B7FFF" stroke-width="1" opacity="0.2"/>
+  <circle cx="50" cy="400" r="40" fill="none" stroke="#FF3D9A" stroke-width="1" opacity="0.15"/>
+  
+  <!-- Brain Logo (left side) -->
+  <g transform="translate(180, 250) scale(1.2)" filter="url(#glow)">
+    <!-- Left hemisphere -->
+    <path d="M-60,-45 C-90,-45 -105,-15 -105,22 C-105,60 -75,82 -37,82 C-15,82 0,67 0,67" 
+          fill="none" stroke="#00D4FF" stroke-width="6" stroke-linecap="round"/>
+    <!-- Right hemisphere -->
+    <path d="M60,-45 C90,-45 105,-15 105,22 C105,60 75,82 37,82 C15,82 0,67 0,67" 
+          fill="none" stroke="#8B7FFF" stroke-width="6" stroke-linecap="round"/>
+    <!-- Folds -->
+    <path d="M-82,-20 C-67,-28 -52,-20 -45,-5" fill="none" stroke="#00D4FF" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <path d="M-90,15 C-75,7 -60,15 -52,30" fill="none" stroke="#00D4FF" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <path d="M82,-20 C67,-28 52,-20 45,-5" fill="none" stroke="#8B7FFF" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <path d="M90,15 C75,7 60,15 52,30" fill="none" stroke="#8B7FFF" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+    <!-- Top -->
+    <path d="M-45,-60 C-22,-75 22,-75 45,-60" fill="none" stroke="url(#accentGrad)" stroke-width="5" stroke-linecap="round"/>
+    <!-- Center -->
+    <path d="M0,-52 L0,67" fill="none" stroke="#00D4FF" stroke-width="3" opacity="0.5"/>
+    <!-- Nodes -->
+    <circle cx="-60" cy="-30" r="5" fill="#00D4FF"/>
+    <circle cx="60" cy="-30" r="5" fill="#8B7FFF"/>
+    <circle cx="0" cy="0" r="6" fill="#FF3D9A"/>
+  </g>
+  
+  <!-- App Name -->
+  <text x="380" y="220" font-family="'Orbitron', 'Arial Black', sans-serif" font-size="72" font-weight="900" fill="url(#accentGrad)">CogniXis</text>
+  
+  <!-- Tagline -->
+  <text x="380" y="280" font-family="'Space Grotesk', 'Arial', sans-serif" font-size="28" font-weight="400" fill="#FFFFFF" opacity="0.9">Feed Your Brain</text>
+  
+  <!-- Feature pills -->
+  <g transform="translate(380, 320)">
+    <!-- Pill 1 -->
+    <rect x="0" y="0" width="120" height="36" rx="18" fill="rgba(0, 212, 255, 0.2)" stroke="#00D4FF" stroke-width="1"/>
+    <text x="60" y="24" font-family="'Space Grotesk', sans-serif" font-size="14" fill="#00D4FF" text-anchor="middle">60 Games</text>
+    
+    <!-- Pill 2 -->
+    <rect x="140" y="0" width="140" height="36" rx="18" fill="rgba(139, 127, 255, 0.2)" stroke="#8B7FFF" stroke-width="1"/>
+    <text x="210" y="24" font-family="'Space Grotesk', sans-serif" font-size="14" fill="#8B7FFF" text-anchor="middle">60 Seconds</text>
+    
+    <!-- Pill 3 -->
+    <rect x="300" y="0" width="130" height="36" rx="18" fill="rgba(255, 61, 154, 0.2)" stroke="#FF3D9A" stroke-width="1"/>
+    <text x="365" y="24" font-family="'Space Grotesk', sans-serif" font-size="14" fill="#FF3D9A" text-anchor="middle">Brain Score</text>
+  </g>
+  
+  <!-- Bottom accent line -->
+  <rect x="0" y="490" width="1024" height="10" fill="url(#accentGrad)"/>
+  
+  <!-- Floating particles -->
+  <circle cx="320" cy="120" r="3" fill="#00D4FF" opacity="0.6"/>
+  <circle cx="700" cy="80" r="4" fill="#8B7FFF" opacity="0.5"/>
+  <circle cx="850" cy="150" r="3" fill="#FF3D9A" opacity="0.4"/>
+  <circle cx="950" cy="250" r="4" fill="#00D4FF" opacity="0.5"/>
+  <circle cx="400" cy="420" r="3" fill="#8B7FFF" opacity="0.4"/>
+  <circle cx="600" cy="450" r="4" fill="#00D4FF" opacity="0.5"/>
+</svg>
+

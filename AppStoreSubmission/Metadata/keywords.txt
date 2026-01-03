@@ -1,0 +1,20 @@
+# iOS Keywords (max 100 characters, comma-separated)
+# Current: 72 characters
+
+brain,games,memory,training,puzzle,mind,cognitive,focus,mental,IQ,quiz
+
+# Alternative keyword sets (pick one):
+
+# Set 2 (99 characters):
+# brain,memory,games,puzzle,training,cognitive,mind,focus,speed,logic,IQ,trivia,mental,challenge
+
+# Set 3 (98 characters):
+# brain,training,memory,games,puzzle,cognitive,mind,boost,focus,smart,IQ,mental,challenge,daily
+
+# Google Play Tags (up to 5):
+# 1. Brain Games
+# 2. Memory Training
+# 3. Puzzle Games
+# 4. Educational
+# 5. Mind Games
+

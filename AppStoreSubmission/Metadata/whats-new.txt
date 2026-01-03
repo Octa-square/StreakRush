@@ -1,0 +1,42 @@
+# COGNIXIS - RELEASE NOTES
+
+## Version 1.0.0 (Initial Release)
+
+🎉 Welcome to CogniXis!
+
+Introducing your new brain training companion:
+
+🧠 60 Brain Games
+From color sequences to world capitals, speed math to pattern recognition - challenge every aspect of your mind.
+
+🎨 4 Beautiful Themes
+Choose from Cyber Neural, Neon Nights, Gradient Fusion, or Dark Matter.
+
+⚡ Quick 60-Second Sessions
+Train your brain in just one minute a day.
+
+🎮 Party Mode
+Challenge friends in real-time multiplayer battles!
+
+📊 Brain Score Tracking
+Watch your cognitive abilities grow over time.
+
+Start your brain training journey today!
+
+---
+
+## Future Version Templates
+
+### Version 1.1.0
+What's New:
+• New game: [Game Name]
+• Performance improvements
+• Bug fixes
+
+### Version 1.2.0
+What's New:
+• [X] new brain games added
+• Improved animations
+• Enhanced accessibility features
+• Bug fixes and stability improvements
+
