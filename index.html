@@ -18,6 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/game-themes.css?v=2">
+    <link rel="stylesheet" href="css/party-mode.css?v=1">
 </head>
 <body>
     <div id="app">
@@ -58,6 +59,18 @@
                 <div class="streak-badge" id="streak-badge">
                     <span class="streak-flames" id="home-streak-flames">🔥</span>
                     <span class="streak-text" id="home-streak-text">0-Game Win Streak</span>
+                </div>
+
+                <!-- Party Mode Banner -->
+                <div class="party-mode-banner" id="party-mode-banner" onclick="PartyUI.showPartyMode()">
+                    <div class="banner-content">
+                        <div class="banner-icon">🎉</div>
+                        <div class="banner-text">
+                            <div class="banner-title">Play with Friends!</div>
+                            <div class="banner-subtitle">2x XP in Party Mode</div>
+                        </div>
+                        <div class="banner-arrow">→</div>
+                    </div>
                 </div>
 
                 <!-- Progress Display -->
@@ -1035,6 +1048,8 @@
     <script src="js/friends-hub.js?v=5"></script>
     <script src="js/game.js?v=5"></script>
     <script src="js/ui.js?v=5"></script>
+    <script src="js/room-manager.js?v=1"></script>
+    <script src="js/party-ui.js?v=1"></script>
     <script src="js/app.js?v=5"></script>
 </body>
 </html>
