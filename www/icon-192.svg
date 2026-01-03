@@ -17,9 +17,14 @@
       <stop offset="50%" style="stop-color:#00d4ff"/>
       <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/>
     </linearGradient>
+    <!-- Text gradient -->
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#f72585"/>
+    </linearGradient>
     <!-- Glow filter -->
     <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
       <feMerge>
         <feMergeNode in="coloredBlur"/>
         <feMergeNode in="SourceGraphic"/>
@@ -31,42 +36,52 @@
   <rect width="192" height="192" rx="38" fill="#1a1a2e"/>
   
   <!-- Subtle border glow -->
-  <rect x="3" y="3" width="186" height="186" rx="35" fill="none" stroke="url(#fireGrad)" stroke-width="2" opacity="0.5"/>
+  <rect x="2" y="2" width="188" height="188" rx="36" fill="none" stroke="url(#fireGrad)" stroke-width="1.5" opacity="0.4"/>
   
   <!-- Speed lines behind flame -->
   <g opacity="0.5">
-    <rect x="15" y="68" width="38" height="5" rx="2.5" fill="url(#speedGrad)"/>
-    <rect x="12" y="83" width="45" height="4" rx="2" fill="url(#speedGrad)"/>
-    <rect x="18" y="98" width="34" height="5" rx="2.5" fill="url(#speedGrad)"/>
+    <rect x="18" y="50" width="30" height="4" rx="2" fill="url(#speedGrad)"/>
+    <rect x="14" y="62" width="36" height="3" rx="1.5" fill="url(#speedGrad)"/>
+    <rect x="20" y="74" width="26" height="4" rx="2" fill="url(#speedGrad)"/>
   </g>
   
   <!-- Main flame shape -->
   <g filter="url(#glow)">
     <!-- Outer flame -->
-    <path d="M96 22 
-             C71 49, 56 68, 56 98 
-             C56 132, 71 158, 96 158 
-             C121 158, 136 132, 136 98 
-             C136 68, 121 49, 96 22
-             M88 60 C79 75, 75 94, 88 117 C93 124, 99 124, 104 117 C117 94, 113 75, 104 60 C99 51, 93 51, 88 60" 
+    <path d="M96 18 
+             C74 42, 62 58, 62 82 
+             C62 110, 74 130, 96 130 
+             C118 130, 130 110, 130 82 
+             C130 58, 118 42, 96 18
+             M90 50 C80 65, 76 80, 90 100 C94 108, 98 108, 102 100 C116 80, 112 65, 102 50 C98 42, 94 42, 90 50" 
           fill="url(#fireGrad)" 
           fill-rule="evenodd"/>
     
     <!-- Inner bright flame -->
-    <path d="M96 56 
-             C83 75, 75 94, 79 117 
-             C83 135, 90 143, 96 143 
-             C102 143, 109 135, 113 117 
-             C117 94, 109 75, 96 56" 
+    <path d="M96 46 
+             C84 62, 78 78, 82 100 
+             C86 115, 92 122, 96 122 
+             C100 122, 106 115, 110 100 
+             C114 78, 108 62, 96 46" 
           fill="url(#innerFlame)"/>
     
     <!-- Flame highlight -->
-    <ellipse cx="92" cy="83" rx="7" ry="13" fill="#fff9e6" opacity="0.7"/>
+    <ellipse cx="92" cy="70" rx="5" ry="10" fill="#fff9e6" opacity="0.7"/>
   </g>
   
   <!-- Streak number badge -->
-  <circle cx="143" cy="45" r="21" fill="#00d4ff"/>
-  <circle cx="143" cy="45" r="18" fill="#1a1a2e"/>
-  <circle cx="143" cy="45" r="16" fill="#00d4ff"/>
-  <text x="143" y="51" font-family="Arial Black, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e" text-anchor="middle">7</text>
+  <circle cx="138" cy="38" r="17" fill="#00d4ff"/>
+  <circle cx="138" cy="38" r="14" fill="#1a1a2e"/>
+  <circle cx="138" cy="38" r="12" fill="#00d4ff"/>
+  <text x="138" y="43" font-family="Arial Black, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e" text-anchor="middle">7</text>
+  
+  <!-- STREAKRUSH Text -->
+  <text x="96" y="158" font-family="Arial Black, sans-serif" font-size="18" font-weight="bold" text-anchor="middle" letter-spacing="1">
+    <tspan fill="url(#textGrad)">STREAK</tspan><tspan fill="#ffffff">RUSH</tspan>
+  </text>
+  
+  <!-- Tagline -->
+  <text x="96" y="176" font-family="Arial, sans-serif" font-size="9" fill="#a0a0c0" text-anchor="middle" letter-spacing="1">
+    TRAIN YOUR BRAIN
+  </text>
 </svg>
