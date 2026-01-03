@@ -1,157 +1,224 @@
 // ========================================
-// STREAKRUSH - PROGRESSIVE UNLOCK SYSTEM
-// Free: 1-10, $5.99: 11-40, 80% threshold or $9.99: 41-60
+// STREAKRUSH - SEQUENTIAL UNLOCK SYSTEM
+// Must score 70%+ to unlock next game
+// Premium required after game 20
+// Mastery tiers: Bronze, Silver, Gold, Platinum
 // ========================================
 
 const UnlockSystem = {
-  // Tier definitions
-  tiers: {
-    free: { start: 1, end: 10, price: 0, name: 'Starter Pack' },
-    tier1: { start: 11, end: 40, price: 5.99, name: 'Explorer Pack' },
-    tier2: { start: 41, end: 60, price: 9.99, name: 'Master Pack' }
+  UNLOCK_THRESHOLD: 70, // 70% required to pass
+  FREE_GAMES: 20, // Games 1-20 are free (changed from 10)
+  PREMIUM_REQUIRED: 21, // Premium starts at game 21
+  
+  // Mastery tiers based on score percentage
+  MASTERY_TIERS: {
+    PLATINUM: { minScore: 100, color: '#E5E4E2', stars: 4, bonus: 300, emoji: '💎' },
+    GOLD: { minScore: 95, color: '#FFD700', stars: 3, bonus: 150, emoji: '🥇' },
+    SILVER: { minScore: 85, color: '#C0C0C0', stars: 2, bonus: 50, emoji: '🥈' },
+    BRONZE: { minScore: 70, color: '#CD7F32', stars: 1, bonus: 0, emoji: '🥉' }
   },
   
-  // Get current unlock status
-  getStatus: () => {
-    const unlocks = JSON.parse(localStorage.getItem('streakrush_unlocks') || '{"free": true}');
-    return unlocks;
+  // Get mastery tier based on percentage
+  getMasteryTier: (percentage) => {
+    if (percentage >= 100) return 'PLATINUM';
+    if (percentage >= 95) return 'GOLD';
+    if (percentage >= 85) return 'SILVER';
+    if (percentage >= 70) return 'BRONZE';
+    return 'FAIL';
   },
   
-  // Check if a game is unlocked
+  // Get tier info
+  getTierInfo: (tierName) => {
+    return UnlockSystem.MASTERY_TIERS[tierName] || null;
+  },
+  
+  // Initialize unlock system
+  init: () => {
+    // Ensure progress exists - start at game 1
+    if (!localStorage.getItem('streakrush_game_progress')) {
+      localStorage.setItem('streakrush_game_progress', JSON.stringify({ highest: 1 }));
+    }
+  },
+  
+  // Get the highest unlocked game (1-based)
+  getHighestUnlocked: () => {
+    const user = Storage.getUser();
+    if (user.isPremium) return 365; // Premium unlocks all
+    
+    const progress = JSON.parse(localStorage.getItem('streakrush_game_progress') || '{"highest": 1}');
+    return Math.min(progress.highest || 1, UnlockSystem.FREE_GAMES + 1);
+  },
+  
+  // Check if a specific game is unlocked
   isGameUnlocked: (gameId) => {
-    const unlocks = UnlockSystem.getStatus();
+    const user = Storage.getUser();
+    if (user.isPremium) return true;
     
-    // Free tier (1-10)
-    if (gameId <= 10) return true;
-    
-    // Tier 1 (11-40)
-    if (gameId <= 40) {
-      return unlocks.tier1 === true;
-    }
-    
-    // Tier 2 (41-60)
-    if (gameId <= 60) {
-      // Check if paid OR achieved 80% score
-      if (unlocks.tier2 === true) return true;
-      
-      // Check 80% score threshold
-      return UnlockSystem.hasAchieved80Percent();
-    }
-    
-    return false;
+    const highest = UnlockSystem.getHighestUnlocked();
+    return gameId <= highest;
   },
   
-  // Get which tier a game belongs to
-  getGameTier: (gameId) => {
-    if (gameId <= 10) return 'free';
-    if (gameId <= 40) return 'tier1';
-    return 'tier2';
+  // Check if game can be played (unlocked AND within free tier or premium)
+  canPlayGame: (gameId) => {
+    const user = Storage.getUser();
+    
+    // Premium can play anything
+    if (user.isPremium) return true;
+    
+    // Must be unlocked
+    if (!UnlockSystem.isGameUnlocked(gameId)) return false;
+    
+    // Must be within free tier
+    return gameId <= UnlockSystem.FREE_GAMES;
   },
   
-  // Check if user has achieved 80% on tier 1 games
-  hasAchieved80Percent: () => {
-    const stats = UnlockSystem.getTier1Stats();
-    if (stats.gamesPlayed < 30) return false; // Must play all 30 games
-    return stats.averagePercent >= 80;
-  },
-  
-  // Get tier 1 game stats (11-40)
-  getTier1Stats: () => {
+  // Record a game score and check if next game is unlocked
+  recordGameScore: (gameId, score, maxPossibleScore, questionsAnswered = 0) => {
+    const percentage = maxPossibleScore > 0 ? Math.round((score / maxPossibleScore) * 100) : 0;
+    const tier = UnlockSystem.getMasteryTier(percentage);
+    const tierInfo = UnlockSystem.getTierInfo(tier);
+    
+    // Save score with mastery info
     const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
-    let totalPercent = 0;
-    let gamesPlayed = 0;
+    const existingScore = scores[gameId];
+    const plays = (existingScore?.plays || 0) + 1;
     
-    // Games 11-40
-    for (let i = 11; i <= 40; i++) {
-      if (scores[`game-${i}`]) {
-        // Assume max score is 500 for percentage calc
-        const percent = Math.min(100, (scores[`game-${i}`] / 500) * 100);
-        totalPercent += percent;
-        gamesPlayed++;
+    // Only update if this is a new best score
+    if (!existingScore || percentage > existingScore.percentage) {
+      scores[gameId] = {
+        score,
+        percentage,
+        tier: tier !== 'FAIL' ? tier : null,
+        stars: tierInfo?.stars || 0,
+        questionsAnswered,
+        plays,
+        bonus: tierInfo?.bonus || 0,
+        lastPlayed: new Date().toISOString()
+      };
+      localStorage.setItem('streakrush_game_scores', JSON.stringify(scores));
+      
+      // Add bonus coins for mastery
+      if (tierInfo?.bonus > 0) {
+        Storage.addCoins(tierInfo.bonus);
+      }
+    } else {
+      // Just update plays count
+      scores[gameId].plays = plays;
+      scores[gameId].lastPlayed = new Date().toISOString();
+      localStorage.setItem('streakrush_game_scores', JSON.stringify(scores));
+    }
+    
+    // Check if passed (70%+)
+    const passed = percentage >= UnlockSystem.UNLOCK_THRESHOLD;
+    
+    if (passed) {
+      const progress = JSON.parse(localStorage.getItem('streakrush_game_progress') || '{"highest": 1}');
+      
+      // Unlock next game if this was the highest
+      if (gameId >= progress.highest && gameId < 365) {
+        progress.highest = gameId + 1;
+        localStorage.setItem('streakrush_game_progress', JSON.stringify(progress));
       }
     }
     
     return {
-      gamesPlayed,
-      totalGames: 30,
-      averagePercent: gamesPlayed > 0 ? Math.round(totalPercent / gamesPlayed) : 0
+      percentage,
+      passed,
+      threshold: UnlockSystem.UNLOCK_THRESHOLD,
+      tier: tier !== 'FAIL' ? tier : null,
+      tierInfo,
+      stars: tierInfo?.stars || 0,
+      bonus: tierInfo?.bonus || 0,
+      nextUnlocked: passed && gameId === UnlockSystem.getHighestUnlocked() - 1,
+      isNewBest: !existingScore || percentage > existingScore.percentage
     };
   },
   
-  // Unlock a tier
-  unlockTier: (tier) => {
-    const unlocks = UnlockSystem.getStatus();
-    unlocks[tier] = true;
-    localStorage.setItem('streakrush_unlocks', JSON.stringify(unlocks));
-  },
-  
-  // Get next unlock requirement
-  getNextUnlockInfo: (gameId) => {
-    const tier = UnlockSystem.getGameTier(gameId);
-    
-    if (tier === 'tier1') {
-      return {
-        price: 5.99,
-        description: 'Unlock 30 more games!',
-        tierName: 'Explorer Pack',
-        games: '11-40'
-      };
-    }
-    
-    if (tier === 'tier2') {
-      const stats = UnlockSystem.getTier1Stats();
-      const needs80 = !UnlockSystem.hasAchieved80Percent();
-      
-      return {
-        price: 9.99,
-        description: needs80 
-          ? `Get 80% average score OR pay to unlock!`
-          : 'Unlock the final 20 games!',
-        tierName: 'Master Pack',
-        games: '41-60',
-        currentPercent: stats.averagePercent,
-        requiredPercent: 80,
-        canEarn: needs80
-      };
-    }
-    
-    return null;
-  },
-  
-  // Record a game score for threshold calculation
-  recordScore: (gameId, score) => {
+  // Get score for a game
+  getGameScore: (gameId) => {
     const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
-    const key = `game-${gameId}`;
-    
-    // Keep highest score
-    if (!scores[key] || score > scores[key]) {
-      scores[key] = score;
-    }
-    
-    localStorage.setItem('streakrush_game_scores', JSON.stringify(scores));
+    return scores[gameId] || null;
   },
   
-  // Get games available to play
+  // Get all scores
+  getAllScores: () => {
+    return JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+  },
+  
+  // Check if user needs premium (completed free games)
+  needsPremium: () => {
+    const user = Storage.getUser();
+    if (user.isPremium) return false;
+    
+    const highest = UnlockSystem.getHighestUnlocked();
+    return highest > UnlockSystem.FREE_GAMES;
+  },
+  
+  // Get available games for display (only unlocked ones)
   getAvailableGames: () => {
-    const available = [];
+    const highest = UnlockSystem.getHighestUnlocked();
+    const user = Storage.getUser();
     
-    for (let i = 1; i <= 60; i++) {
-      if (UnlockSystem.isGameUnlocked(i)) {
-        const game = getGameById(i);
-        if (game) available.push(game);
-      }
-    }
-    
-    return available;
+    return GAMES.filter(game => {
+      if (user.isPremium) return true;
+      return game.id <= highest && game.id <= UnlockSystem.FREE_GAMES;
+    });
   },
   
-  // Get locked games count
-  getLockedCount: () => {
-    let locked = 0;
-    for (let i = 1; i <= 60; i++) {
-      if (!UnlockSystem.isGameUnlocked(i)) locked++;
-    }
-    return locked;
+  // Get progress info for UI
+  getProgressInfo: () => {
+    const highest = UnlockSystem.getHighestUnlocked();
+    const user = Storage.getUser();
+    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    
+    // Count completed games (70%+) and mastery stats
+    let completed = 0;
+    let totalStars = 0;
+    let platinumCount = 0;
+    let goldCount = 0;
+    let silverCount = 0;
+    let bronzeCount = 0;
+    
+    Object.values(scores).forEach(s => {
+      if (s.percentage >= UnlockSystem.UNLOCK_THRESHOLD) {
+        completed++;
+        totalStars += s.stars || 0;
+        
+        if (s.tier === 'PLATINUM') platinumCount++;
+        else if (s.tier === 'GOLD') goldCount++;
+        else if (s.tier === 'SILVER') silverCount++;
+        else if (s.tier === 'BRONZE') bronzeCount++;
+      }
+    });
+    
+    return {
+      currentGame: highest,
+      completedGames: completed,
+      totalFreeGames: UnlockSystem.FREE_GAMES,
+      isPremium: user.isPremium,
+      needsPremium: UnlockSystem.needsPremium(),
+      totalStars,
+      mastery: {
+        platinum: platinumCount,
+        gold: goldCount,
+        silver: silverCount,
+        bronze: bronzeCount
+      }
+    };
+  },
+  
+  // Get star display for a score
+  getStarDisplay: (percentage) => {
+    const tier = UnlockSystem.getMasteryTier(percentage);
+    const tierInfo = UnlockSystem.getTierInfo(tier);
+    if (!tierInfo) return '';
+    
+    return '⭐'.repeat(tierInfo.stars);
+  },
+  
+  // Reset progress (for testing)
+  resetProgress: () => {
+    localStorage.setItem('streakrush_game_progress', JSON.stringify({ highest: 1 }));
+    localStorage.removeItem('streakrush_game_scores');
   }
 };
-

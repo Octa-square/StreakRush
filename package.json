@@ -7,8 +7,26 @@
     "start": "npx serve -s . -p 3000",
     "dev": "npx live-server --port=3000 --no-browser"
   },
-  "keywords": ["game", "pwa", "mobile", "streak"],
+  "keywords": [
+    "game",
+    "pwa",
+    "mobile",
+    "streak"
+  ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Octa-square/StreakRush.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Octa-square/StreakRush/issues"
+  },
+  "homepage": "https://github.com/Octa-square/StreakRush#readme",
+  "dependencies": {
+    "@capacitor/android": "^8.0.0",
+    "@capacitor/cli": "^8.0.0",
+    "@capacitor/core": "^8.0.0",
+    "@capacitor/ios": "^8.0.0"
+  }
 }
-

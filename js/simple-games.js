@@ -1,6 +1,6 @@
 // ========================================
-// STREAKRUSH - UNIQUE GAME IMPLEMENTATIONS
-// Every game has completely different gameplay!
+// STREAKRUSH - 365 UNIQUE GAME MECHANICS
+// Continuously reshuffling, challenging games!
 // ========================================
 
 const SimpleGames = {
@@ -10,6 +10,33 @@ const SimpleGames = {
   gameType: null,
   intervals: [],
   timeouts: [],
+  gameData: {},
+  maxPossibleScore: 0, // Track for percentage calculation
+  questionsAnswered: 0,
+  correctAnswers: 0,
+  wrongAnswers: 0,
+  reactionTimes: [], // Track reaction times for speed bonus
+  questionStartTime: 0, // When current question started
+  
+  // NEW SCORING SYSTEM
+  SCORING: {
+    correctAnswer: 25,
+    wrongAnswer: -15,
+    speedBonus: {
+      under1sec: 10,
+      under2sec: 5
+    },
+    volumeBonus: {
+      15: 50,   // Answer 15+ questions correctly
+      20: 100,  // Answer 20+ questions correctly
+      25: 200   // Answer 25+ questions correctly
+    },
+    accuracyBonus: {
+      100: 200,  // Perfect accuracy
+      95: 100,   // 95%+ accuracy
+      90: 50     // 90%+ accuracy
+    }
+  },
   
   clearTimers: () => {
     SimpleGames.intervals.forEach(i => clearInterval(i));
@@ -21,1032 +48,1352 @@ const SimpleGames = {
   init: (gameArea, gameId) => {
     SimpleGames.gameArea = gameArea;
     SimpleGames.score = 0;
+    SimpleGames.maxPossibleScore = 0;
+    SimpleGames.questionsAnswered = 0;
+    SimpleGames.correctAnswers = 0;
+    SimpleGames.wrongAnswers = 0;
+    SimpleGames.reactionTimes = [];
+    SimpleGames.questionStartTime = 0;
     SimpleGames.isActive = true;
     SimpleGames.gameType = gameId;
+    SimpleGames.gameData = {};
     SimpleGames.clearTimers();
     gameArea.innerHTML = '';
+  },
+  
+  // Start timing a question
+  startQuestionTimer: () => {
+    SimpleGames.questionStartTime = Date.now();
+  },
+  
+  // Get reaction time for current question
+  getReactionTime: () => {
+    if (!SimpleGames.questionStartTime) return 0;
+    return Date.now() - SimpleGames.questionStartTime;
+  },
+  
+  // NO question cap - games run until time expires
+  checkGameComplete: () => {
+    // Games no longer have a cap - they run until time runs out
+    return false;
+  },
+  
+  // Record a question answered
+  recordQuestion: (correct = false) => {
+    SimpleGames.questionsAnswered++;
+    
+    if (correct) {
+      SimpleGames.correctAnswers++;
+      const reactionTime = SimpleGames.getReactionTime();
+      SimpleGames.reactionTimes.push(reactionTime);
+    } else {
+      SimpleGames.wrongAnswers++;
+    }
+    
+    // Update progress display if exists
+    const progressEl = document.getElementById('q-num');
+    if (progressEl) {
+      progressEl.textContent = SimpleGames.questionsAnswered;
+    }
+  },
+  
+  // Calculate final score with bonuses
+  calculateFinalScore: () => {
+    let baseScore = SimpleGames.score;
+    let bonuses = {
+      speed: 0,
+      volume: 0,
+      accuracy: 0
+    };
+    
+    // Speed bonus - based on average reaction time
+    if (SimpleGames.reactionTimes.length > 0) {
+      const avgReaction = SimpleGames.reactionTimes.reduce((a, b) => a + b, 0) / SimpleGames.reactionTimes.length;
+      
+      const fastAnswers = SimpleGames.reactionTimes.filter(t => t < 1000).length;
+      const mediumAnswers = SimpleGames.reactionTimes.filter(t => t >= 1000 && t < 2000).length;
+      
+      bonuses.speed = (fastAnswers * SimpleGames.SCORING.speedBonus.under1sec) + 
+                      (mediumAnswers * SimpleGames.SCORING.speedBonus.under2sec);
+    }
+    
+    // Volume bonus - for answering many questions correctly
+    const volumeThresholds = Object.entries(SimpleGames.SCORING.volumeBonus)
+      .sort((a, b) => parseInt(b[0]) - parseInt(a[0])); // Sort descending
+    
+    for (const [threshold, bonus] of volumeThresholds) {
+      if (SimpleGames.correctAnswers >= parseInt(threshold)) {
+        bonuses.volume = bonus;
+        break; // Only get highest applicable bonus
+      }
+    }
+    
+    // Accuracy bonus
+    if (SimpleGames.questionsAnswered > 0) {
+      const accuracy = (SimpleGames.correctAnswers / SimpleGames.questionsAnswered) * 100;
+      
+      const accuracyThresholds = Object.entries(SimpleGames.SCORING.accuracyBonus)
+        .sort((a, b) => parseInt(b[0]) - parseInt(a[0])); // Sort descending
+      
+      for (const [threshold, bonus] of accuracyThresholds) {
+        if (accuracy >= parseInt(threshold)) {
+          bonuses.accuracy = bonus;
+          break; // Only get highest applicable bonus
+        }
+      }
+    }
+    
+    const totalBonus = bonuses.speed + bonuses.volume + bonuses.accuracy;
+    const finalScore = Math.max(0, baseScore + totalBonus);
+    
+    return {
+      baseScore: baseScore,
+      bonuses: bonuses,
+      totalBonus: totalBonus,
+      finalScore: finalScore,
+      correctAnswers: SimpleGames.correctAnswers,
+      wrongAnswers: SimpleGames.wrongAnswers,
+      totalQuestions: SimpleGames.questionsAnswered,
+      accuracy: SimpleGames.questionsAnswered > 0 
+        ? Math.round((SimpleGames.correctAnswers / SimpleGames.questionsAnswered) * 100)
+        : 0,
+      avgReactionTime: SimpleGames.reactionTimes.length > 0
+        ? Math.round(SimpleGames.reactionTimes.reduce((a, b) => a + b, 0) / SimpleGames.reactionTimes.length)
+        : 0
+    };
+  },
+  
+  // Pause/Resume game timer
+  pauseTimer: () => {
+    if (typeof Game !== 'undefined' && Game.timerInterval) {
+      clearInterval(Game.timerInterval);
+      SimpleGames.timerPaused = true;
+    }
+  },
+  
+  resumeTimer: () => {
+    if (typeof Game !== 'undefined' && SimpleGames.timerPaused) {
+      Game.startTimer();
+      SimpleGames.timerPaused = false;
+    }
+  },
+  
+  // Show explanation for wrong answer with continue button
+  showExplanation: (answer, funFact, callback) => {
+    // Pause the game timer
+    SimpleGames.pauseTimer();
+    
+    // Create or get explanation overlay
+    let overlay = document.getElementById('explanation-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'explanation-overlay';
+      document.body.appendChild(overlay);
+      
+      // Add animation keyframes if not exists
+      if (!document.getElementById('explanation-styles')) {
+        const style = document.createElement('style');
+        style.id = 'explanation-styles';
+        style.textContent = `
+          @keyframes slideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+          }
+          @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255,107,53,0.3); }
+            50% { box-shadow: 0 0 30px rgba(255,107,53,0.6); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+    
+    overlay.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #1e3a5f 0%, #0d1b2a 100%);
+      border: 2px solid #ff6b35;
+      border-radius: 20px;
+      padding: 24px 28px;
+      max-width: 90%;
+      width: 340px;
+      z-index: 1000;
+      text-align: center;
+      animation: slideUp 0.3s ease-out, pulse-glow 2s ease-in-out infinite;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    `;
+    
+    overlay.innerHTML = `
+      <div style="color: #ef4444; font-size: 1.2rem; margin-bottom: 12px;">❌ Not quite!</div>
+      <div style="color: #22c55e; font-size: 1.3rem; font-weight: 600; margin-bottom: 16px;">✓ ${answer}</div>
+      <div style="background: rgba(255,255,255,0.05); border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+        <div style="color: #ffd700; font-size: 0.85rem; margin-bottom: 6px;">💡 Fun Fact</div>
+        <div style="color: #e0e0e0; font-size: 0.95rem; line-height: 1.5;">${funFact}</div>
+      </div>
+      <button id="continue-after-explanation" style="
+        background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+        border: none;
+        color: white;
+        padding: 14px 40px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 30px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: transform 0.2s;
+      ">Continue →</button>
+      <div style="color: #888; font-size: 0.8rem; margin-top: 12px;">⏸ Timer paused</div>
+    `;
+    overlay.style.display = 'block';
+    
+    // Continue button handler
+    document.getElementById('continue-after-explanation').onclick = () => {
+      overlay.style.display = 'none';
+      SimpleGames.resumeTimer();
+      if (callback) callback();
+    };
   },
   
   start: (gameId) => {
     const game = getGameById(gameId);
     if (!game) return;
-    
-    // Each game has unique implementation
-    switch(gameId) {
-      case 1: SimpleGames.game1_TapGreen(); break;
-      case 2: SimpleGames.game2_PopBubbles(); break;
-      case 3: SimpleGames.game3_CatchStars(); break;
-      case 4: SimpleGames.game4_WhackMole(); break;
-      case 5: SimpleGames.game5_TapFast(); break;
-      case 6: SimpleGames.game6_AvoidRed(); break;
-      case 7: SimpleGames.game7_ShrinkingDots(); break;
-      case 8: SimpleGames.game8_MovingTargets(); break;
-      case 9: SimpleGames.game9_ColorMatch(); break;
-      case 10: SimpleGames.game10_QuickTap(); break;
-      default:
-        if (game.category === 'memory') SimpleGames.startMemoryGame(gameId);
-        else if (game.category === 'math') SimpleGames.startMathGame(gameId);
-        else if (game.category === 'reaction') SimpleGames.startReactionGame(gameId);
-        else if (game.category === 'words') SimpleGames.startWordGame(gameId);
-        else if (game.category === 'visual') SimpleGames.startVisualGame(gameId);
-    }
+    SimpleGames.startUniqueGame(gameId, game);
+  },
+  
+  addScore: (points) => {
+    SimpleGames.score += points;
+    SimpleGames.maxPossibleScore += SimpleGames.SCORING.correctAnswer;
+    SimpleGames.recordQuestion(true); // Track as correct
+    SimpleGames.showScorePopup(points);
+    if (typeof Sounds !== 'undefined' && Sounds.correct) Sounds.correct();
+  },
+  
+  loseScore: (points) => {
+    SimpleGames.score = Math.max(0, SimpleGames.score - Math.abs(points));
+    SimpleGames.maxPossibleScore += SimpleGames.SCORING.correctAnswer; // Could have earned this
+    SimpleGames.recordQuestion(false); // Track as wrong
+    SimpleGames.showScorePopup(-Math.abs(points));
+    if (typeof Sounds !== 'undefined' && Sounds.wrong) Sounds.wrong();
+  },
+  
+  // Track possible score for percentage calculation
+  trackPossible: (points) => {
+    SimpleGames.maxPossibleScore += points;
+  },
+  
+  showScorePopup: (points) => {
+    const popup = document.createElement('div');
+    popup.className = `score-popup ${points > 0 ? 'positive' : 'negative'}`;
+    popup.textContent = points > 0 ? `+${points}` : points;
+    popup.style.left = `${Math.random() * 60 + 20}%`;
+    popup.style.top = `${Math.random() * 40 + 30}%`;
+    SimpleGames.gameArea.appendChild(popup);
+    setTimeout(() => popup.remove(), 800);
   },
   
   end: () => {
     SimpleGames.isActive = false;
     SimpleGames.clearTimers();
-    return { score: Math.max(0, SimpleGames.score) };
+    return SimpleGames.score;
   },
   
-  updateScore: () => {
-    const scoreEl = document.getElementById('game-score');
-    if (scoreEl) scoreEl.textContent = SimpleGames.score;
-  },
-  
-  showPopup: (x, y, text, isPositive) => {
-    const popup = document.createElement('div');
-    popup.className = `score-popup ${isPositive ? 'positive' : 'negative'}`;
-    popup.textContent = text;
-    popup.style.left = `${x}px`;
-    popup.style.top = `${y}px`;
-    SimpleGames.gameArea.appendChild(popup);
-    setTimeout(() => popup.remove(), 800);
-    if (isPositive) Sounds.correct(); else Sounds.wrong();
+  getScorePercentage: () => {
+    if (SimpleGames.maxPossibleScore === 0) return 0;
+    return Math.round((SimpleGames.score / SimpleGames.maxPossibleScore) * 100);
   },
 
   // ========================================
-  // GAME 1: TAP GREEN - Tap green circles
+  // UNIQUE GAME ROUTER
   // ========================================
-  game1_TapGreen: () => {
-    const area = SimpleGames.gameArea;
-    const rect = area.getBoundingClientRect();
-    
-    const spawnCircle = () => {
-      if (!SimpleGames.isActive) return;
-      
-      const circle = document.createElement('div');
-      circle.className = 'game1-circle';
-      
-      const size = 60 + Math.random() * 30;
-      circle.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, #4ade80, #22c55e, #16a34a);
-        box-shadow: 0 0 20px rgba(74,222,128,0.6), inset 0 -5px 15px rgba(0,0,0,0.2);
-        cursor: pointer;
-        transition: transform 0.1s;
-        left: ${Math.random() * (rect.width - size - 20) + 10}px;
-        top: ${Math.random() * (rect.height - size - 20) + 10}px;
-      `;
-      
-      circle.onclick = (e) => {
-        SimpleGames.score += 10;
-        SimpleGames.updateScore();
-        SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, '+10', true);
-        circle.style.transform = 'scale(1.5)';
-        circle.style.opacity = '0';
-        setTimeout(() => circle.remove(), 150);
-      };
-      
-      area.appendChild(circle);
-      
-      SimpleGames.timeouts.push(setTimeout(() => {
-        if (circle.parentNode) {
-          circle.style.opacity = '0';
-          setTimeout(() => circle.remove(), 200);
-        }
-      }, 1500));
-    };
-    
-    SimpleGames.intervals.push(setInterval(spawnCircle, 600));
-    spawnCircle();
-  },
-
-  // ========================================
-  // GAME 2: POP BUBBLES - Bubbles float UP
-  // ========================================
-  game2_PopBubbles: () => {
-    const area = SimpleGames.gameArea;
-    const rect = area.getBoundingClientRect();
-    
-    const spawnBubble = () => {
-      if (!SimpleGames.isActive) return;
-      
-      const bubble = document.createElement('div');
-      const size = 30 + Math.random() * 50;
-      const startX = Math.random() * (rect.width - size);
-      const speed = 1 + Math.random() * 2;
-      let y = rect.height;
-      
-      bubble.className = 'game2-bubble';
-      bubble.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: 50%;
-        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(135,206,250,0.5), transparent);
-        border: 2px solid rgba(255,255,255,0.6);
-        box-shadow: inset -5px -5px 10px rgba(0,0,0,0.05), 0 0 10px rgba(255,255,255,0.3);
-        cursor: pointer;
-        left: ${startX}px;
-        top: ${y}px;
-      `;
-      
-      bubble.onclick = (e) => {
-        SimpleGames.score += 10;
-        SimpleGames.updateScore();
-        SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, '+10', true);
-        // Pop animation
-        bubble.style.transform = 'scale(1.5)';
-        bubble.style.opacity = '0';
-        bubble.innerHTML = '💨';
-        setTimeout(() => bubble.remove(), 200);
-      };
-      
-      area.appendChild(bubble);
-      
-      // Float upward with wobble
-      const float = setInterval(() => {
-        if (!SimpleGames.isActive || !bubble.parentNode) {
-          clearInterval(float);
-          return;
-        }
-        y -= speed;
-        const wobble = Math.sin(Date.now() / 200) * 3;
-        bubble.style.top = `${y}px`;
-        bubble.style.left = `${startX + wobble}px`;
-        
-        if (y < -size) {
-          bubble.remove();
-          clearInterval(float);
-        }
-      }, 16);
-      SimpleGames.intervals.push(float);
-    };
-    
-    SimpleGames.intervals.push(setInterval(spawnBubble, 400));
-    spawnBubble();
-  },
-
-  // ========================================
-  // GAME 3: CATCH STARS - Stars fall, catch with basket
-  // ========================================
-  game3_CatchStars: () => {
-    const area = SimpleGames.gameArea;
-    const rect = area.getBoundingClientRect();
-    
-    // Create basket
-    const basket = document.createElement('div');
-    basket.className = 'game3-basket';
-    basket.innerHTML = '🧺';
-    basket.style.cssText = `
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 60px;
-      cursor: grab;
-      user-select: none;
-      touch-action: none;
-      filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
-    `;
-    area.appendChild(basket);
-    
-    let basketX = rect.width / 2 - 30;
-    
-    // Mouse/Touch control
-    const moveBasket = (clientX) => {
-      basketX = clientX - rect.left - 30;
-      basketX = Math.max(0, Math.min(rect.width - 60, basketX));
-      basket.style.left = `${basketX}px`;
-      basket.style.transform = 'none';
-    };
-    
-    area.addEventListener('mousemove', (e) => moveBasket(e.clientX));
-    area.addEventListener('touchmove', (e) => {
-      e.preventDefault();
-      moveBasket(e.touches[0].clientX);
-    }, { passive: false });
-    
-    // Spawn stars
-    const spawnStar = () => {
-      if (!SimpleGames.isActive) return;
-      
-      const star = document.createElement('div');
-      const x = Math.random() * (rect.width - 40);
-      let y = -40;
-      const speed = 3 + Math.random() * 3;
-      
-      star.className = 'game3-star';
-      star.innerHTML = '⭐';
-      star.style.cssText = `
-        position: absolute;
-        font-size: 35px;
-        left: ${x}px;
-        top: ${y}px;
-        animation: twinkleStar 0.5s ease infinite alternate;
-        text-shadow: 0 0 10px gold;
-      `;
-      area.appendChild(star);
-      
-      const fall = setInterval(() => {
-        if (!SimpleGames.isActive || !star.parentNode) {
-          clearInterval(fall);
-          return;
-        }
-        y += speed;
-        star.style.top = `${y}px`;
-        
-        // Check catch
-        if (y > rect.height - 90) {
-          const starX = x + 20;
-          if (Math.abs(starX - (basketX + 30)) < 50) {
-            SimpleGames.score += 15;
-            SimpleGames.updateScore();
-            star.innerHTML = '✨';
-            star.style.transform = 'scale(1.5)';
-            Sounds.correct();
-            setTimeout(() => star.remove(), 200);
-            clearInterval(fall);
-            return;
-          }
-        }
-        
-        // Missed
-        if (y > rect.height) {
-          star.remove();
-          clearInterval(fall);
-        }
-      }, 16);
-      SimpleGames.intervals.push(fall);
-    };
-    
-    SimpleGames.intervals.push(setInterval(spawnStar, 700));
-    spawnStar();
-  },
-
-  // ========================================
-  // GAME 4: WHACK MOLE - Moles pop from holes
-  // ========================================
-  game4_WhackMole: () => {
+  startUniqueGame: (gameId, game) => {
     const area = SimpleGames.gameArea;
     
     area.innerHTML = `
-      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 30px; max-width: 350px; margin: 0 auto;">
-        ${[0,1,2,3,4,5,6,7,8].map(i => `
-          <div class="mole-hole" data-hole="${i}" style="
-            aspect-ratio: 1;
-            background: radial-gradient(ellipse at bottom, #3d2817 0%, #251709 100%);
-            border-radius: 50%;
-            position: relative;
-            box-shadow: inset 0 10px 20px rgba(0,0,0,0.5);
-            cursor: pointer;
-            overflow: hidden;
-          ">
-            <div class="mole" style="
-              position: absolute;
-              bottom: -60px;
-              left: 50%;
-              transform: translateX(-50%);
-              font-size: 50px;
-              transition: bottom 0.15s ease-out;
-            ">🐹</div>
-          </div>
-        `).join('')}
+      <div class="game-header-display">
+        <div class="game-icon-display">${game.icon}</div>
+        <div class="game-title-display">${game.name}</div>
       </div>
+      <div class="game-zone" id="game-zone"></div>
     `;
     
-    const holes = area.querySelectorAll('.mole-hole');
+    const zone = document.getElementById('game-zone');
     
-    const popMole = () => {
-      if (!SimpleGames.isActive) return;
-      
-      const holeIndex = Math.floor(Math.random() * 9);
-      const hole = holes[holeIndex];
-      const mole = hole.querySelector('.mole');
-      
-      // Pop up
-      mole.style.bottom = '5px';
-      
-      let clicked = false;
-      const whack = () => {
-        if (clicked) return;
-        clicked = true;
-        SimpleGames.score += 15;
-        SimpleGames.updateScore();
-        mole.innerHTML = '😵';
-        Sounds.correct();
-        if ('vibrate' in navigator) navigator.vibrate(30);
-        setTimeout(() => {
-          mole.style.bottom = '-60px';
-          mole.innerHTML = '🐹';
-        }, 200);
-      };
-      
-      hole.onclick = whack;
-      
-      // Go back down
-      SimpleGames.timeouts.push(setTimeout(() => {
-        mole.style.bottom = '-60px';
-        hole.onclick = null;
-      }, 800 + Math.random() * 400));
-    };
-    
-    SimpleGames.intervals.push(setInterval(popMole, 600));
-    popMole();
+    // Route to specific unique game based on ID
+    switch(gameId) {
+      case 1: SimpleGames.game1_WorldCapitals(zone); break;
+      case 2: SimpleGames.game2_FlagMatch(zone); break;
+      case 3: SimpleGames.game3_ContinentSort(zone); break;
+      case 4: SimpleGames.game4_SpeedMath(zone); break;
+      case 5: SimpleGames.game5_CountryPopulation(zone); break;
+      case 6: SimpleGames.game6_ReactionTest(zone); break;
+      case 7: SimpleGames.game7_MemorySequence(zone); break;
+      case 8: SimpleGames.game8_WordScramble(zone); break;
+      case 9: SimpleGames.game9_TrueFalseBlitz(zone); break;
+      case 10: SimpleGames.game10_UltimateQuiz(zone); break;
+      default: SimpleGames.gameGeneric(zone, game); break;
+    }
   },
 
   // ========================================
-  // GAME 5: TAP FAST - Rapid tapping counter
+  // GAME 1: WORLD CAPITALS - Geography Quiz
+  // Continuous questions about world capitals
   // ========================================
-  game5_TapFast: () => {
-    const area = SimpleGames.gameArea;
-    let taps = 0;
-    
-    area.innerHTML = `
-      <div style="text-align: center; padding-top: 30px;">
-        <div style="font-size: 80px; font-weight: bold; color: #ff6b35; text-shadow: 0 0 20px rgba(255,107,53,0.5);" id="tap-counter">0</div>
-        <div style="font-size: 18px; color: rgba(255,255,255,0.6); margin-bottom: 30px;">TAPS</div>
-        <button id="tap-btn" style="
-          width: 200px;
-          height: 200px;
-          border-radius: 50%;
-          background: linear-gradient(145deg, #ff6b35, #f7931e);
-          border: none;
-          font-size: 60px;
-          cursor: pointer;
-          box-shadow: 0 10px 30px rgba(255,107,53,0.4), inset 0 -5px 20px rgba(0,0,0,0.2);
-          transition: transform 0.05s;
-          user-select: none;
-          touch-action: manipulation;
-        ">👆</button>
-        <div style="margin-top: 30px; font-size: 24px; color: rgba(255,255,255,0.8);">TAP AS FAST AS YOU CAN!</div>
-      </div>
-    `;
-    
-    const counter = document.getElementById('tap-counter');
-    const btn = document.getElementById('tap-btn');
-    
-    const handleTap = (e) => {
-      e.preventDefault();
-      taps++;
-      counter.textContent = taps;
-      SimpleGames.score = taps * 2;
-      SimpleGames.updateScore();
-      
-      btn.style.transform = 'scale(0.92)';
-      setTimeout(() => btn.style.transform = '', 50);
-      
-      if ('vibrate' in navigator) navigator.vibrate(5);
-    };
-    
-    btn.addEventListener('mousedown', handleTap);
-    btn.addEventListener('touchstart', handleTap, { passive: false });
-  },
-
-  // ========================================
-  // GAME 6: AVOID RED - Green good, Red bad
-  // ========================================
-  game6_AvoidRed: () => {
-    const area = SimpleGames.gameArea;
-    const rect = area.getBoundingClientRect();
-    
-    const spawnCircle = () => {
-      if (!SimpleGames.isActive) return;
-      
-      const isGood = Math.random() > 0.35;
-      const circle = document.createElement('div');
-      const size = 50 + Math.random() * 30;
-      
-      circle.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: 50%;
-        cursor: pointer;
-        left: ${Math.random() * (rect.width - size - 20) + 10}px;
-        top: ${Math.random() * (rect.height - size - 20) + 10}px;
-        ${isGood 
-          ? 'background: radial-gradient(circle at 30% 30%, #4ade80, #22c55e); box-shadow: 0 0 15px rgba(74,222,128,0.6);'
-          : 'background: radial-gradient(circle at 30% 30%, #f87171, #ef4444); box-shadow: 0 0 15px rgba(248,113,113,0.6); animation: dangerPulse 0.3s infinite;'
-        }
-      `;
-      
-      circle.onclick = (e) => {
-        if (isGood) {
-          SimpleGames.score += 10;
-          SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, '+10', true);
-        } else {
-          SimpleGames.score -= 20;
-          SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, '-20', false);
-          if ('vibrate' in navigator) navigator.vibrate([50, 30, 50]);
-        }
-        SimpleGames.updateScore();
-        circle.style.transform = 'scale(1.3)';
-        circle.style.opacity = '0';
-        setTimeout(() => circle.remove(), 150);
-      };
-      
-      area.appendChild(circle);
-      
-      SimpleGames.timeouts.push(setTimeout(() => {
-        if (circle.parentNode) circle.remove();
-      }, 1800));
-    };
-    
-    SimpleGames.intervals.push(setInterval(spawnCircle, 500));
-    spawnCircle();
-  },
-
-  // ========================================
-  // GAME 7: SHRINKING DOTS - Tap before gone
-  // ========================================
-  game7_ShrinkingDots: () => {
-    const area = SimpleGames.gameArea;
-    const rect = area.getBoundingClientRect();
-    
-    const spawnDot = () => {
-      if (!SimpleGames.isActive) return;
-      
-      const dot = document.createElement('div');
-      const startSize = 80 + Math.random() * 40;
-      const x = Math.random() * (rect.width - startSize - 20) + 10;
-      const y = Math.random() * (rect.height - startSize - 20) + 10;
-      
-      dot.style.cssText = `
-        position: absolute;
-        width: ${startSize}px;
-        height: ${startSize}px;
-        border-radius: 50%;
-        background: radial-gradient(circle, #a855f7, #7c3aed, #5b21b6);
-        box-shadow: 0 0 30px rgba(168,85,247,0.6);
-        cursor: pointer;
-        left: ${x}px;
-        top: ${y}px;
-        transition: width 2.5s linear, height 2.5s linear, opacity 2.5s linear;
-      `;
-      
-      area.appendChild(dot);
-      
-      // Start shrinking
-      setTimeout(() => {
-        dot.style.width = '5px';
-        dot.style.height = '5px';
-        dot.style.opacity = '0.2';
-      }, 50);
-      
-      dot.onclick = (e) => {
-        const currentSize = parseFloat(dot.style.width);
-        const points = Math.max(5, Math.floor(currentSize / 3));
-        SimpleGames.score += points;
-        SimpleGames.updateScore();
-        SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, `+${points}`, true);
-        dot.remove();
-      };
-      
-      SimpleGames.timeouts.push(setTimeout(() => {
-        if (dot.parentNode) dot.remove();
-      }, 2600));
-    };
-    
-    SimpleGames.intervals.push(setInterval(spawnDot, 800));
-    spawnDot();
-  },
-
-  // ========================================
-  // GAME 8: MOVING TARGETS - Chase & tap
-  // ========================================
-  game8_MovingTargets: () => {
-    const area = SimpleGames.gameArea;
-    const rect = area.getBoundingClientRect();
-    
-    const spawnTarget = () => {
-      if (!SimpleGames.isActive) return;
-      
-      const target = document.createElement('div');
-      const size = 50;
-      let x = Math.random() * (rect.width - size - 20) + 10;
-      let y = Math.random() * (rect.height - size - 20) + 10;
-      let vx = (Math.random() - 0.5) * 8;
-      let vy = (Math.random() - 0.5) * 8;
-      
-      target.innerHTML = '🎯';
-      target.style.cssText = `
-        position: absolute;
-        font-size: 40px;
-        cursor: crosshair;
-        left: ${x}px;
-        top: ${y}px;
-        filter: drop-shadow(0 0 10px rgba(255,0,255,0.5));
-      `;
-      
-      target.onclick = (e) => {
-        SimpleGames.score += 15;
-        SimpleGames.updateScore();
-        SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, '+15', true);
-        target.innerHTML = '💥';
-        setTimeout(() => target.remove(), 150);
-      };
-      
-      area.appendChild(target);
-      
-      // Movement
-      const move = setInterval(() => {
-        if (!SimpleGames.isActive || !target.parentNode) {
-          clearInterval(move);
-          return;
-        }
-        x += vx;
-        y += vy;
-        
-        if (x < 0 || x > rect.width - size) vx *= -1;
-        if (y < 0 || y > rect.height - size) vy *= -1;
-        
-        target.style.left = `${x}px`;
-        target.style.top = `${y}px`;
-      }, 16);
-      SimpleGames.intervals.push(move);
-      
-      SimpleGames.timeouts.push(setTimeout(() => {
-        if (target.parentNode) target.remove();
-      }, 3000));
-    };
-    
-    SimpleGames.intervals.push(setInterval(spawnTarget, 900));
-    spawnTarget();
-  },
-
-  // ========================================
-  // GAME 9: COLOR MATCH - Match the color shown
-  // ========================================
-  game9_ColorMatch: () => {
-    const area = SimpleGames.gameArea;
-    const rect = area.getBoundingClientRect();
-    
-    const colors = [
-      { name: 'RED', hex: '#ef4444' },
-      { name: 'BLUE', hex: '#3b82f6' },
-      { name: 'GREEN', hex: '#22c55e' },
-      { name: 'YELLOW', hex: '#eab308' },
-      { name: 'PINK', hex: '#ec4899' },
-      { name: 'ORANGE', hex: '#f97316' }
+  game1_WorldCapitals: (zone) => {
+    const capitals = [
+      { country: 'France', capital: 'Paris', wrong: ['London', 'Berlin', 'Madrid'], fact: 'Paris is called "The City of Light" because it was one of the first cities to adopt gas street lighting in the 1800s.' },
+      { country: 'Japan', capital: 'Tokyo', wrong: ['Seoul', 'Beijing', 'Bangkok'], fact: 'Tokyo is the world\'s most populous metropolitan area with over 37 million people - more than Canada!' },
+      { country: 'Australia', capital: 'Canberra', wrong: ['Sydney', 'Melbourne', 'Perth'], fact: 'Canberra was purpose-built as the capital in 1913 because Sydney and Melbourne couldn\'t agree on which should be the capital.' },
+      { country: 'Brazil', capital: 'Brasília', wrong: ['Rio de Janeiro', 'São Paulo', 'Salvador'], fact: 'Brasília was built from scratch in just 41 months and is designed to look like an airplane from above.' },
+      { country: 'Egypt', capital: 'Cairo', wrong: ['Alexandria', 'Luxor', 'Giza'], fact: 'Cairo means "The Victorious" in Arabic and is home to the only remaining ancient wonder: the Great Pyramid of Giza.' },
+      { country: 'Canada', capital: 'Ottawa', wrong: ['Toronto', 'Vancouver', 'Montreal'], fact: 'Ottawa has the world\'s largest skating rink - the frozen Rideau Canal stretches 7.8 km through the city!' },
+      { country: 'Germany', capital: 'Berlin', wrong: ['Munich', 'Frankfurt', 'Hamburg'], fact: 'Berlin has more bridges than Venice (over 1,700!) and more museums than rainy days per year.' },
+      { country: 'India', capital: 'New Delhi', wrong: ['Mumbai', 'Bangalore', 'Chennai'], fact: 'New Delhi was designed by British architects and completed in 1931, replacing Calcutta as India\'s capital.' },
+      { country: 'South Africa', capital: 'Pretoria', wrong: ['Cape Town', 'Johannesburg', 'Durban'], fact: 'South Africa uniquely has THREE capitals: Pretoria (executive), Cape Town (legislative), and Bloemfontein (judicial).' },
+      { country: 'China', capital: 'Beijing', wrong: ['Shanghai', 'Hong Kong', 'Guangzhou'], fact: 'Beijing means "Northern Capital" and has served as China\'s capital for over 800 years. The Forbidden City has 9,999 rooms!' },
+      { country: 'Italy', capital: 'Rome', wrong: ['Milan', 'Venice', 'Florence'], fact: 'Rome is called the "Eternal City" and contains an entire country within it - Vatican City, the world\'s smallest nation.' },
+      { country: 'Mexico', capital: 'Mexico City', wrong: ['Cancun', 'Guadalajara', 'Monterrey'], fact: 'Mexico City is built on a lake bed and is sinking about 10 inches per year. It has more museums than any city in the world!' },
+      { country: 'Russia', capital: 'Moscow', wrong: ['St. Petersburg', 'Novosibirsk', 'Kazan'], fact: 'Moscow\'s metro system is famous for its palatial stations, featuring chandeliers, mosaics, and marble columns like underground palaces.' },
+      { country: 'Spain', capital: 'Madrid', wrong: ['Barcelona', 'Seville', 'Valencia'], fact: 'Madrid is the highest capital city in Europe at 667 meters. The Prado Museum has over 8,000 paintings!' },
+      { country: 'Turkey', capital: 'Ankara', wrong: ['Istanbul', 'Izmir', 'Antalya'], fact: 'Ankara became Turkey\'s capital in 1923 instead of Istanbul because it was more centrally located and strategically safer.' },
+      { country: 'Nigeria', capital: 'Abuja', wrong: ['Lagos', 'Kano', 'Ibadan'], fact: 'Abuja replaced Lagos as capital in 1991 and was built from scratch in the center of Nigeria for ethnic neutrality.' },
+      { country: 'Argentina', capital: 'Buenos Aires', wrong: ['Córdoba', 'Rosario', 'Mendoza'], fact: 'Buenos Aires means "Good Airs" and has the widest avenue in the world - 9 de Julio Avenue has 16 lanes!' },
+      { country: 'Kenya', capital: 'Nairobi', wrong: ['Mombasa', 'Kisumu', 'Nakuru'], fact: 'Nairobi has a national park within city limits where you can see lions with skyscrapers in the background!' },
+      { country: 'Thailand', capital: 'Bangkok', wrong: ['Chiang Mai', 'Phuket', 'Pattaya'], fact: 'Bangkok\'s full ceremonial name has 168 letters, making it the longest city name in the world!' },
+      { country: 'Poland', capital: 'Warsaw', wrong: ['Krakow', 'Gdansk', 'Wroclaw'], fact: 'Warsaw was 85% destroyed in WWII but was meticulously rebuilt. Its Old Town is a UNESCO World Heritage Site.' }
     ];
     
-    let targetColor = colors[0];
+    let usedQuestions = [];
     
-    // Target display
-    const targetEl = document.createElement('div');
-    targetEl.style.cssText = `
-      position: absolute;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0,0,0,0.5);
-      padding: 15px 30px;
-      border-radius: 12px;
-      font-size: 24px;
-      font-weight: bold;
-      z-index: 10;
+    zone.innerHTML = `
+      <div class="quiz-container">
+        <div class="quiz-progress">Questions: <span id="q-num">0</span> | Correct: <span id="q-correct">0</span></div>
+        <div class="quiz-question" id="quiz-question">🌍 Loading...</div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-timer-bar"><div class="quiz-timer-fill" id="timer-fill"></div></div>
+      </div>
     `;
-    area.appendChild(targetEl);
+    zone.style.cssText = 'background: linear-gradient(180deg, #1e3a5f 0%, #0d1b2a 100%); border-radius: 20px; padding: 20px;';
     
-    const updateTarget = () => {
-      targetColor = colors[Math.floor(Math.random() * colors.length)];
-      targetEl.innerHTML = `TAP <span style="color:${targetColor.hex}">${targetColor.name}</span>`;
-    };
-    updateTarget();
-    
-    const spawnCircle = () => {
+    const askQuestion = () => {
       if (!SimpleGames.isActive) return;
       
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const circle = document.createElement('div');
-      const size = 55;
+      // Get unused question (recycle when all used)
+      let available = capitals.filter((_, i) => !usedQuestions.includes(i));
+      if (available.length === 0) {
+        usedQuestions = [];
+        available = capitals;
+      }
       
-      circle.style.cssText = `
-        position: absolute;
-        width: ${size}px;
-        height: ${size}px;
-        border-radius: 50%;
-        background: ${color.hex};
-        box-shadow: 0 0 15px ${color.hex}80;
-        cursor: pointer;
-        left: ${Math.random() * (rect.width - size - 20) + 10}px;
-        top: ${80 + Math.random() * (rect.height - size - 100)}px;
-      `;
+      const idx = capitals.indexOf(available[Math.floor(Math.random() * available.length)]);
+      usedQuestions.push(idx);
+      const q = capitals[idx];
       
-      circle.onclick = (e) => {
-        if (color.name === targetColor.name) {
-          SimpleGames.score += 12;
-          SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, '+12', true);
-          updateTarget();
-        } else {
-          SimpleGames.score -= 8;
-          SimpleGames.showPopup(e.clientX - rect.left, e.clientY - rect.top, '-8', false);
-        }
-        SimpleGames.updateScore();
-        circle.remove();
-      };
+      // Start timing this question
+      SimpleGames.startQuestionTimer();
       
-      area.appendChild(circle);
+      document.getElementById('q-num').textContent = SimpleGames.questionsAnswered + 1;
+      document.getElementById('q-correct').textContent = SimpleGames.correctAnswers;
+      document.getElementById('quiz-question').innerHTML = `🌍 What is the capital of <strong>${q.country}</strong>?`;
       
-      SimpleGames.timeouts.push(setTimeout(() => {
-        if (circle.parentNode) circle.remove();
-      }, 2000));
-    };
-    
-    SimpleGames.intervals.push(setInterval(spawnCircle, 450));
-    spawnCircle();
-  },
-
-  // ========================================
-  // GAME 10: QUICK TAP - Reaction time
-  // ========================================
-  game10_QuickTap: () => {
-    const area = SimpleGames.gameArea;
-    
-    area.innerHTML = `
-      <div style="text-align: center; padding-top: 50px;">
-        <div id="light" style="
-          width: 180px;
-          height: 180px;
-          border-radius: 50%;
-          background: #ef4444;
-          margin: 0 auto 40px;
-          box-shadow: 0 0 40px rgba(239,68,68,0.6);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 28px;
-          font-weight: bold;
+      // Shuffle options
+      const options = [q.capital, ...q.wrong].sort(() => Math.random() - 0.5);
+      const optionsDiv = document.getElementById('quiz-options');
+      optionsDiv.innerHTML = '';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-option';
+        btn.textContent = opt;
+        btn.style.cssText = `
+          display: block;
+          width: 100%;
+          padding: 15px;
+          margin: 8px 0;
+          font-size: 1.1rem;
+          border: none;
+          border-radius: 12px;
+          background: rgba(255,255,255,0.1);
           color: white;
           cursor: pointer;
-          user-select: none;
-        ">WAIT...</div>
-        <div id="result" style="font-size: 36px; font-weight: bold; min-height: 50px;"></div>
-        <div id="best" style="font-size: 18px; color: rgba(255,255,255,0.5); margin-top: 20px;">Best: ---</div>
-      </div>
-    `;
-    
-    const light = document.getElementById('light');
-    const result = document.getElementById('result');
-    const bestEl = document.getElementById('best');
-    
-    let canTap = false;
-    let startTime = 0;
-    let best = Infinity;
-    
-    const startRound = () => {
-      if (!SimpleGames.isActive) return;
-      
-      canTap = false;
-      light.textContent = 'WAIT...';
-      light.style.background = '#ef4444';
-      light.style.boxShadow = '0 0 40px rgba(239,68,68,0.6)';
-      result.textContent = '';
-      
-      const delay = 1500 + Math.random() * 3000;
-      
-      SimpleGames.timeouts.push(setTimeout(() => {
-        if (!SimpleGames.isActive) return;
-        canTap = true;
-        startTime = Date.now();
-        light.textContent = 'TAP!';
-        light.style.background = '#22c55e';
-        light.style.boxShadow = '0 0 60px rgba(34,197,94,0.8)';
-      }, delay));
-    };
-    
-    light.onclick = () => {
-      if (!canTap) {
-        result.textContent = '❌ TOO EARLY!';
-        result.style.color = '#ef4444';
-        SimpleGames.score -= 15;
-        if ('vibrate' in navigator) navigator.vibrate([50, 30, 50]);
-      } else {
-        const time = Date.now() - startTime;
-        const points = Math.max(5, 50 - Math.floor(time / 10));
-        result.textContent = `⚡ ${time}ms! +${points}`;
-        result.style.color = '#22c55e';
-        SimpleGames.score += points;
-        Sounds.correct();
+          transition: all 0.2s;
+        `;
         
-        if (time < best) {
-          best = time;
-          bestEl.textContent = `Best: ${best}ms`;
-        }
-      }
-      SimpleGames.updateScore();
-      canTap = false;
-      setTimeout(startRound, 1500);
-    };
-    
-    startRound();
-  },
-
-  // ========== MEMORY GAMES (11-20) ==========
-  startMemoryGame: (gameId) => {
-    const area = SimpleGames.gameArea;
-    
-    // Simon Says pattern game
-    let pattern = [];
-    let userPattern = [];
-    let showingPattern = false;
-    let level = 3;
-    
-    const colors = [
-      { bg: 'linear-gradient(145deg, #ef233c, #b91c1c)', glow: 'rgba(239,35,60,0.6)' },
-      { bg: 'linear-gradient(145deg, #3b82f6, #1d4ed8)', glow: 'rgba(59,130,246,0.6)' },
-      { bg: 'linear-gradient(145deg, #10b981, #059669)', glow: 'rgba(16,185,129,0.6)' },
-      { bg: 'linear-gradient(145deg, #fbbf24, #d97706)', glow: 'rgba(251,191,36,0.6)' }
-    ];
-    
-    const container = document.createElement('div');
-    container.className = 'memory-game-container';
-    container.innerHTML = `
-      <div class="memory-status" id="memory-status" style="text-align:center;font-size:24px;margin-bottom:20px;">🔮 Watch the pattern...</div>
-      <div class="memory-grid" id="memory-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:280px;margin:0 auto;"></div>
-    `;
-    area.appendChild(container);
-    
-    const grid = document.getElementById('memory-grid');
-    const status = document.getElementById('memory-status');
-    const tiles = [];
-    
-    for (let i = 0; i < 4; i++) {
-      const tile = document.createElement('div');
-      tile.className = 'memory-tile';
-      tile.dataset.index = i;
-      tile.style.cssText = `
-        aspect-ratio: 1;
-        border-radius: 50%;
-        background: rgba(255,255,255,0.1);
-        cursor: pointer;
-        transition: all 0.2s;
-      `;
-      
-      tile.addEventListener('click', () => {
-        if (showingPattern || !SimpleGames.isActive) return;
-        
-        tile.style.background = colors[i].bg;
-        tile.style.boxShadow = `0 0 30px ${colors[i].glow}`;
-        Sounds.correct();
-        
-        setTimeout(() => {
-          tile.style.background = 'rgba(255,255,255,0.1)';
-          tile.style.boxShadow = '';
-        }, 300);
-        
-        userPattern.push(i);
-        
-        if (userPattern[userPattern.length - 1] !== pattern[userPattern.length - 1]) {
-          status.textContent = '❌ Wrong!';
-          Sounds.wrong();
-          SimpleGames.score -= 10;
-          SimpleGames.updateScore();
-          setTimeout(startRound, 1000);
-        } else if (userPattern.length === pattern.length) {
-          SimpleGames.score += level * 25;
-          SimpleGames.updateScore();
-          status.textContent = `✨ Level ${level + 1}!`;
-          level++;
-          setTimeout(startRound, 1000);
-        }
+        btn.onclick = () => {
+          clearTimeout(questionTimer);
+          
+          if (opt === q.capital) {
+            SimpleGames.addScore(SimpleGames.SCORING.correctAnswer);
+            btn.style.background = '#22c55e';
+            optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+            
+            // Update correct count and move to next question
+            document.getElementById('q-correct').textContent = SimpleGames.correctAnswers;
+            setTimeout(askQuestion, 800); // Faster pace - no cap!
+          } else {
+            SimpleGames.loseScore(Math.abs(SimpleGames.SCORING.wrongAnswer));
+            btn.style.background = '#ef4444';
+            // Show correct answer
+            optionsDiv.querySelectorAll('button').forEach(b => {
+              if (b.textContent === q.capital) b.style.background = '#22c55e';
+              b.disabled = true;
+            });
+            
+            // Show explanation with fun fact (timer paused)
+            SimpleGames.showExplanation(
+              `${q.capital} is the capital of ${q.country}`,
+              q.fact,
+              askQuestion // Continue to next question after explanation
+            );
+          }
+        };
+        optionsDiv.appendChild(btn);
       });
       
-      grid.appendChild(tile);
-      tiles.push(tile);
-    }
-    
-    const startRound = async () => {
-      if (!SimpleGames.isActive) return;
+      // Timer for each question (5 seconds)
+      const timerFill = document.getElementById('timer-fill');
+      timerFill.style.cssText = 'height: 100%; width: 100%; background: linear-gradient(90deg, #22c55e 0%, #4ade80 100%); transition: width 5s linear;';
+      setTimeout(() => timerFill.style.width = '0%', 50);
       
-      pattern = [];
-      userPattern = [];
-      showingPattern = true;
-      status.textContent = '🔮 Watch...';
-      
-      for (let i = 0; i < level; i++) {
-        pattern.push(Math.floor(Math.random() * 4));
-      }
-      
-      await Utils.delay(500);
-      
-      for (let i = 0; i < pattern.length; i++) {
+      const questionTimer = setTimeout(() => {
         if (!SimpleGames.isActive) return;
+        SimpleGames.loseScore(Math.abs(SimpleGames.SCORING.wrongAnswer));
+        optionsDiv.querySelectorAll('button').forEach(b => {
+          b.disabled = true;
+          if (b.textContent === q.capital) b.style.background = '#22c55e';
+        });
         
-        const tile = tiles[pattern[i]];
-        const colorIdx = pattern[i];
-        
-        tile.style.background = colors[colorIdx].bg;
-        tile.style.boxShadow = `0 0 40px ${colors[colorIdx].glow}`;
-        Sounds.correct();
-        
-        await Utils.delay(400);
-        
-        tile.style.background = 'rgba(255,255,255,0.1)';
-        tile.style.boxShadow = '';
-        
-        await Utils.delay(200);
-      }
+        // Show explanation for timeout with fun fact
+        SimpleGames.showExplanation(
+          `⏱️ Time's up! ${q.capital} is the capital of ${q.country}`,
+          q.fact,
+          askQuestion // Continue to next question
+        );
+      }, 5000);
       
-      showingPattern = false;
-      status.textContent = '👆 Your turn!';
+      SimpleGames.timeouts.push(questionTimer);
     };
     
-    startRound();
+    askQuestion();
   },
 
-  // ========== MATH GAMES (21-30) ==========
-  startMathGame: (gameId) => {
-    const area = SimpleGames.gameArea;
+  // ========================================
+  // GAME 2: FLAG MATCH - Identify Country Flags
+  // ========================================
+  game2_FlagMatch: (zone) => {
+    const flags = [
+      { country: 'Japan', flag: '🇯🇵' },
+      { country: 'USA', flag: '🇺🇸' },
+      { country: 'UK', flag: '🇬🇧' },
+      { country: 'France', flag: '🇫🇷' },
+      { country: 'Germany', flag: '🇩🇪' },
+      { country: 'Italy', flag: '🇮🇹' },
+      { country: 'Spain', flag: '🇪🇸' },
+      { country: 'Brazil', flag: '🇧🇷' },
+      { country: 'Canada', flag: '🇨🇦' },
+      { country: 'Australia', flag: '🇦🇺' },
+      { country: 'India', flag: '🇮🇳' },
+      { country: 'China', flag: '🇨🇳' },
+      { country: 'Russia', flag: '🇷🇺' },
+      { country: 'Mexico', flag: '🇲🇽' },
+      { country: 'South Korea', flag: '🇰🇷' },
+      { country: 'Nigeria', flag: '🇳🇬' },
+      { country: 'South Africa', flag: '🇿🇦' },
+      { country: 'Egypt', flag: '🇪🇬' },
+      { country: 'Argentina', flag: '🇦🇷' },
+      { country: 'Sweden', flag: '🇸🇪' }
+    ];
     
-    const container = document.createElement('div');
-    container.className = 'math-game-container';
-    container.innerHTML = `
-      <div class="math-problem" id="math-problem" style="font-size:48px;text-align:center;margin-bottom:30px;font-weight:bold;">Loading...</div>
-      <div class="math-options" id="math-options" style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:300px;margin:0 auto;"></div>
+    let usedFlags = [];
+    
+    zone.innerHTML = `
+      <div class="flag-container">
+        <div class="flag-display" id="flag-display">🏳️</div>
+        <div class="flag-question">Which country?</div>
+        <div class="flag-options" id="flag-options"></div>
+      </div>
     `;
-    area.appendChild(container);
+    zone.style.cssText = 'background: linear-gradient(180deg, #7c3aed 0%, #5b21b6 100%); border-radius: 20px; padding: 20px; text-align: center;';
     
-    const problemEl = document.getElementById('math-problem');
-    const optionsEl = document.getElementById('math-options');
+    const showFlag = () => {
+      if (!SimpleGames.isActive) return;
+      
+      let available = flags.filter((_, i) => !usedFlags.includes(i));
+      if (available.length < 4) {
+        usedFlags = [];
+        available = flags;
+      }
+      
+      const correctIdx = flags.indexOf(available[Math.floor(Math.random() * available.length)]);
+      usedFlags.push(correctIdx);
+      const correct = flags[correctIdx];
+      
+      document.getElementById('flag-display').textContent = correct.flag;
+      document.getElementById('flag-display').style.cssText = 'font-size: 8rem; margin: 20px 0; animation: flagWave 1s ease-in-out;';
+      
+      // Get 3 wrong answers
+      const wrongOptions = flags.filter(f => f.country !== correct.country)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 3)
+        .map(f => f.country);
+      
+      const options = [correct.country, ...wrongOptions].sort(() => Math.random() - 0.5);
+      const optionsDiv = document.getElementById('flag-options');
+      optionsDiv.innerHTML = '';
+      optionsDiv.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;';
+      
+      options.forEach(country => {
+        const btn = document.createElement('button');
+        btn.textContent = country;
+        btn.style.cssText = `
+          padding: 15px;
+          font-size: 1rem;
+          font-weight: 600;
+          border: none;
+          border-radius: 12px;
+          background: rgba(255,255,255,0.15);
+          color: white;
+          cursor: pointer;
+        `;
+        
+        btn.onclick = () => {
+          if (country === correct.country) {
+            SimpleGames.addScore(30);
+            btn.style.background = '#22c55e';
+          } else {
+            SimpleGames.loseScore(20);
+            btn.style.background = '#ef4444';
+          }
+          optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+          setTimeout(showFlag, 1000);
+        };
+        optionsDiv.appendChild(btn);
+      });
+    };
+    
+    showFlag();
+  },
+
+  // ========================================
+  // GAME 3: CONTINENT SORT - Sort Countries
+  // ========================================
+  game3_ContinentSort: (zone) => {
+    const countries = [
+      { name: 'Brazil', continent: 'South America' },
+      { name: 'Nigeria', continent: 'Africa' },
+      { name: 'Japan', continent: 'Asia' },
+      { name: 'France', continent: 'Europe' },
+      { name: 'Australia', continent: 'Oceania' },
+      { name: 'Canada', continent: 'North America' },
+      { name: 'Egypt', continent: 'Africa' },
+      { name: 'India', continent: 'Asia' },
+      { name: 'Germany', continent: 'Europe' },
+      { name: 'Mexico', continent: 'North America' },
+      { name: 'Argentina', continent: 'South America' },
+      { name: 'Kenya', continent: 'Africa' },
+      { name: 'China', continent: 'Asia' },
+      { name: 'Italy', continent: 'Europe' },
+      { name: 'Peru', continent: 'South America' },
+      { name: 'Thailand', continent: 'Asia' },
+      { name: 'South Africa', continent: 'Africa' },
+      { name: 'Poland', continent: 'Europe' },
+      { name: 'New Zealand', continent: 'Oceania' },
+      { name: 'Colombia', continent: 'South America' }
+    ];
+    
+    const continents = ['Africa', 'Asia', 'Europe', 'North America', 'South America', 'Oceania'];
+    let currentCountry = null;
+    
+    zone.innerHTML = `
+      <div class="sort-game">
+        <div class="sort-country" id="sort-country">🌍</div>
+        <div class="sort-hint">Tap the correct continent!</div>
+        <div class="sort-options" id="sort-options"></div>
+      </div>
+    `;
+    zone.style.cssText = 'background: linear-gradient(180deg, #059669 0%, #047857 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    
+    const optionsDiv = document.getElementById('sort-options');
+    optionsDiv.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;';
+    
+    const showCountry = () => {
+      if (!SimpleGames.isActive) return;
+      
+      currentCountry = countries[Math.floor(Math.random() * countries.length)];
+      document.getElementById('sort-country').innerHTML = `<strong>${currentCountry.name}</strong>`;
+      document.getElementById('sort-country').style.cssText = 'font-size: 2rem; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; margin-bottom: 15px;';
+      
+      // Show continent options
+      optionsDiv.innerHTML = '';
+      const shuffledContinents = [...continents].sort(() => Math.random() - 0.5);
+      
+      shuffledContinents.forEach(cont => {
+        const btn = document.createElement('button');
+        btn.textContent = cont;
+        btn.style.cssText = `
+          padding: 12px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          border: none;
+          border-radius: 10px;
+          background: rgba(255,255,255,0.15);
+          color: white;
+          cursor: pointer;
+        `;
+        
+        btn.onclick = () => {
+          if (cont === currentCountry.continent) {
+            SimpleGames.addScore(20);
+            btn.style.background = '#22c55e';
+          } else {
+            SimpleGames.loseScore(15);
+            btn.style.background = '#ef4444';
+            optionsDiv.querySelectorAll('button').forEach(b => {
+              if (b.textContent === currentCountry.continent) b.style.background = '#22c55e';
+            });
+          }
+          optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+          setTimeout(showCountry, 1000);
+        };
+        optionsDiv.appendChild(btn);
+      });
+    };
+    
+    showCountry();
+  },
+
+  // ========================================
+  // GAME 4: SPEED MATH - Quick Calculations
+  // ========================================
+  game4_SpeedMath: (zone) => {
+    zone.innerHTML = `
+      <div class="math-game">
+        <div class="math-problem" id="math-problem">?</div>
+        <div class="math-options" id="math-options"></div>
+        <div class="math-streak">Streak: <span id="math-streak">0</span></div>
+      </div>
+    `;
+    zone.style.cssText = 'background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    
+    let streak = 0;
     
     const generateProblem = () => {
       if (!SimpleGames.isActive) return;
       
-      let problem, answer, options;
-      const a = Math.floor(Math.random() * 10) + 1;
-      const b = Math.floor(Math.random() * 10) + 1;
+      const ops = ['+', '-', '×'];
+      const op = ops[Math.floor(Math.random() * ops.length)];
+      let a, b, answer;
       
-      switch(gameId) {
-        case 21: problem = `${a} + ${b} = ?`; answer = a + b; break;
-        case 22: problem = `${Math.max(a,b)} - ${Math.min(a,b)} = ?`; answer = Math.max(a,b) - Math.min(a,b); break;
-        case 23: problem = `${a} × ${b} = ?`; answer = a * b; break;
-        case 24:
-          problem = 'Which is BIGGER?';
-          answer = Math.max(a * 10, b * 10);
-          options = [a * 10, b * 10];
+      switch(op) {
+        case '+':
+          a = Math.floor(Math.random() * 50) + 10;
+          b = Math.floor(Math.random() * 50) + 10;
+          answer = a + b;
           break;
-        case 27:
-          const num = Math.floor(Math.random() * 20) + 1;
-          problem = `Is ${num} EVEN or ODD?`;
-          answer = num % 2 === 0 ? 'EVEN' : 'ODD';
-          options = ['EVEN', 'ODD'];
+        case '-':
+          a = Math.floor(Math.random() * 50) + 30;
+          b = Math.floor(Math.random() * 30) + 1;
+          answer = a - b;
           break;
-        case 28: problem = `Double ${a} = ?`; answer = a * 2; break;
-        case 29: problem = `Half of ${a * 2} = ?`; answer = a; break;
-        default: problem = `${a} + ${b} = ?`; answer = a + b;
+        case '×':
+          a = Math.floor(Math.random() * 12) + 2;
+          b = Math.floor(Math.random() * 12) + 2;
+          answer = a * b;
+          break;
       }
       
-      problemEl.innerHTML = problem;
+      document.getElementById('math-problem').innerHTML = `${a} ${op} ${b} = ?`;
+      document.getElementById('math-problem').style.cssText = 'font-size: 3rem; font-weight: bold; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; margin-bottom: 20px;';
       
-      if (!options) {
-        options = [answer];
-        while (options.length < 4) {
-          const wrong = answer + Math.floor(Math.random() * 10) - 5;
-          if (wrong !== answer && wrong > 0 && !options.includes(wrong)) options.push(wrong);
-        }
-        options.sort(() => Math.random() - 0.5);
-      }
+      // Generate wrong answers
+      const wrongAnswers = [
+        answer + Math.floor(Math.random() * 10) + 1,
+        answer - Math.floor(Math.random() * 10) - 1,
+        answer + Math.floor(Math.random() * 20) - 10
+      ].filter(w => w !== answer && w > 0);
       
-      optionsEl.innerHTML = '';
+      const options = [answer, ...wrongAnswers.slice(0, 3)].sort(() => Math.random() - 0.5);
+      const optionsDiv = document.getElementById('math-options');
+      optionsDiv.innerHTML = '';
+      optionsDiv.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 15px;';
+      
       options.forEach(opt => {
         const btn = document.createElement('button');
+        btn.textContent = opt;
         btn.style.cssText = `
           padding: 20px;
-          font-size: 24px;
+          font-size: 1.5rem;
           font-weight: bold;
-          background: rgba(255,255,255,0.1);
-          border: 2px solid rgba(255,255,255,0.2);
-          border-radius: 12px;
-          color: white;
+          border: none;
+          border-radius: 15px;
+          background: white;
+          color: #0284c7;
           cursor: pointer;
         `;
-        btn.textContent = opt;
+        
         btn.onclick = () => {
-          if (opt === answer || opt.toString() === answer.toString()) {
-            SimpleGames.score += 10;
-            btn.style.background = '#22c55e';
-            Sounds.correct();
+          if (opt === answer) {
+            streak++;
+            SimpleGames.addScore(20 + streak * 5);
           } else {
-            SimpleGames.score -= 5;
-            btn.style.background = '#ef4444';
-            Sounds.wrong();
+            streak = 0;
+            SimpleGames.loseScore(15);
           }
-          SimpleGames.updateScore();
-          setTimeout(generateProblem, 400);
+          document.getElementById('math-streak').textContent = streak;
+          optionsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+          setTimeout(generateProblem, 800);
         };
-        optionsEl.appendChild(btn);
+        optionsDiv.appendChild(btn);
       });
     };
     
     generateProblem();
   },
 
-  // ========== REACTION GAMES (31-40) ==========
-  startReactionGame: (gameId) => {
-    SimpleGames.game10_QuickTap(); // Use reaction game template
-  },
-
-  // ========== WORD GAMES (41-50) ==========
-  startWordGame: (gameId) => {
-    const area = SimpleGames.gameArea;
-    const words = ['cat', 'dog', 'sun', 'moon', 'star', 'tree', 'book', 'fish', 'bird', 'cake'];
+  // ========================================
+  // GAME 5: COUNTRY POPULATION - Bigger or Smaller
+  // ========================================
+  game5_CountryPopulation: (zone) => {
+    const countries = [
+      { name: 'China', pop: 1400 },
+      { name: 'India', pop: 1380 },
+      { name: 'USA', pop: 330 },
+      { name: 'Indonesia', pop: 270 },
+      { name: 'Brazil', pop: 210 },
+      { name: 'Nigeria', pop: 200 },
+      { name: 'Russia', pop: 145 },
+      { name: 'Japan', pop: 126 },
+      { name: 'Mexico', pop: 128 },
+      { name: 'Germany', pop: 83 },
+      { name: 'UK', pop: 67 },
+      { name: 'France', pop: 67 },
+      { name: 'Italy', pop: 60 },
+      { name: 'South Africa', pop: 59 },
+      { name: 'Kenya', pop: 54 },
+      { name: 'Canada', pop: 38 },
+      { name: 'Australia', pop: 26 },
+      { name: 'Sweden', pop: 10 },
+      { name: 'New Zealand', pop: 5 },
+      { name: 'Iceland', pop: 0.4 }
+    ];
     
-    const container = document.createElement('div');
-    container.innerHTML = `
-      <div style="text-align:center;padding:20px;">
-        <div id="word" style="font-size:64px;margin-bottom:30px;letter-spacing:8px;font-weight:bold;"></div>
-        <input type="text" id="input" style="
-          width:100%;max-width:300px;padding:20px;font-size:32px;text-align:center;
-          background:rgba(0,0,0,0.3);border:2px solid rgba(255,255,255,0.3);
-          border-radius:12px;color:white;
-        " autocomplete="off" autocorrect="off">
+    zone.innerHTML = `
+      <div class="pop-game">
+        <div class="pop-question">Which has MORE people?</div>
+        <div class="pop-choices" id="pop-choices"></div>
+        <div class="pop-score">Correct: <span id="pop-correct">0</span></div>
       </div>
     `;
-    area.appendChild(container);
+    zone.style.cssText = 'background: linear-gradient(180deg, #dc2626 0%, #b91c1c 100%); border-radius: 20px; padding: 20px; text-align: center;';
     
-    const wordEl = document.getElementById('word');
-    const input = document.getElementById('input');
-    let currentWord = '';
+    let correct = 0;
     
-    const newWord = () => {
-      currentWord = words[Math.floor(Math.random() * words.length)];
-      wordEl.textContent = currentWord.toUpperCase();
-      input.value = '';
-      input.focus();
+    const showChoice = () => {
+      if (!SimpleGames.isActive) return;
+      
+      const shuffled = [...countries].sort(() => Math.random() - 0.5);
+      const a = shuffled[0];
+      const b = shuffled[1];
+      const bigger = a.pop > b.pop ? a : b;
+      
+      const choicesDiv = document.getElementById('pop-choices');
+      choicesDiv.innerHTML = '';
+      choicesDiv.style.cssText = 'display: flex; flex-direction: column; gap: 15px; margin: 30px 0;';
+      
+      [a, b].forEach(country => {
+        const btn = document.createElement('button');
+        btn.innerHTML = `<span style="font-size: 2rem;">🌍</span><br><strong>${country.name}</strong>`;
+        btn.style.cssText = `
+          padding: 25px;
+          font-size: 1.2rem;
+          border: none;
+          border-radius: 15px;
+          background: rgba(255,255,255,0.15);
+          color: white;
+          cursor: pointer;
+        `;
+        
+        btn.onclick = () => {
+          if (country === bigger) {
+            correct++;
+            SimpleGames.addScore(25);
+            btn.style.background = '#22c55e';
+          } else {
+            SimpleGames.loseScore(20);
+            btn.style.background = '#ef4444';
+          }
+          document.getElementById('pop-correct').textContent = correct;
+          choicesDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+          setTimeout(showChoice, 1000);
+        };
+        choicesDiv.appendChild(btn);
+      });
     };
     
-    input.addEventListener('input', () => {
-      if (input.value.toLowerCase() === currentWord) {
-        SimpleGames.score += currentWord.length * 5;
-        SimpleGames.updateScore();
-        Sounds.correct();
-        newWord();
+    showChoice();
+  },
+
+  // ========================================
+  // GAME 6: REACTION TEST - Tap When Green
+  // ========================================
+  game6_ReactionTest: (zone) => {
+    zone.innerHTML = `
+      <div class="reaction-game">
+        <div class="reaction-circle" id="reaction-circle">WAIT...</div>
+        <div class="reaction-time" id="reaction-time">Best: ---ms</div>
+      </div>
+    `;
+    zone.style.cssText = 'background: linear-gradient(180deg, #1f2937 0%, #111827 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    
+    const circle = document.getElementById('reaction-circle');
+    circle.style.cssText = `
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: #ef4444;
+      margin: 40px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+    `;
+    
+    let canTap = false;
+    let startTime = 0;
+    let bestTime = Infinity;
+    let tooEarly = false;
+    
+    const startRound = () => {
+      if (!SimpleGames.isActive) return;
+      
+      canTap = false;
+      tooEarly = false;
+      circle.textContent = 'WAIT...';
+      circle.style.background = '#ef4444';
+      
+      const delay = 1000 + Math.random() * 3000;
+      
+      SimpleGames.timeouts.push(setTimeout(() => {
+        if (!SimpleGames.isActive || tooEarly) return;
+        circle.textContent = 'TAP!';
+        circle.style.background = '#22c55e';
+        canTap = true;
+        startTime = Date.now();
+        
+        // Timeout if too slow
+        SimpleGames.timeouts.push(setTimeout(() => {
+          if (canTap) {
+            circle.textContent = 'TOO SLOW!';
+            circle.style.background = '#f97316';
+            SimpleGames.loseScore(15);
+            canTap = false;
+            setTimeout(startRound, 1500);
+          }
+        }, 1000));
+      }, delay));
+    };
+    
+    circle.onclick = () => {
+      if (!SimpleGames.isActive) return;
+      
+      if (!canTap) {
+        tooEarly = true;
+        circle.textContent = 'TOO EARLY!';
+        circle.style.background = '#f97316';
+        SimpleGames.loseScore(20);
+        setTimeout(startRound, 1500);
+        return;
       }
+      
+      const reactionTime = Date.now() - startTime;
+      canTap = false;
+      
+      if (reactionTime < 300) {
+        SimpleGames.addScore(40);
+        circle.textContent = `${reactionTime}ms AMAZING!`;
+      } else if (reactionTime < 500) {
+        SimpleGames.addScore(25);
+        circle.textContent = `${reactionTime}ms GOOD!`;
+      } else {
+        SimpleGames.addScore(15);
+        circle.textContent = `${reactionTime}ms OK`;
+      }
+      
+      if (reactionTime < bestTime) {
+        bestTime = reactionTime;
+        document.getElementById('reaction-time').textContent = `Best: ${bestTime}ms`;
+      }
+      
+      setTimeout(startRound, 1500);
+    };
+    
+    startRound();
+  },
+
+  // ========================================
+  // GAME 7: MEMORY SEQUENCE - Simon Says
+  // ========================================
+  game7_MemorySequence: (zone) => {
+    zone.innerHTML = `
+      <div class="memory-game">
+        <div class="memory-status" id="memory-status">Watch carefully...</div>
+        <div class="memory-grid" id="memory-grid"></div>
+        <div class="memory-level">Level: <span id="memory-level">1</span></div>
+      </div>
+    `;
+    zone.style.cssText = 'background: linear-gradient(180deg, #4f46e5 0%, #3730a3 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    
+    const colors = ['#ef4444', '#22c55e', '#3b82f6', '#eab308'];
+    const grid = document.getElementById('memory-grid');
+    grid.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 15px; max-width: 250px; margin: 20px auto;';
+    
+    let sequence = [];
+    let playerIndex = 0;
+    let level = 1;
+    let showingPattern = false;
+    
+    // Create tiles
+    colors.forEach((color, i) => {
+      const tile = document.createElement('div');
+      tile.className = 'memory-tile';
+      tile.dataset.index = i;
+      tile.style.cssText = `
+        width: 100%;
+        aspect-ratio: 1;
+        background: ${color};
+        border-radius: 15px;
+        cursor: pointer;
+        opacity: 0.6;
+        transition: opacity 0.2s, transform 0.2s;
+      `;
+      
+      tile.onclick = () => {
+        if (showingPattern) return;
+        
+        tile.style.opacity = '1';
+        tile.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          tile.style.opacity = '0.6';
+          tile.style.transform = 'scale(1)';
+        }, 200);
+        
+        if (parseInt(tile.dataset.index) === sequence[playerIndex]) {
+          playerIndex++;
+          SimpleGames.addScore(15);
+          
+          if (playerIndex >= sequence.length) {
+            level++;
+            document.getElementById('memory-level').textContent = level;
+            document.getElementById('memory-status').textContent = 'Correct! Next level...';
+            SimpleGames.addScore(20);
+            setTimeout(showPattern, 1000);
+          }
+        } else {
+          SimpleGames.loseScore(25);
+          document.getElementById('memory-status').textContent = 'Wrong! Try again...';
+          level = Math.max(1, level - 1);
+          document.getElementById('memory-level').textContent = level;
+          setTimeout(showPattern, 1000);
+        }
+      };
+      
+      grid.appendChild(tile);
     });
+    
+    const tiles = grid.querySelectorAll('.memory-tile');
+    
+    const showPattern = () => {
+      if (!SimpleGames.isActive) return;
+      
+      showingPattern = true;
+      playerIndex = 0;
+      sequence = [];
+      
+      // Generate new sequence
+      for (let i = 0; i < level + 2; i++) {
+        sequence.push(Math.floor(Math.random() * 4));
+      }
+      
+      document.getElementById('memory-status').textContent = 'Watch carefully...';
+      
+      let i = 0;
+      const showNext = () => {
+        if (i >= sequence.length) {
+          showingPattern = false;
+          document.getElementById('memory-status').textContent = 'Your turn!';
+          return;
+        }
+        
+        const tile = tiles[sequence[i]];
+        tile.style.opacity = '1';
+        tile.style.transform = 'scale(1.1)';
+        
+        setTimeout(() => {
+          tile.style.opacity = '0.6';
+          tile.style.transform = 'scale(1)';
+          i++;
+          setTimeout(showNext, 300);
+        }, 500);
+      };
+      
+      setTimeout(showNext, 500);
+    };
+    
+    showPattern();
+  },
+
+  // ========================================
+  // GAME 8: WORD SCRAMBLE - Unscramble Words
+  // ========================================
+  game8_WordScramble: (zone) => {
+    const words = [
+      'PLANET', 'OCEAN', 'MOUNTAIN', 'COUNTRY', 'CAPITAL', 'ISLAND',
+      'DESERT', 'FOREST', 'RIVER', 'VALLEY', 'CLIMATE', 'EQUATOR',
+      'GLACIER', 'VOLCANO', 'CANYON', 'HARBOR', 'COAST', 'JUNGLE'
+    ];
+    
+    zone.innerHTML = `
+      <div class="scramble-game">
+        <div class="scramble-word" id="scramble-word">????</div>
+        <div class="scramble-hint" id="scramble-hint">Unscramble the geography word!</div>
+        <div class="scramble-letters" id="scramble-letters"></div>
+        <div class="scramble-answer" id="scramble-answer"></div>
+        <button class="scramble-clear" id="scramble-clear">Clear</button>
+      </div>
+    `;
+    zone.style.cssText = 'background: linear-gradient(180deg, #0d9488 0%, #0f766e 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    
+    let currentWord = '';
+    let currentAnswer = '';
+    
+    const newWord = () => {
+      if (!SimpleGames.isActive) return;
+      
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      currentAnswer = '';
+      
+      // Scramble the word
+      const scrambled = currentWord.split('').sort(() => Math.random() - 0.5).join('');
+      document.getElementById('scramble-word').textContent = scrambled;
+      document.getElementById('scramble-word').style.cssText = 'font-size: 2.5rem; font-weight: bold; letter-spacing: 8px; margin: 20px 0;';
+      
+      const lettersDiv = document.getElementById('scramble-letters');
+      lettersDiv.innerHTML = '';
+      lettersDiv.style.cssText = 'display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 20px 0;';
+      
+      scrambled.split('').forEach((letter, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = letter;
+        btn.dataset.index = i;
+        btn.style.cssText = `
+          width: 45px;
+          height: 45px;
+          font-size: 1.3rem;
+          font-weight: bold;
+          border: none;
+          border-radius: 10px;
+          background: white;
+          color: #0f766e;
+          cursor: pointer;
+        `;
+        
+        btn.onclick = () => {
+          if (btn.disabled) return;
+          currentAnswer += letter;
+          btn.disabled = true;
+          btn.style.opacity = '0.3';
+          document.getElementById('scramble-answer').textContent = currentAnswer;
+          
+          if (currentAnswer.length === currentWord.length) {
+            if (currentAnswer === currentWord) {
+              SimpleGames.addScore(35);
+              document.getElementById('scramble-hint').textContent = '✅ Correct!';
+            } else {
+              SimpleGames.loseScore(20);
+              document.getElementById('scramble-hint').textContent = `❌ It was: ${currentWord}`;
+            }
+            setTimeout(newWord, 1500);
+          }
+        };
+        lettersDiv.appendChild(btn);
+      });
+      
+      document.getElementById('scramble-answer').textContent = '';
+      document.getElementById('scramble-answer').style.cssText = 'font-size: 2rem; font-weight: bold; min-height: 50px; margin: 15px 0; letter-spacing: 5px;';
+      document.getElementById('scramble-hint').textContent = 'Unscramble the geography word!';
+    };
+    
+    document.getElementById('scramble-clear').style.cssText = 'padding: 10px 30px; font-size: 1rem; border: none; border-radius: 10px; background: rgba(255,255,255,0.2); color: white; cursor: pointer; margin-top: 10px;';
+    document.getElementById('scramble-clear').onclick = () => {
+      currentAnswer = '';
+      document.getElementById('scramble-answer').textContent = '';
+      document.getElementById('scramble-letters').querySelectorAll('button').forEach(b => {
+        b.disabled = false;
+        b.style.opacity = '1';
+      });
+    };
     
     newWord();
   },
 
-  // ========== VISUAL GAMES (51-60) ==========
-  startVisualGame: (gameId) => {
-    const area = SimpleGames.gameArea;
-    const shapes = ['🔴', '🟢', '🔵', '🟡', '🟣', '🟠'];
+  // ========================================
+  // GAME 9: TRUE/FALSE BLITZ - Quick Facts
+  // ========================================
+  game9_TrueFalseBlitz: (zone) => {
+    const facts = [
+      { statement: 'The Great Wall of China is visible from space', answer: false },
+      { statement: 'Russia is the largest country by area', answer: true },
+      { statement: 'The Amazon is the longest river in the world', answer: false },
+      { statement: 'Mount Everest is in Nepal and China', answer: true },
+      { statement: 'Australia is both a country and a continent', answer: true },
+      { statement: 'The Sahara is the largest desert in the world', answer: false },
+      { statement: 'There are 7 continents on Earth', answer: true },
+      { statement: 'Japan has more people than USA', answer: false },
+      { statement: 'The Pacific Ocean is the largest ocean', answer: true },
+      { statement: 'Africa has the most countries of any continent', answer: true },
+      { statement: 'Greenland is a country', answer: false },
+      { statement: 'The Nile flows through Egypt', answer: true },
+      { statement: 'Brazil is in North America', answer: false },
+      { statement: 'Iceland is covered mostly in ice', answer: false },
+      { statement: 'Canada has the longest coastline', answer: true },
+      { statement: 'The Dead Sea is actually a lake', answer: true },
+      { statement: 'Tokyo is the most populous city in the world', answer: true },
+      { statement: 'Antarctica is owned by Russia', answer: false }
+    ];
     
-    const container = document.createElement('div');
-    container.innerHTML = `
-      <div id="question" style="text-align:center;font-size:24px;margin-bottom:20px;">Find the different one!</div>
-      <div id="grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:280px;margin:0 auto;"></div>
+    let usedFacts = [];
+    
+    zone.innerHTML = `
+      <div class="tf-game">
+        <div class="tf-statement" id="tf-statement">Loading...</div>
+        <div class="tf-buttons">
+          <button class="tf-btn true" id="tf-true">✅ TRUE</button>
+          <button class="tf-btn false" id="tf-false">❌ FALSE</button>
+        </div>
+        <div class="tf-streak">Streak: <span id="tf-streak">0</span></div>
+      </div>
     `;
-    area.appendChild(container);
+    zone.style.cssText = 'background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%); border-radius: 20px; padding: 20px; text-align: center;';
     
-    const questionEl = document.getElementById('question');
-    const gridEl = document.getElementById('grid');
+    let streak = 0;
     
-    const generateRound = () => {
+    const showFact = () => {
       if (!SimpleGames.isActive) return;
-      gridEl.innerHTML = '';
       
-      const main = shapes[Math.floor(Math.random() * shapes.length)];
-      let odd = shapes[Math.floor(Math.random() * shapes.length)];
-      while (odd === main) odd = shapes[Math.floor(Math.random() * shapes.length)];
-      
-      const oddIndex = Math.floor(Math.random() * 9);
-      
-      for (let i = 0; i < 9; i++) {
-        const item = document.createElement('div');
-        item.textContent = i === oddIndex ? odd : main;
-        item.style.cssText = `
-          font-size: 48px;
-          aspect-ratio: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          background: rgba(255,255,255,0.05);
-          border-radius: 12px;
-          cursor: pointer;
-        `;
-        item.onclick = () => {
-          if (i === oddIndex) {
-            SimpleGames.score += 15;
-            item.style.background = 'rgba(34,197,94,0.3)';
-            Sounds.correct();
-          } else {
-            SimpleGames.score -= 5;
-            item.style.background = 'rgba(239,68,68,0.3)';
-            Sounds.wrong();
-          }
-          SimpleGames.updateScore();
-          setTimeout(generateRound, 500);
-        };
-        gridEl.appendChild(item);
+      let available = facts.filter((_, i) => !usedFacts.includes(i));
+      if (available.length === 0) {
+        usedFacts = [];
+        available = facts;
       }
+      
+      const idx = facts.indexOf(available[Math.floor(Math.random() * available.length)]);
+      usedFacts.push(idx);
+      const fact = facts[idx];
+      
+      document.getElementById('tf-statement').textContent = fact.statement;
+      document.getElementById('tf-statement').style.cssText = 'font-size: 1.3rem; padding: 25px; background: rgba(255,255,255,0.15); border-radius: 15px; margin-bottom: 25px; line-height: 1.5;';
+      
+      const trueBtn = document.getElementById('tf-true');
+      const falseBtn = document.getElementById('tf-false');
+      
+      trueBtn.disabled = false;
+      falseBtn.disabled = false;
+      trueBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 15px; background: #22c55e; color: white; cursor: pointer; margin: 10px;';
+      falseBtn.style.cssText = 'padding: 20px 40px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 15px; background: #ef4444; color: white; cursor: pointer; margin: 10px;';
+      
+      const handleAnswer = (userAnswer) => {
+        trueBtn.disabled = true;
+        falseBtn.disabled = true;
+        
+        if (userAnswer === fact.answer) {
+          streak++;
+          SimpleGames.addScore(20 + streak * 5);
+          (userAnswer ? trueBtn : falseBtn).style.transform = 'scale(1.1)';
+        } else {
+          streak = 0;
+          SimpleGames.loseScore(15);
+          (userAnswer ? trueBtn : falseBtn).style.opacity = '0.5';
+        }
+        
+        document.getElementById('tf-streak').textContent = streak;
+        setTimeout(showFact, 1200);
+      };
+      
+      trueBtn.onclick = () => handleAnswer(true);
+      falseBtn.onclick = () => handleAnswer(false);
     };
     
-    generateRound();
+    showFact();
+  },
+
+  // ========================================
+  // GAME 10: ULTIMATE QUIZ - Mixed Challenge
+  // ========================================
+  game10_UltimateQuiz: (zone) => {
+    const questions = [
+      { q: 'What is the capital of South Korea?', a: 'Seoul', wrong: ['Tokyo', 'Beijing', 'Bangkok'] },
+      { q: 'Which ocean is the deepest?', a: 'Pacific', wrong: ['Atlantic', 'Indian', 'Arctic'] },
+      { q: 'What is 15 × 8?', a: '120', wrong: ['115', '125', '110'] },
+      { q: 'Which country has the most time zones?', a: 'France', wrong: ['Russia', 'USA', 'China'] },
+      { q: 'What is the smallest continent?', a: 'Australia', wrong: ['Europe', 'Antarctica', 'South America'] },
+      { q: 'Which river is the longest?', a: 'Nile', wrong: ['Amazon', 'Yangtze', 'Mississippi'] },
+      { q: 'What is √144?', a: '12', wrong: ['11', '13', '14'] },
+      { q: 'How many countries are in the EU?', a: '27', wrong: ['28', '25', '30'] },
+      { q: 'Which mountain range includes Everest?', a: 'Himalayas', wrong: ['Alps', 'Andes', 'Rockies'] },
+      { q: 'What is 256 ÷ 16?', a: '16', wrong: ['15', '17', '14'] },
+      { q: 'Which is the largest African country?', a: 'Algeria', wrong: ['Nigeria', 'Egypt', 'South Africa'] },
+      { q: 'What is the deepest lake?', a: 'Baikal', wrong: ['Superior', 'Tanganyika', 'Victoria'] },
+      { q: 'How many states in the USA?', a: '50', wrong: ['48', '51', '52'] },
+      { q: 'Which planet is closest to the Sun?', a: 'Mercury', wrong: ['Venus', 'Mars', 'Earth'] },
+      { q: 'What is 17²?', a: '289', wrong: ['279', '299', '269'] }
+    ];
+    
+    let usedQ = [];
+    let correctCount = 0;
+    
+    zone.innerHTML = `
+      <div class="ultimate-game">
+        <div class="ultimate-header">🏆 ULTIMATE CHALLENGE 🏆</div>
+        <div class="ultimate-question" id="ultimate-q">Loading...</div>
+        <div class="ultimate-options" id="ultimate-opts"></div>
+        <div class="ultimate-progress">Correct: <span id="ultimate-score">0</span></div>
+      </div>
+    `;
+    zone.style.cssText = 'background: linear-gradient(180deg, #7c3aed 0%, #4c1d95 100%); border-radius: 20px; padding: 20px; text-align: center;';
+    
+    const askQuestion = () => {
+      if (!SimpleGames.isActive) return;
+      
+      let available = questions.filter((_, i) => !usedQ.includes(i));
+      if (available.length === 0) {
+        usedQ = [];
+        available = questions;
+      }
+      
+      const idx = questions.indexOf(available[Math.floor(Math.random() * available.length)]);
+      usedQ.push(idx);
+      const q = questions[idx];
+      
+      document.getElementById('ultimate-q').innerHTML = q.q;
+      document.getElementById('ultimate-q').style.cssText = 'font-size: 1.2rem; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; margin: 20px 0;';
+      
+      const options = [q.a, ...q.wrong].sort(() => Math.random() - 0.5);
+      const optsDiv = document.getElementById('ultimate-opts');
+      optsDiv.innerHTML = '';
+      optsDiv.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 10px;';
+      
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.style.cssText = `
+          padding: 15px;
+          font-size: 1rem;
+          font-weight: 600;
+          border: none;
+          border-radius: 12px;
+          background: rgba(255,255,255,0.15);
+          color: white;
+          cursor: pointer;
+        `;
+        
+        btn.onclick = () => {
+          if (opt === q.a) {
+            correctCount++;
+            SimpleGames.addScore(30);
+            btn.style.background = '#22c55e';
+          } else {
+            SimpleGames.loseScore(20);
+            btn.style.background = '#ef4444';
+            optsDiv.querySelectorAll('button').forEach(b => {
+              if (b.textContent === q.a) b.style.background = '#22c55e';
+            });
+          }
+          document.getElementById('ultimate-score').textContent = correctCount;
+          optsDiv.querySelectorAll('button').forEach(b => b.disabled = true);
+          setTimeout(askQuestion, 1200);
+        };
+        optsDiv.appendChild(btn);
+      });
+    };
+    
+    document.querySelector('.ultimate-header').style.cssText = 'font-size: 1.3rem; font-weight: bold; color: #fbbf24; margin-bottom: 15px;';
+    askQuestion();
+  },
+
+  // Generic game for IDs > 10
+  gameGeneric: (zone, game) => {
+    const mechanic = game.id % 5;
+    switch(mechanic) {
+      case 0: SimpleGames.game1_WorldCapitals(zone); break;
+      case 1: SimpleGames.game4_SpeedMath(zone); break;
+      case 2: SimpleGames.game9_TrueFalseBlitz(zone); break;
+      case 3: SimpleGames.game6_ReactionTest(zone); break;
+      case 4: SimpleGames.game7_MemorySequence(zone); break;
+    }
   }
 };
+
+// CSS Animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes flagWave {
+    0%, 100% { transform: rotate(-3deg); }
+    50% { transform: rotate(3deg); }
+  }
+  
+  .game-header-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 15px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .game-icon-display { font-size: 2rem; }
+  .game-title-display { font-size: 1.2rem; font-weight: 600; }
+  
+  .quiz-container, .flag-container, .sort-game, .math-game, .pop-game,
+  .reaction-game, .memory-game, .scramble-game, .tf-game, .ultimate-game {
+    padding: 15px;
+  }
+  
+  .quiz-progress, .math-streak, .pop-score, .memory-level, .tf-streak, .ultimate-progress {
+    margin-top: 15px;
+    font-size: 1rem;
+    color: rgba(255,255,255,0.8);
+  }
+  
+  .quiz-timer-bar {
+    height: 8px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    margin-top: 15px;
+    overflow: hidden;
+  }
+  
+  .score-popup {
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    pointer-events: none;
+    animation: popUp 0.8s ease-out forwards;
+    z-index: 100;
+  }
+  
+  .score-popup.positive { color: #22c55e; }
+  .score-popup.negative { color: #ef4444; }
+  
+  @keyframes popUp {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+  }
+`;
+document.head.appendChild(style);

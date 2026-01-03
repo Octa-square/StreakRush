@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="fireGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff4500"/>
+      <stop offset="50%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#ffd700"/>
+    </linearGradient>
+    <linearGradient id="innerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#fff3cd"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="192" height="192" rx="40" fill="#1a1a2e"/>
+  
+  <!-- Main flame -->
+  <g transform="translate(96, 96) scale(1.4) translate(-60, -60)">
+    <!-- Outer flame -->
+    <path d="M60 20 
+             C42 45, 30 55, 30 80 
+             C30 105, 42 120, 60 120 
+             C78 120, 90 105, 90 80 
+             C90 55, 78 45, 60 20" 
+          fill="url(#fireGrad)"/>
+    
+    <!-- Inner flame -->
+    <path d="M60 45 
+             C50 58, 45 70, 48 85 
+             C50 95, 55 100, 60 100 
+             C65 100, 70 95, 72 85 
+             C75 70, 70 58, 60 45" 
+          fill="url(#innerFlame)"/>
+    
+    <!-- Highlight -->
+    <ellipse cx="55" cy="60" rx="6" ry="12" fill="#fff9e6" opacity="0.7"/>
+  </g>
+</svg>
+

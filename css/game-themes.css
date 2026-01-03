@@ -1,885 +1,1367 @@
 /* ========================================
-   STREAKRUSH - UNIQUE GAME THEMES
-   Each game has completely distinct visuals
+   STREAKRUSH - 365 GAME CATEGORY THEMES
+   Each category has unique visual identity
    ======================================== */
 
 /* ========================================
-   INDIVIDUAL GAME THEMES (1-10 REFLEX)
-   Each game has its own unique look!
+   🎯 DISCIPLINE GAMES - RED/FIRE THEME
    ======================================== */
-
-/* Game 1: Tap Green - NEON GREEN MATRIX */
-.game-area[data-game="1"] {
-  background: linear-gradient(135deg, #001a0a 0%, #002915 50%, #001a0a 100%);
-}
-.game-area[data-game="1"]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
+.game-area[data-category="discipline"] {
   background: 
-    repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(0, 255, 136, 0.05) 30px, rgba(0, 255, 136, 0.05) 31px),
-    repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(0, 255, 136, 0.05) 30px, rgba(0, 255, 136, 0.05) 31px);
+    radial-gradient(circle at 30% 20%, rgba(239, 35, 60, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 80%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #1a0a0a 0%, #2d1515 50%, #1a0a0a 100%);
+}
+
+.game-area[data-category="discipline"] .game-header {
+  background: linear-gradient(135deg, rgba(239, 35, 60, 0.3), transparent);
+  border-bottom: 2px solid rgba(239, 35, 60, 0.5);
+}
+
+.game-area[data-category="discipline"] .game-icon {
+  text-shadow: 0 0 20px rgba(239, 35, 60, 0.8);
+}
+
+/* ========================================
+   🧠 MENTAL GAMES - BLUE/ELECTRIC THEME
+   ======================================== */
+.game-area[data-category="mental"] {
+  background: 
+    radial-gradient(circle at 50% 30%, rgba(67, 97, 238, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 20% 70%, rgba(114, 9, 183, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #0a0a1a 0%, #151530 50%, #0a0a1a 100%);
+}
+
+.game-area[data-category="mental"] .game-header {
+  background: linear-gradient(135deg, rgba(67, 97, 238, 0.3), transparent);
+  border-bottom: 2px solid rgba(67, 97, 238, 0.5);
+}
+
+.game-area[data-category="mental"] .game-icon {
+  text-shadow: 0 0 20px rgba(67, 97, 238, 0.8);
+}
+
+/* ========================================
+   💪 PHYSICAL GAMES - GREEN/ENERGY THEME
+   ======================================== */
+.game-area[data-category="physical"] {
+  background: 
+    radial-gradient(circle at 40% 40%, rgba(6, 214, 160, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 60%, rgba(0, 180, 120, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #0a1a0a 0%, #153020 50%, #0a1a0a 100%);
+}
+
+.game-area[data-category="physical"] .game-header {
+  background: linear-gradient(135deg, rgba(6, 214, 160, 0.3), transparent);
+  border-bottom: 2px solid rgba(6, 214, 160, 0.5);
+}
+
+.game-area[data-category="physical"] .game-icon {
+  text-shadow: 0 0 20px rgba(6, 214, 160, 0.8);
+}
+
+/* ========================================
+   🎨 CREATIVITY GAMES - PINK/VIBRANT THEME
+   ======================================== */
+.game-area[data-category="creativity"] {
+  background: 
+    radial-gradient(circle at 60% 20%, rgba(247, 37, 133, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 30% 80%, rgba(255, 214, 10, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #1a0a15 0%, #2d1525 50%, #1a0a15 100%);
+}
+
+.game-area[data-category="creativity"] .game-header {
+  background: linear-gradient(135deg, rgba(247, 37, 133, 0.3), transparent);
+  border-bottom: 2px solid rgba(247, 37, 133, 0.5);
+}
+
+.game-area[data-category="creativity"] .game-icon {
+  text-shadow: 0 0 20px rgba(247, 37, 133, 0.8);
+}
+
+/* ========================================
+   🤝 SOCIAL GAMES - YELLOW/WARM THEME
+   ======================================== */
+.game-area[data-category="social"] {
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(255, 214, 10, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 70% 30%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #1a150a 0%, #2d2515 50%, #1a150a 100%);
+}
+
+.game-area[data-category="social"] .game-header {
+  background: linear-gradient(135deg, rgba(255, 214, 10, 0.3), transparent);
+  border-bottom: 2px solid rgba(255, 214, 10, 0.5);
+}
+
+.game-area[data-category="social"] .game-icon {
+  text-shadow: 0 0 20px rgba(255, 214, 10, 0.8);
+}
+
+/* ========================================
+   🧩 REFLECTION GAMES - PURPLE/CALM THEME
+   ======================================== */
+.game-area[data-category="reflection"] {
+  background: 
+    radial-gradient(circle at 30% 60%, rgba(114, 9, 183, 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 70% 20%, rgba(67, 97, 238, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, #150a1a 0%, #251530 50%, #150a1a 100%);
+}
+
+.game-area[data-category="reflection"] .game-header {
+  background: linear-gradient(135deg, rgba(114, 9, 183, 0.3), transparent);
+  border-bottom: 2px solid rgba(114, 9, 183, 0.5);
+}
+
+.game-area[data-category="reflection"] .game-icon {
+  text-shadow: 0 0 20px rgba(114, 9, 183, 0.8);
+}
+
+/* ========================================
+   🧱 MASTERY GAMES - ORANGE/GOLD THEME
+   ======================================== */
+.game-area[data-category="mastery"] {
+  background: 
+    radial-gradient(circle at 50% 30%, rgba(255, 107, 53, 0.25) 0%, transparent 50%),
+    radial-gradient(circle at 30% 70%, rgba(255, 214, 10, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #1a0f0a 0%, #3d2515 50%, #1a0f0a 100%);
+}
+
+.game-area[data-category="mastery"] .game-header {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.4), rgba(255, 214, 10, 0.2));
+  border-bottom: 2px solid rgba(255, 107, 53, 0.6);
+}
+
+.game-area[data-category="mastery"] .game-icon {
+  text-shadow: 0 0 30px rgba(255, 214, 10, 1), 0 0 60px rgba(255, 107, 53, 0.8);
+}
+
+/* ========================================
+   GAME HEADER STYLES
+   ======================================== */
+.game-header {
+  padding: 15px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-radius: 15px;
+}
+
+.game-icon {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 10px;
+  animation: iconPulse 2s ease-in-out infinite;
+}
+
+.game-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* ========================================
+   GAME ZONE STYLES
+   ======================================== */
+.game-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ========================================
+   SPAWN ITEMS (Discipline Games)
+   ======================================== */
+.spawn-item {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  font-size: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  animation: spawnIn 0.3s ease-out;
+  transition: transform 0.1s;
+}
+
+.spawn-item.good {
+  background: radial-gradient(circle, rgba(6, 214, 160, 0.3), rgba(6, 214, 160, 0.1));
+  box-shadow: 0 0 20px rgba(6, 214, 160, 0.5);
+}
+
+.spawn-item.bad {
+  background: radial-gradient(circle, rgba(239, 35, 60, 0.3), rgba(239, 35, 60, 0.1));
+  box-shadow: 0 0 20px rgba(239, 35, 60, 0.5);
+}
+
+.spawn-item:active {
+  transform: scale(0.9);
+}
+
+.spawn-item.success {
+  animation: popSuccess 0.3s ease-out forwards;
+}
+
+.spawn-item.fail {
+  animation: popFail 0.3s ease-out forwards;
+}
+
+@keyframes spawnIn {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes popSuccess {
+  to { transform: scale(1.5); opacity: 0; }
+}
+
+@keyframes popFail {
+  to { transform: scale(0.5) rotate(180deg); opacity: 0; }
+}
+
+/* ========================================
+   SEQUENCE GAME (Discipline)
+   ======================================== */
+.sequence-display {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.seq-item {
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  transition: all 0.3s;
+}
+
+.seq-item.completed {
+  background: rgba(6, 214, 160, 0.4);
+  box-shadow: 0 0 15px rgba(6, 214, 160, 0.5);
+}
+
+.sequence-input {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.seq-button {
+  width: 60px;
+  height: 60px;
+  font-size: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.seq-button:active {
+  transform: scale(0.95);
+}
+
+.seq-button.used {
+  opacity: 0.3;
   pointer-events: none;
 }
-.game-area[data-game="1"] .target.good {
-  background: radial-gradient(circle, #00ff88 0%, #00cc66 100%);
-  box-shadow: 0 0 30px rgba(0, 255, 136, 0.8), 0 0 60px rgba(0, 255, 136, 0.4);
+
+.seq-button.wrong {
+  animation: shake 0.3s;
+  background: rgba(239, 35, 60, 0.4);
 }
 
-/* Game 2: Pop Bubbles - OCEAN BUBBLES */
-.game-area[data-game="2"] {
-  background: linear-gradient(180deg, #0077b6 0%, #00b4d8 50%, #90e0ef 100%);
+.sequence-hint {
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
 }
-.game-area[data-game="2"]::before {
-  content: '🫧';
-  font-size: 200px;
+
+/* ========================================
+   RESISTANCE GAME (Discipline)
+   ======================================== */
+.resistance-bar {
+  width: 100%;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.resistance-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #06d6a0, #4361ee);
+  transition: width 0.3s;
+  border-radius: 15px;
+}
+
+.resistance-zone {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.temptation {
   position: absolute;
-  bottom: -50px;
-  right: -50px;
-  opacity: 0.1;
-  pointer-events: none;
-}
-.game-area[data-game="2"] .bubble {
-  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, rgba(173,216,230,0.4) 40%, transparent 70%);
-  border: 2px solid rgba(255,255,255,0.5);
-  box-shadow: 0 0 20px rgba(255,255,255,0.3), inset 0 0 20px rgba(255,255,255,0.1);
+  font-size: 40px;
+  cursor: pointer;
+  animation: floatUp 3s linear forwards;
 }
 
-/* Game 3: Catch Stars - NIGHT SKY */
-.game-area[data-game="3"] {
-  background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+.temptation.resisted {
+  animation: resistPop 0.3s ease-out forwards;
 }
-.game-area[data-game="3"]::before {
-  content: '';
+
+.resistance-text {
+  margin-top: 15px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+}
+
+@keyframes floatUp {
+  from { top: 100%; }
+  to { top: -50px; }
+}
+
+@keyframes resistPop {
+  to { transform: scale(0); opacity: 0; }
+}
+
+/* ========================================
+   MEMORY GAME (Mental)
+   ======================================== */
+.memory-status {
+  font-size: 18px;
+  color: #4361ee;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 300px;
+}
+
+.memory-tile {
+  aspect-ratio: 1;
+  background: rgba(67, 97, 238, 0.2);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-height: 70px;
+}
+
+.memory-tile.highlight {
+  background: rgba(67, 97, 238, 0.8);
+  box-shadow: 0 0 30px rgba(67, 97, 238, 0.8);
+}
+
+.memory-tile.pressed {
+  background: rgba(255, 214, 10, 0.6);
+  transform: scale(0.95);
+}
+
+/* ========================================
+   MATH GAME (Mental)
+   ======================================== */
+.math-problem {
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 30px;
+  text-shadow: 0 0 20px rgba(67, 97, 238, 0.5);
+}
+
+.math-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.math-option {
+  padding: 20px;
+  font-size: 24px;
+  font-weight: 700;
+  border: none;
+  background: rgba(67, 97, 238, 0.3);
+  color: #fff;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.math-option:active {
+  transform: scale(0.95);
+}
+
+.math-option.correct {
+  background: rgba(6, 214, 160, 0.6);
+}
+
+.math-option.wrong {
+  background: rgba(239, 35, 60, 0.6);
+}
+
+/* ========================================
+   PATTERN GAME (Mental)
+   ======================================== */
+.pattern-display {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pattern-item {
+  width: 50px;
+  height: 50px;
+  background: rgba(114, 9, 183, 0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.pattern-item.unknown {
+  background: rgba(255, 255, 255, 0.2);
+  animation: pulse 1s infinite;
+}
+
+.pattern-question {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
+}
+
+.pattern-options {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pattern-btn {
+  width: 60px;
+  height: 60px;
+  font-size: 32px;
+  border: none;
+  background: rgba(114, 9, 183, 0.4);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pattern-btn.correct {
+  background: rgba(6, 214, 160, 0.6);
+}
+
+.pattern-btn.wrong {
+  background: rgba(239, 35, 60, 0.6);
+}
+
+/* ========================================
+   RHYTHM GAME (Physical)
+   ======================================== */
+.rhythm-track {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.rhythm-note {
   position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(2px 2px at 10% 20%, #fff, transparent),
-    radial-gradient(2px 2px at 30% 60%, #fff, transparent),
-    radial-gradient(1px 1px at 50% 30%, #fff, transparent),
-    radial-gradient(2px 2px at 70% 80%, #fff, transparent),
-    radial-gradient(1px 1px at 90% 40%, #fff, transparent);
-  animation: twinkle 2s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes twinkle { 0%,100%{opacity:0.5} 50%{opacity:1} }
-.game-area[data-game="3"] .star {
-  color: gold;
-  text-shadow: 0 0 20px gold, 0 0 40px orange;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #06d6a0, #4361ee);
+  border-radius: 50%;
+  top: -50px;
+  animation: fallDown 2s linear forwards;
 }
 
-/* Game 4: Whack Mole - FARM DIRT */
-.game-area[data-game="4"] {
-  background: linear-gradient(180deg, #87CEEB 0% 30%, #228B22 30% 40%, #654321 40% 100%);
-}
-.game-area[data-game="4"] .mole-hole {
-  background: radial-gradient(circle, #3d2314 0%, #1a0f08 100%);
-  border: 4px solid #654321;
-}
-.game-area[data-game="4"] .mole {
-  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+.rhythm-note.hit {
+  animation: hitNote 0.3s ease-out forwards;
 }
 
-/* Game 5: Tap Fast - HOT LAVA */
-.game-area[data-game="5"] {
-  background: linear-gradient(135deg, #ff4e00 0%, #ec9f05 50%, #ff4e00 100%);
-  animation: lavaFlow 3s ease-in-out infinite;
+.tap-zone {
+  padding: 20px;
 }
-@keyframes lavaFlow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
-.game-area[data-game="5"]::before {
-  content: '🔥';
-  font-size: 150px;
+
+.big-tap-button {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #06d6a0, #00b478);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(6, 214, 160, 0.4);
+  transition: all 0.1s;
+}
+
+.big-tap-button.pressed {
+  transform: scale(0.95);
+  box-shadow: 0 5px 15px rgba(6, 214, 160, 0.3);
+}
+
+.rhythm-combo {
+  font-size: 18px;
+  color: #ffd60a;
+  font-weight: 600;
+  margin-top: 15px;
+}
+
+@keyframes fallDown {
+  to { top: calc(100% + 50px); }
+}
+
+@keyframes hitNote {
+  to { transform: scale(2); opacity: 0; }
+}
+
+/* ========================================
+   ENDURANCE GAME (Physical)
+   ======================================== */
+.endurance-ring {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: rgba(6, 214, 160, 0.1);
+  border: 5px solid rgba(6, 214, 160, 0.3);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.endurance-fill {
   position: absolute;
-  top: 10px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, rgba(6, 214, 160, 0.8), rgba(6, 214, 160, 0.4));
+  transition: height 0.1s;
+}
+
+.endurance-text {
+  font-size: 36px;
+  font-weight: 700;
+  color: #fff;
+  z-index: 1;
+}
+
+.endurance-info {
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ========================================
+   BALANCE GAME (Physical)
+   ======================================== */
+.balance-bar {
+  width: 100%;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.balance-target {
+  position: absolute;
+  left: 45%;
+  width: 10%;
+  height: 100%;
+  background: rgba(6, 214, 160, 0.5);
+  border-radius: 10px;
+}
+
+.balance-ball {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border-radius: 50%;
+  top: -5px;
+  transform: translateX(-50%);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  transition: left 0.1s;
+}
+
+.balance-controls {
+  display: flex;
+  gap: 50px;
+}
+
+.balance-btn {
+  width: 80px;
+  height: 80px;
+  font-size: 36px;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.balance-score {
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ========================================
+   WORD CREATIVE GAME (Creativity)
+   ======================================== */
+.word-prompt {
+  font-size: 24px;
+  color: #f72585;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.word-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 15px;
+  font-size: 18px;
+  border: 2px solid rgba(247, 37, 133, 0.5);
+  background: rgba(247, 37, 133, 0.1);
+  border-radius: 15px;
+  color: #fff;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.word-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.word-submit {
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  background: linear-gradient(135deg, #f72585, #b5179e);
+  color: #fff;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.word-submit:active {
+  transform: scale(0.95);
+}
+
+.word-history {
+  margin-top: 20px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.word-entry {
+  padding: 8px 15px;
+  background: rgba(247, 37, 133, 0.2);
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ========================================
+   COLOR MOOD GAME (Creativity)
+   ======================================== */
+.mood-text {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 10px;
+}
+
+.mood-target {
+  font-size: 36px;
+  font-weight: 700;
+  color: #ffd60a;
+  margin-bottom: 25px;
+  text-shadow: 0 0 20px rgba(255, 214, 10, 0.5);
+}
+
+.color-palette {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.color-swatch {
+  width: 60px;
+  height: 60px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 3px solid transparent;
+}
+
+.color-swatch:active {
+  transform: scale(0.9);
+}
+
+.color-swatch.correct {
+  border-color: #06d6a0;
+  box-shadow: 0 0 15px rgba(6, 214, 160, 0.5);
+}
+
+.color-swatch.wrong {
+  border-color: #ef233c;
+  opacity: 0.5;
+}
+
+.color-selected {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.color-pick {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* ========================================
+   IDEA CATCH GAME (Creativity)
+   ======================================== */
+.idea-cloud {
+  flex: 1;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.falling-idea {
+  position: absolute;
+  font-size: 40px;
+  animation: ideaFall 3s linear forwards;
+}
+
+.falling-idea.good {
+  filter: drop-shadow(0 0 10px rgba(255, 214, 10, 0.8));
+}
+
+.falling-idea.bad {
+  filter: drop-shadow(0 0 10px rgba(239, 35, 60, 0.8));
+}
+
+.idea-catcher {
+  position: absolute;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  opacity: 0.15;
-  pointer-events: none;
+  font-size: 50px;
+  filter: drop-shadow(0 0 15px rgba(255, 214, 10, 0.8));
+  transition: left 0.1s;
 }
 
-/* Game 6: Avoid Red - DANGER ZONE */
-.game-area[data-game="6"] {
-  background: 
-    repeating-linear-gradient(45deg, #1a1a1a 0px, #1a1a1a 20px, #2a2a2a 20px, #2a2a2a 40px);
-}
-.game-area[data-game="6"]::before {
-  content: '⚠️';
-  font-size: 180px;
+.idea-hint {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.1;
-  pointer-events: none;
-}
-.game-area[data-game="6"] .target.fake {
-  background: radial-gradient(circle, #ff0044 0%, #990022 100%);
-  box-shadow: 0 0 30px rgba(255,0,68,0.8);
-  animation: dangerPulse 0.5s ease-in-out infinite;
-}
-@keyframes dangerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
-
-/* Game 7: Shrinking Dots - VOID SPACE */
-.game-area[data-game="7"] {
-  background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a15 100%);
-}
-.game-area[data-game="7"]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, transparent 0%, rgba(138,43,226,0.1) 100%);
-  pointer-events: none;
-}
-.game-area[data-game="7"] .shrinking-dot {
-  background: radial-gradient(circle, #8a2be2 0%, #4b0082 100%);
-  box-shadow: 0 0 25px rgba(138,43,226,0.8);
+  bottom: 80px;
+  width: 100%;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
 }
 
-/* Game 8: Moving Targets - ARCADE RETRO */
-.game-area[data-game="8"] {
-  background: #1a1a2e;
-  background-image: 
-    linear-gradient(rgba(255,0,255,0.1) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,0,255,0.1) 1px, transparent 1px);
-  background-size: 40px 40px;
+@keyframes ideaFall {
+  from { top: -50px; }
+  to { top: calc(100% + 50px); }
 }
-.game-area[data-game="8"]::before {
-  content: 'ARCADE';
+
+/* ========================================
+   RESPONSE GAME (Social)
+   ======================================== */
+.scenario-text {
+  font-size: 22px;
+  color: #ffd60a;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.scenario-question {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 20px;
+}
+
+.scenario-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
+}
+
+.scenario-btn {
+  padding: 15px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  background: rgba(255, 214, 10, 0.2);
+  color: #fff;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.scenario-btn:active {
+  transform: scale(0.98);
+}
+
+.scenario-btn.correct {
+  background: rgba(6, 214, 160, 0.5);
+}
+
+.scenario-btn.wrong {
+  background: rgba(239, 35, 60, 0.5);
+}
+
+/* ========================================
+   EMPATHY GAME (Social)
+   ======================================== */
+.emotion-face {
   font-size: 80px;
-  font-weight: bold;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: rgba(255,0,255,0.05);
-  pointer-events: none;
-  font-family: monospace;
-}
-.game-area[data-game="8"] .moving-target {
-  border: 3px solid #ff00ff;
-  box-shadow: 0 0 20px rgba(255,0,255,0.6);
+  margin-bottom: 15px;
 }
 
-/* Game 9: Color Match - RAINBOW BURST */
-.game-area[data-game="9"] {
-  background: linear-gradient(135deg, 
-    rgba(255,0,0,0.1) 0%, 
-    rgba(255,165,0,0.1) 20%, 
-    rgba(255,255,0,0.1) 40%, 
-    rgba(0,128,0,0.1) 60%, 
-    rgba(0,0,255,0.1) 80%, 
-    rgba(75,0,130,0.1) 100%),
-    #1a1a2e;
-}
-.game-area[data-game="9"]::before {
-  content: '🎨';
-  font-size: 200px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.08;
-  pointer-events: none;
+.emotion-name {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 25px;
 }
 
-/* Game 10: Quick Tap - ELECTRIC STORM */
-.game-area[data-game="10"] {
-  background: linear-gradient(180deg, #0d0d0d 0%, #1a1a3e 50%, #0d0d0d 100%);
-}
-.game-area[data-game="10"]::before {
-  content: '⚡';
-  font-size: 250px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.1;
-  animation: electricFlash 0.5s ease-in-out infinite;
-  pointer-events: none;
-}
-@keyframes electricFlash { 0%,100%{opacity:0.05} 50%{opacity:0.15} }
-.game-area[data-game="10"] .reaction-light {
-  box-shadow: 0 0 50px rgba(255,255,0,0.8), 0 0 100px rgba(255,255,0,0.4);
+.emotion-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  max-width: 280px;
 }
 
-/* ========================================
-   🎯 REFLEX GAMES - FALLBACK
-   For any reflex games not individually styled
-   ======================================== */
-.game-area[data-category="reflex"] {
-  background: 
-    linear-gradient(135deg, #001a0a 0%, #002915 50%, #001a0a 100%),
-    repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(0, 255, 136, 0.03) 50px, rgba(0, 255, 136, 0.03) 51px),
-    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0, 255, 136, 0.03) 50px, rgba(0, 255, 136, 0.03) 51px);
-}
-
-.game-area[data-category="reflex"]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
-  pointer-events: none;
-  animation: reflexPulse 3s ease-in-out infinite;
-}
-
-@keyframes reflexPulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
-}
-
-/* Reflex Targets - Neon glow */
-.game-area[data-category="reflex"] .target {
-  box-shadow: 
-    0 0 20px rgba(0, 255, 136, 0.8),
-    0 0 40px rgba(0, 255, 136, 0.4),
-    inset 0 0 20px rgba(255, 255, 255, 0.2);
-  border: 3px solid rgba(255, 255, 255, 0.3);
-}
-
-.game-area[data-category="reflex"] .target.good {
-  background: radial-gradient(circle, #00ff88 0%, #00cc66 50%, #009944 100%);
-  animation: neonFlicker 0.1s ease-in-out infinite alternate;
-}
-
-@keyframes neonFlicker {
-  from { filter: brightness(1); }
-  to { filter: brightness(1.2); }
-}
-
-.game-area[data-category="reflex"] .target.fake {
-  background: radial-gradient(circle, #ff0044 0%, #cc0033 50%, #990022 100%);
-  box-shadow: 
-    0 0 20px rgba(255, 0, 68, 0.8),
-    0 0 40px rgba(255, 0, 68, 0.4);
-}
-
-/* ========================================
-   🧠 MEMORY GAMES - MYSTICAL PURPLE
-   Deep purple with starfield/galaxy effect
-   ======================================== */
-.game-area[data-category="memory"] {
-  background: 
-    radial-gradient(ellipse at 20% 30%, rgba(147, 51, 234, 0.3) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 70%, rgba(236, 72, 153, 0.2) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(88, 28, 135, 0.8) 0%, #1a0a2e 100%);
-}
-
-.game-area[data-category="memory"]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: 
-    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.3), transparent),
-    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.6), transparent),
-    radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(1px 1px at 160px 120px, rgba(255, 255, 255, 0.5), transparent);
-  background-size: 200px 150px;
-  animation: starsTwinkle 4s ease-in-out infinite;
-  pointer-events: none;
-}
-
-@keyframes starsTwinkle {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-.game-area[data-category="memory"] .memory-game-container {
-  background: transparent;
-}
-
-.game-area[data-category="memory"] .memory-grid {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 20px;
-  padding: 24px;
-  border: 2px solid rgba(147, 51, 234, 0.3);
-  box-shadow: 0 0 40px rgba(147, 51, 234, 0.3);
-}
-
-.game-area[data-category="memory"] .memory-tile {
-  background: linear-gradient(145deg, #2d1b4e 0%, #1a0a2e 100%);
-  border: 2px solid rgba(147, 51, 234, 0.4);
+.emotion-btn {
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  background: rgba(255, 214, 10, 0.25);
+  color: #fff;
   border-radius: 12px;
-  box-shadow: 
-    inset 0 2px 4px rgba(255, 255, 255, 0.1),
-    0 4px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  cursor: pointer;
+  text-transform: capitalize;
+  transition: all 0.2s;
 }
 
-.game-area[data-category="memory"] .memory-tile:hover {
-  border-color: rgba(236, 72, 153, 0.6);
-  transform: translateY(-2px);
+.emotion-btn.correct {
+  background: rgba(6, 214, 160, 0.5);
 }
 
-.game-area[data-category="memory"] .memory-status {
-  color: #e879f9;
-  text-shadow: 0 0 10px rgba(232, 121, 249, 0.5);
-  font-size: 1.3rem;
+.emotion-btn.wrong {
+  background: rgba(239, 35, 60, 0.5);
 }
 
 /* ========================================
-   ➕ MATH GAMES - DIGITAL BLUE
-   Tech/calculator style with matrix effect
+   CONNECTION GAME (Social)
    ======================================== */
-.game-area[data-category="math"] {
-  background: 
-    linear-gradient(180deg, #0a1628 0%, #0f2847 50%, #0a1628 100%);
-  overflow: hidden;
+.connection-prompt {
+  font-size: 18px;
+  color: #ffd60a;
+  margin-bottom: 15px;
 }
 
-.game-area[data-category="math"]::before {
-  content: '+ - × ÷ = % √ π ∑ ∞';
+.connection-people {
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+.floating-person {
   position: absolute;
-  inset: 0;
-  font-family: 'Courier New', monospace;
+  font-size: 50px;
+  cursor: pointer;
+  animation: floatPerson 4s ease-in-out infinite;
+  transition: all 0.2s;
+}
+
+.floating-person.connected {
+  animation: connectPop 0.5s ease-out forwards;
+}
+
+.connection-count {
+  font-size: 18px;
+  color: #06d6a0;
+  font-weight: 600;
+}
+
+@keyframes floatPerson {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes connectPop {
+  50% { transform: scale(1.3); }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+/* ========================================
+   VALUES GAME (Reflection)
+   ======================================== */
+.values-prompt {
+  font-size: 20px;
+  color: #7209b7;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+.values-bins {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.value-bin {
+  padding: 15px 30px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.value-bin.keep {
+  background: rgba(6, 214, 160, 0.3);
+  border: 2px solid rgba(6, 214, 160, 0.5);
+}
+
+.value-bin.reject {
+  background: rgba(239, 35, 60, 0.3);
+  border: 2px solid rgba(239, 35, 60, 0.5);
+}
+
+.value-bin:active {
+  transform: scale(0.95);
+}
+
+.values-cards {
+  display: flex;
+  justify-content: center;
+}
+
+.value-card {
+  padding: 25px 50px;
   font-size: 24px;
-  color: rgba(59, 130, 246, 0.08);
-  letter-spacing: 20px;
-  line-height: 50px;
-  word-spacing: 30px;
-  overflow: hidden;
-  animation: mathScroll 20s linear infinite;
-  pointer-events: none;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(114, 9, 183, 0.3);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(114, 9, 183, 0.3);
+  transition: all 0.3s;
 }
 
-@keyframes mathScroll {
-  from { transform: translateY(0); }
-  to { transform: translateY(-50%); }
+.value-card.correct {
+  background: rgba(6, 214, 160, 0.4);
 }
 
-.game-area[data-category="math"] .math-game-container {
-  background: rgba(15, 40, 71, 0.8);
-  border-radius: 24px;
-  padding: 32px;
-  border: 2px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 
-    0 0 50px rgba(59, 130, 246, 0.2),
-    inset 0 0 30px rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(10px);
-  max-width: 400px;
-  margin: auto;
+.value-card.wrong {
+  background: rgba(239, 35, 60, 0.4);
 }
 
-.game-area[data-category="math"] .math-problem {
-  font-family: 'Orbitron', 'Courier New', monospace;
-  color: #60a5fa;
-  text-shadow: 
-    0 0 10px rgba(96, 165, 250, 0.8),
-    0 0 20px rgba(96, 165, 250, 0.4);
-  font-size: 2.5rem;
-  letter-spacing: 4px;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.4);
+/* ========================================
+   GROWTH GAME (Reflection)
+   ======================================== */
+.growth-ladder {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 25px;
+}
+
+.ladder-step {
+  width: 200px;
+  padding: 8px;
+  background: rgba(114, 9, 183, 0.2);
+  text-align: center;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.ladder-step.active {
+  background: rgba(114, 9, 183, 0.6);
+  box-shadow: 0 0 15px rgba(114, 9, 183, 0.5);
+}
+
+.growth-question {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.growth-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.growth-btn {
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  background: rgba(114, 9, 183, 0.3);
+  color: #fff;
   border-radius: 12px;
-  margin-bottom: 32px;
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.game-area[data-category="math"] .math-option {
-  background: linear-gradient(145deg, #1e3a5f 0%, #0f2847 100%);
-  border: 2px solid rgba(59, 130, 246, 0.4);
-  color: #93c5fd;
-  font-family: 'Orbitron', monospace;
-  transition: all 0.2s ease;
+.growth-btn.correct {
+  background: rgba(6, 214, 160, 0.5);
 }
 
-.game-area[data-category="math"] .math-option:hover {
-  border-color: #3b82f6;
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-  transform: translateY(-2px);
+.growth-btn.wrong {
+  background: rgba(239, 35, 60, 0.5);
 }
 
-.game-area[data-category="math"] .math-option.correct {
-  background: linear-gradient(145deg, #065f46 0%, #047857 100%);
-  border-color: #10b981;
-  box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+/* ========================================
+   ALIGNMENT GAME (Reflection)
+   ======================================== */
+.align-compass {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(114, 9, 183, 0.2);
+  border: 4px solid rgba(114, 9, 183, 0.5);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
 }
 
-.game-area[data-category="math"] .math-option.wrong {
-  background: linear-gradient(145deg, #7f1d1d 0%, #991b1b 100%);
-  border-color: #ef4444;
-  animation: mathWrong 0.3s ease;
+.compass-needle {
+  position: absolute;
+  width: 4px;
+  height: 60px;
+  background: linear-gradient(180deg, #06d6a0, #ef233c);
+  border-radius: 2px;
+  transform-origin: bottom center;
+  bottom: 50%;
+  transition: transform 0.3s;
 }
 
-@keyframes mathWrong {
+.compass-center {
+  font-size: 30px;
+  z-index: 1;
+}
+
+.align-choices {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.align-btn {
+  padding: 15px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  background: rgba(114, 9, 183, 0.3);
+  color: #fff;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.align-btn.correct {
+  background: rgba(6, 214, 160, 0.5);
+}
+
+.align-btn.wrong {
+  background: rgba(239, 35, 60, 0.5);
+}
+
+.align-hint {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+}
+
+/* ========================================
+   IDENTITY GAME (Mastery)
+   ======================================== */
+.identity-mirror {
+  font-size: 80px;
+  margin-bottom: 15px;
+  animation: mirrorPulse 2s ease-in-out infinite;
+}
+
+.identity-question {
+  font-size: 24px;
+  color: #ffd60a;
+  font-weight: 700;
+  margin-bottom: 25px;
+}
+
+.identity-choices {
+  display: flex;
+  gap: 20px;
+}
+
+.identity-btn {
+  padding: 20px 35px;
+  font-size: 18px;
+  font-weight: 700;
+  border: none;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.4), rgba(255, 214, 10, 0.3));
+  color: #fff;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 5px 20px rgba(255, 107, 53, 0.3);
+}
+
+.identity-btn:active {
+  transform: scale(0.95);
+}
+
+.identity-btn.correct {
+  background: linear-gradient(135deg, rgba(6, 214, 160, 0.6), rgba(6, 214, 160, 0.4));
+}
+
+.identity-btn.wrong {
+  background: linear-gradient(135deg, rgba(239, 35, 60, 0.6), rgba(239, 35, 60, 0.4));
+}
+
+.identity-score {
+  margin-top: 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes mirrorPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+}
+
+/* ========================================
+   CONSISTENCY GAME (Mastery)
+   ======================================== */
+.consistency-streak {
+  font-size: 24px;
+  color: #ffd60a;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.consistency-pattern {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+  transition: opacity 0.3s;
+}
+
+.consistency-pattern.hidden {
+  opacity: 0.1;
+}
+
+.pattern-sym {
+  font-size: 40px;
+}
+
+.consistency-input {
+  display: flex;
+  gap: 15px;
+}
+
+.con-btn {
+  width: 70px;
+  height: 70px;
+  font-size: 32px;
+  border: none;
+  background: rgba(255, 107, 53, 0.3);
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.con-btn.pressed {
+  background: rgba(255, 214, 10, 0.5);
+  transform: scale(0.95);
+}
+
+/* ========================================
+   COMEBACK GAME (Mastery)
+   ======================================== */
+.comeback-title {
+  font-size: 28px;
+  color: #ff6b35;
+  font-weight: 700;
+  margin-bottom: 15px;
+  text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+}
+
+.comeback-bar {
+  width: 100%;
+  height: 25px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.comeback-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35, #ffd60a);
+  transition: width 0.3s;
+}
+
+.comeback-zone {
+  flex: 1;
+  width: 100%;
+  position: relative;
+}
+
+.comeback-boost {
+  position: absolute;
+  font-size: 45px;
+  cursor: pointer;
+  animation: boostPulse 0.5s ease-in-out infinite;
+}
+
+.comeback-boost.collected {
+  animation: collectBoost 0.3s ease-out forwards;
+}
+
+.comeback-hint {
+  margin-top: 15px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes boostPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+@keyframes collectBoost {
+  to { transform: scale(2); opacity: 0; }
+}
+
+/* ========================================
+   SCORE POPUP
+   ======================================== */
+.score-popup {
+  position: absolute;
+  font-size: 28px;
+  font-weight: 700;
+  pointer-events: none;
+  animation: popUp 0.8s ease-out forwards;
+  z-index: 100;
+}
+
+.score-popup.positive {
+  color: #06d6a0;
+  text-shadow: 0 0 10px rgba(6, 214, 160, 0.8);
+}
+
+.score-popup.negative {
+  color: #ef233c;
+  text-shadow: 0 0 10px rgba(239, 35, 60, 0.8);
+}
+
+@keyframes popUp {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-50px); opacity: 0; }
+}
+
+/* ========================================
+   GENERAL ANIMATIONS
+   ======================================== */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
+}
+
+@keyframes shake {
   0%, 100% { transform: translateX(0); }
   25% { transform: translateX(-5px); }
   75% { transform: translateX(5px); }
 }
 
 /* ========================================
-   ⚡ REACTION GAMES - ELECTRIC YELLOW
-   Lightning/energy with spark effects
+   CATEGORY CARD COLORS (for grid)
    ======================================== */
-.game-area[data-category="reaction"] {
-  background: 
-    radial-gradient(ellipse at 50% 0%, rgba(250, 204, 21, 0.2) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 100%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
-    linear-gradient(180deg, #1a1500 0%, #2d2400 50%, #1a1500 100%);
+.game-card[data-category="discipline"] {
+  background: linear-gradient(135deg, rgba(239, 35, 60, 0.3), rgba(255, 107, 53, 0.2));
+  border-color: rgba(239, 35, 60, 0.4);
 }
 
-.game-area[data-category="reaction"]::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  width: 2px;
-  height: 100%;
-  background: linear-gradient(180deg, transparent, rgba(250, 204, 21, 0.5), transparent);
-  animation: lightningPulse 2s ease-in-out infinite;
-  pointer-events: none;
+.game-card[data-category="mental"] {
+  background: linear-gradient(135deg, rgba(67, 97, 238, 0.3), rgba(114, 9, 183, 0.2));
+  border-color: rgba(67, 97, 238, 0.4);
 }
 
-@keyframes lightningPulse {
-  0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleY(1); }
-  50% { opacity: 0.8; transform: translateX(-50%) scaleY(1.02); }
+.game-card[data-category="physical"] {
+  background: linear-gradient(135deg, rgba(6, 214, 160, 0.3), rgba(0, 180, 120, 0.2));
+  border-color: rgba(6, 214, 160, 0.4);
 }
 
-.game-area[data-category="reaction"] .reaction-container,
-.game-area[data-category="reaction"] .speed-tap-container,
-.game-area[data-category="reaction"] .swipe-container {
-  position: relative;
-  z-index: 1;
+.game-card[data-category="creativity"] {
+  background: linear-gradient(135deg, rgba(247, 37, 133, 0.3), rgba(255, 214, 10, 0.2));
+  border-color: rgba(247, 37, 133, 0.4);
 }
 
-.game-area[data-category="reaction"] .reaction-light {
-  box-shadow: 
-    0 0 30px rgba(250, 204, 21, 0.6),
-    0 0 60px rgba(250, 204, 21, 0.3),
-    inset 0 0 30px rgba(255, 255, 255, 0.1);
-  border: 4px solid rgba(255, 255, 255, 0.2);
-  font-weight: 900;
-  letter-spacing: 3px;
+.game-card[data-category="social"] {
+  background: linear-gradient(135deg, rgba(255, 214, 10, 0.3), rgba(255, 107, 53, 0.2));
+  border-color: rgba(255, 214, 10, 0.4);
 }
 
-.game-area[data-category="reaction"] .big-tap-button {
-  background: radial-gradient(circle, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
-  box-shadow: 
-    0 0 40px rgba(251, 191, 36, 0.7),
-    0 0 80px rgba(251, 191, 36, 0.4),
-    inset 0 -10px 20px rgba(0, 0, 0, 0.2),
-    inset 0 10px 20px rgba(255, 255, 255, 0.2);
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  animation: electricPulse 1.5s ease-in-out infinite;
+.game-card[data-category="reflection"] {
+  background: linear-gradient(135deg, rgba(114, 9, 183, 0.3), rgba(67, 97, 238, 0.2));
+  border-color: rgba(114, 9, 183, 0.4);
 }
 
-@keyframes electricPulse {
-  0%, 100% { 
-    box-shadow: 
-      0 0 40px rgba(251, 191, 36, 0.7),
-      0 0 80px rgba(251, 191, 36, 0.4);
-  }
-  50% { 
-    box-shadow: 
-      0 0 60px rgba(251, 191, 36, 0.9),
-      0 0 100px rgba(251, 191, 36, 0.6);
-  }
+.game-card[data-category="mastery"] {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.4), rgba(255, 214, 10, 0.3));
+  border-color: rgba(255, 214, 10, 0.5);
+  box-shadow: 0 0 20px rgba(255, 214, 10, 0.3);
 }
-
-.game-area[data-category="reaction"] .tap-counter {
-  color: #fbbf24;
-  text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
-}
-
-.game-area[data-category="reaction"] .swipe-instruction {
-  color: #fcd34d;
-  text-shadow: 0 0 15px rgba(252, 211, 77, 0.7);
-  font-size: 2.5rem;
-}
-
-.game-area[data-category="reaction"] .swipe-area {
-  background: linear-gradient(145deg, #3d3000 0%, #2d2400 100%);
-  border: 3px solid rgba(250, 204, 21, 0.4);
-  box-shadow: 0 0 30px rgba(250, 204, 21, 0.2);
-}
-
-/* ========================================
-   📝 WORDS GAMES - TYPEWRITER CYAN
-   Vintage paper/ink aesthetic
-   ======================================== */
-.game-area[data-category="words"] {
-  background: 
-    linear-gradient(180deg, #0c1a24 0%, #0f2937 50%, #0c1a24 100%);
-  position: relative;
-}
-
-.game-area[data-category="words"]::before {
-  content: '';
-  position: absolute;
-  inset: 20px;
-  background: 
-    repeating-linear-gradient(
-      transparent,
-      transparent 31px,
-      rgba(34, 211, 238, 0.05) 31px,
-      rgba(34, 211, 238, 0.05) 32px
-    );
-  pointer-events: none;
-  border-radius: 8px;
-}
-
-.game-area[data-category="words"] .typing-game-container,
-.game-area[data-category="words"] .word-game-container {
-  background: rgba(15, 41, 55, 0.9);
-  border-radius: 20px;
-  padding: 32px;
-  border: 2px solid rgba(34, 211, 238, 0.2);
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  max-width: 400px;
-  margin: auto;
-}
-
-.game-area[data-category="words"] .target-word {
-  font-family: 'Courier New', 'Lucida Console', monospace;
-  color: #22d3ee;
-  text-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
-  font-size: 2.5rem;
-  letter-spacing: 8px;
-  padding: 24px;
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: 12px;
-  border-left: 4px solid #22d3ee;
-}
-
-.game-area[data-category="words"] .typing-input {
-  font-family: 'Courier New', monospace;
-  background: rgba(0, 0, 0, 0.5);
-  border: 2px solid rgba(34, 211, 238, 0.4);
-  color: #a5f3fc;
-  font-size: 1.8rem;
-  letter-spacing: 4px;
-}
-
-.game-area[data-category="words"] .typing-input:focus {
-  border-color: #22d3ee;
-  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
-}
-
-.game-area[data-category="words"] .word-question {
-  color: #67e8f9;
-  font-family: 'Courier New', monospace;
-  font-size: 1.4rem;
-  letter-spacing: 1px;
-}
-
-.game-area[data-category="words"] .word-option {
-  font-family: 'Courier New', monospace;
-  background: linear-gradient(145deg, #164e63 0%, #0e3a4a 100%);
-  border: 2px solid rgba(34, 211, 238, 0.3);
-  color: #a5f3fc;
-  letter-spacing: 1px;
-}
-
-.game-area[data-category="words"] .word-option:hover {
-  border-color: #22d3ee;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.2);
-}
-
-/* ========================================
-   👁️ VISUAL GAMES - PSYCHEDELIC PINK
-   Abstract patterns, optical illusion feel
-   ======================================== */
-.game-area[data-category="visual"] {
-  background: 
-    radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 40%),
-    radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.3) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.1) 0%, transparent 60%),
-    linear-gradient(135deg, #2d0a2e 0%, #1a0a2e 50%, #2d0a2e 100%);
-  overflow: hidden;
-}
-
-.game-area[data-category="visual"]::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: 
-    conic-gradient(from 0deg at 50% 50%, 
-      transparent 0deg, 
-      rgba(236, 72, 153, 0.05) 60deg, 
-      transparent 120deg,
-      rgba(168, 85, 247, 0.05) 180deg,
-      transparent 240deg,
-      rgba(244, 114, 182, 0.05) 300deg,
-      transparent 360deg
-    );
-  animation: visualRotate 30s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes visualRotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.game-area[data-category="visual"] .visual-game-container {
-  position: relative;
-  z-index: 1;
-  background: rgba(45, 10, 46, 0.7);
-  border-radius: 24px;
-  padding: 32px;
-  border: 2px solid rgba(236, 72, 153, 0.3);
-  backdrop-filter: blur(10px);
-  max-width: 400px;
-  margin: auto;
-}
-
-.game-area[data-category="visual"] .visual-question {
-  color: #f472b6;
-  text-shadow: 0 0 15px rgba(244, 114, 182, 0.6);
-  font-size: 1.4rem;
-  letter-spacing: 2px;
-}
-
-.game-area[data-category="visual"] .visual-grid {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 16px;
-  padding: 20px;
-  gap: 12px;
-}
-
-.game-area[data-category="visual"] .visual-item {
-  background: linear-gradient(145deg, #4a1a4e 0%, #2d0a2e 100%);
-  border: 2px solid rgba(236, 72, 153, 0.3);
-  border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.game-area[data-category="visual"] .visual-item:hover {
-  transform: scale(1.05) rotate(2deg);
-  border-color: #ec4899;
-  box-shadow: 0 0 25px rgba(236, 72, 153, 0.4);
-}
-
-.game-area[data-category="visual"] .visual-item.correct {
-  background: linear-gradient(145deg, #065f46 0%, #047857 100%);
-  border-color: #10b981;
-  animation: visualCorrect 0.5s ease;
-}
-
-@keyframes visualCorrect {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.2) rotate(10deg); }
-  100% { transform: scale(1); }
-}
-
-.game-area[data-category="visual"] .visual-option {
-  background: linear-gradient(145deg, #581c87 0%, #3b0764 100%);
-  border: 2px solid rgba(168, 85, 247, 0.4);
-  color: #e9d5ff;
-}
-
-/* ========================================
-   GAME-SPECIFIC UNIQUE ELEMENTS
-   Individual games have distinct feels
-   ======================================== */
-
-/* Pop Bubbles - Underwater theme */
-.game-area[data-game="2"] {
-  background: 
-    linear-gradient(180deg, #001a33 0%, #003366 50%, #004080 100%) !important;
-}
-
-.game-area[data-game="2"] .target {
-  background: radial-gradient(circle at 30% 30%, 
-    rgba(255, 255, 255, 0.9) 0%, 
-    rgba(135, 206, 250, 0.8) 30%, 
-    rgba(70, 130, 180, 0.6) 60%, 
-    rgba(30, 80, 150, 0.4) 100%) !important;
-  border: 2px solid rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 
-    inset -10px -10px 20px rgba(0, 0, 0, 0.1),
-    inset 10px 10px 20px rgba(255, 255, 255, 0.4),
-    0 0 30px rgba(135, 206, 250, 0.5) !important;
-  animation: bubbleFloat 3s ease-in-out infinite !important;
-}
-
-@keyframes bubbleFloat {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-5px) scale(1.02); }
-}
-
-/* Catch Stars - Night sky */
-.game-area[data-game="3"] {
-  background: 
-    radial-gradient(ellipse at 50% 0%, rgba(50, 50, 100, 0.5) 0%, transparent 50%),
-    linear-gradient(180deg, #0a0a1a 0%, #1a1a3a 100%) !important;
-}
-
-.game-area[data-game="3"] .target {
-  background: radial-gradient(circle, #ffd700 0%, #ffaa00 50%, #ff8800 100%) !important;
-  box-shadow: 
-    0 0 20px rgba(255, 215, 0, 0.8),
-    0 0 40px rgba(255, 215, 0, 0.4),
-    0 0 60px rgba(255, 215, 0, 0.2) !important;
-  animation: starSparkle 0.5s ease-in-out infinite alternate !important;
-}
-
-@keyframes starSparkle {
-  from { filter: brightness(1); }
-  to { filter: brightness(1.3); }
-}
-
-/* Whack Mole - Garden theme */
-.game-area[data-game="4"] {
-  background: 
-    linear-gradient(180deg, #2d5a27 0%, #1a3d15 50%, #0f2d0a 100%) !important;
-}
-
-.game-area[data-game="4"]::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 40%;
-  background: 
-    radial-gradient(ellipse at 50% 100%, rgba(139, 90, 43, 0.8) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.game-area[data-game="4"] .target {
-  background: radial-gradient(circle at 50% 30%, #8b6914 0%, #6b4f10 50%, #4a370a 100%) !important;
-  border-radius: 40% 40% 50% 50% !important;
-  animation: molePopup 0.2s ease-out !important;
-}
-
-@keyframes molePopup {
-  from { transform: translateY(50px) scale(0.5); }
-  to { transform: translateY(0) scale(1); }
-}
-
-/* Speed Tap - Arcade feel */
-.game-area[data-game="33"] .big-tap-button {
-  background: 
-    radial-gradient(circle at 50% 30%, #ff4444 0%, #cc0000 50%, #880000 100%) !important;
-  font-size: 2.5rem !important;
-}
-
-/* Green Light - Traffic light */
-.game-area[data-game="31"] {
-  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%) !important;
-}
-
-.game-area[data-game="31"] .reaction-light {
-  border: 8px solid #333 !important;
-  box-shadow: 
-    inset 0 0 30px rgba(0, 0, 0, 0.5),
-    0 10px 30px rgba(0, 0, 0, 0.5) !important;
-}
-
-/* Copy Pattern - Simon Says style */
-.game-area[data-game="11"] .memory-grid {
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 16px !important;
-  max-width: 280px !important;
-}
-
-.game-area[data-game="11"] .memory-tile {
-  border-radius: 50% !important;
-  aspect-ratio: 1 !important;
-}
-
-/* Find Pairs - Card game */
-.game-area[data-game="12"] .memory-tile {
-  background: 
-    linear-gradient(145deg, #1e3a5f 0%, #0f2847 100%),
-    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px) !important;
-  border-radius: 8px !important;
-}
-
-/* Odd One Out - Spotlight effect */
-.game-area[data-game="51"]::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 50% 40%, transparent 30%, rgba(0, 0, 0, 0.4) 100%);
-  pointer-events: none;
-}
-
-/* ========================================
-   SCORE POPUPS - Category themed
-   ======================================== */
-.game-area[data-category="reflex"] .score-popup.positive {
-  color: #00ff88;
-  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
-}
-
-.game-area[data-category="memory"] .score-popup.positive {
-  color: #e879f9;
-  text-shadow: 0 0 10px rgba(232, 121, 249, 0.8);
-}
-
-.game-area[data-category="math"] .score-popup.positive {
-  color: #60a5fa;
-  text-shadow: 0 0 10px rgba(96, 165, 250, 0.8);
-}
-
-.game-area[data-category="reaction"] .score-popup.positive {
-  color: #fbbf24;
-  text-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
-}
-
-.game-area[data-category="words"] .score-popup.positive {
-  color: #22d3ee;
-  text-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
-}
-
-.game-area[data-category="visual"] .score-popup.positive {
-  color: #f472b6;
-  text-shadow: 0 0 10px rgba(244, 114, 182, 0.8);
-}
-
-/* ========================================
-   GAME HEADER - Category themed
-   ======================================== */
-.game-header[data-category="reflex"] {
-  background: linear-gradient(180deg, #001a0a 0%, rgba(0, 26, 10, 0.8) 100%);
-  border-bottom: 2px solid rgba(0, 255, 136, 0.3);
-}
-
-.game-header[data-category="memory"] {
-  background: linear-gradient(180deg, #1a0a2e 0%, rgba(26, 10, 46, 0.8) 100%);
-  border-bottom: 2px solid rgba(147, 51, 234, 0.3);
-}
-
-.game-header[data-category="math"] {
-  background: linear-gradient(180deg, #0a1628 0%, rgba(10, 22, 40, 0.8) 100%);
-  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
-}
-
-.game-header[data-category="reaction"] {
-  background: linear-gradient(180deg, #1a1500 0%, rgba(26, 21, 0, 0.8) 100%);
-  border-bottom: 2px solid rgba(250, 204, 21, 0.3);
-}
-
-.game-header[data-category="words"] {
-  background: linear-gradient(180deg, #0c1a24 0%, rgba(12, 26, 36, 0.8) 100%);
-  border-bottom: 2px solid rgba(34, 211, 238, 0.3);
-}
-
-.game-header[data-category="visual"] {
-  background: linear-gradient(180deg, #2d0a2e 0%, rgba(45, 10, 46, 0.8) 100%);
-  border-bottom: 2px solid rgba(236, 72, 153, 0.3);
-}
-
-/* Timer colors per category */
-.game-header[data-category="reflex"] .timer-value { color: #00ff88; }
-.game-header[data-category="memory"] .timer-value { color: #e879f9; }
-.game-header[data-category="math"] .timer-value { color: #60a5fa; }
-.game-header[data-category="reaction"] .timer-value { color: #fbbf24; }
-.game-header[data-category="words"] .timer-value { color: #22d3ee; }
-.game-header[data-category="visual"] .timer-value { color: #f472b6; }
-
-/* Score colors per category */
-.game-header[data-category="reflex"] .score-value { color: #00ff88; }
-.game-header[data-category="memory"] .score-value { color: #e879f9; }
-.game-header[data-category="math"] .score-value { color: #60a5fa; }
-.game-header[data-category="reaction"] .score-value { color: #fbbf24; }
-.game-header[data-category="words"] .score-value { color: #22d3ee; }
-.game-header[data-category="visual"] .score-value { color: #f472b6; }
-

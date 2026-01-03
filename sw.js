@@ -1,4 +1,4 @@
-const CACHE_NAME = 'streakrush-v5';
+const CACHE_NAME = 'streakrush-v42';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,6 +9,13 @@ const urlsToCache = [
   '/js/games-list.js',
   '/js/game-limit.js',
   '/js/simple-games.js',
+  '/js/game-modes.js',
+  '/js/commitment-screen.js',
+  '/js/milestones.js',
+  '/js/onboarding.js',
+  '/js/failure-handling.js',
+  '/js/unlock-system.js',
+  '/js/stats.js',
   '/js/game.js',
   '/js/ui.js',
   '/js/app.js'

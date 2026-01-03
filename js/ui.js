@@ -9,6 +9,13 @@ const UI = {
   
   // Show a screen
   showScreen: (screenId) => {
+    // Stop quote rotation when leaving home screen
+    if (UI.currentScreen === 'home' && screenId !== 'home') {
+      if (typeof App !== 'undefined' && App.stopQuoteRotation) {
+        App.stopQuoteRotation();
+      }
+    }
+    
     // Hide all screens
     document.querySelectorAll('.screen').forEach(screen => {
       screen.classList.remove('active');
@@ -25,18 +32,19 @@ const UI = {
   // Update home screen streak display
   updateHomeScreen: () => {
     const user = Storage.getUser();
+    const currentStreak = user.currentStreak || 0;
     
     // Update streak display (with null checks)
     const streakCountEl = document.getElementById('streak-count');
     const streakFlamesEl = document.getElementById('streak-flames');
     const tierEl = document.getElementById('streak-tier');
     
-    if (streakCountEl) streakCountEl.textContent = user.streak;
-    if (streakFlamesEl) streakFlamesEl.textContent = Streak.getFlames(user.streak);
+    if (streakCountEl) streakCountEl.textContent = currentStreak;
+    if (streakFlamesEl) streakFlamesEl.textContent = Streak.getFlames(currentStreak);
     
     // Update tier badge
     if (tierEl) {
-      const tier = Streak.getTier(user.streak);
+      const tier = Streak.getTier(currentStreak);
       if (tier) {
         tierEl.textContent = tier.name;
         tierEl.className = `streak-tier ${tier.tier}`;
@@ -68,7 +76,7 @@ const UI = {
         <div class="player-avatar">${entry.avatar}</div>
         <div class="player-info">
           <div class="player-name">${entry.name}${isUser ? ' (You)' : ''}</div>
-          <div class="player-streak">🔥 ${entry.streak} day streak</div>
+          <div class="player-streak">🔥 ${entry.streak || 0} win streak</div>
         </div>
         <div class="player-score">${Utils.formatNumber(entry.score)}</div>
       `;
@@ -102,8 +110,15 @@ const UI = {
     
     document.getElementById('user-avatar').textContent = user.avatar;
     document.getElementById('display-name').value = user.name;
-    document.getElementById('profile-flames').textContent = Streak.getFlames(user.streak);
-    document.getElementById('profile-streak').textContent = `${user.streak} day streak`;
+    
+    const currentStreak = user.currentStreak || 0;
+    const bestStreak = user.bestStreak || 0;
+    
+    const profileFlamesEl = document.getElementById('profile-flames');
+    const profileStreakEl = document.getElementById('profile-streak');
+    
+    if (profileFlamesEl) profileFlamesEl.textContent = Streak.getFlames(currentStreak);
+    if (profileStreakEl) profileStreakEl.textContent = `${currentStreak} win streak (best: ${bestStreak})`;
     
     // Stats
     document.getElementById('total-games').textContent = stats.totalGames;
@@ -265,7 +280,7 @@ const UI = {
     
     const shareText = `🔥 I scored ${Utils.formatNumber(score)} on ${gameName}!\n` +
                       `🎮 StreakRush - 60 Mini-Games\n` +
-                      `🏆 ${user.streak} day streak!\n\n` +
+                      `🏆 ${user.streak} game streak!\n\n` +
                       `Can you beat my score? Play now!`;
     
     if (navigator.share) {

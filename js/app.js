@@ -1,11 +1,89 @@
 // ========================================
 // STREAKRUSH - MAIN APPLICATION
-// 60 Games • Progressive Unlock • Multiplayer
+// Self-improvement through structure
+// No ads. No discounts. No manipulation.
 // ========================================
 
 const App = {
-  selectedGame: null,
-  showInstructions: true, // Show instructions before first time playing each game
+  currentGame: null,
+  quoteRotationInterval: null,
+  
+  // Get a random motivational quote
+  getRandomQuote: () => {
+    const quotes = [
+      { text: "Discipline is the bridge between goals and accomplishment.", author: "Jim Rohn" },
+      { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+      { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+      { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+      { text: "What you get by achieving your goals is not as important as what you become.", author: "Zig Ziglar" },
+      { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+      { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+      { text: "Quality is not an act, it is a habit.", author: "Aristotle" },
+      { text: "Champions keep playing until they get it right.", author: "Billie Jean King" },
+      { text: "Hard work beats talent when talent doesn't work hard.", author: "Tim Notke" },
+      { text: "The harder you work, the luckier you get.", author: "Gary Player" },
+      { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+      { text: "Progress, not perfection.", author: "Unknown" },
+      { text: "Every expert was once a beginner.", author: "Helen Hayes" },
+      { text: "Your limitation—it's only your imagination.", author: "Unknown" },
+      { text: "The journey of a thousand miles begins with one step.", author: "Lao Tzu" },
+      { text: "You miss 100% of the shots you don't take.", author: "Wayne Gretzky" },
+      { text: "Dream big. Start small. Act now.", author: "Robin Sharma" },
+      { text: "Be so good they can't ignore you.", author: "Steve Martin" },
+      { text: "Small daily improvements lead to staggering long-term results.", author: "Unknown" },
+      { text: "The pain you feel today is the strength you feel tomorrow.", author: "Unknown" },
+      { text: "Winners are not people who never fail, but people who never quit.", author: "Unknown" },
+      { text: "Fall seven times, stand up eight.", author: "Japanese Proverb" },
+      { text: "Action is the foundational key to all success.", author: "Pablo Picasso" },
+      { text: "Do something today that your future self will thank you for.", author: "Unknown" }
+    ];
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  },
+  
+  // Update the quote display
+  updateQuoteDisplay: () => {
+    const quoteText = document.getElementById('game-quote-text');
+    const quoteAuthor = document.getElementById('game-quote-author');
+    
+    if (quoteText && quoteAuthor) {
+      const quote = App.getRandomQuote();
+      
+      // Fade out effect
+      quoteText.style.opacity = '0';
+      quoteAuthor.style.opacity = '0';
+      
+      setTimeout(() => {
+        quoteText.textContent = `"${quote.text}"`;
+        quoteAuthor.textContent = `— ${quote.author}`;
+        
+        // Fade in effect
+        quoteText.style.opacity = '1';
+        quoteAuthor.style.opacity = '1';
+      }, 300);
+    }
+  },
+  
+  // Start quote rotation (every 10 seconds)
+  startQuoteRotation: () => {
+    // Clear any existing interval
+    App.stopQuoteRotation();
+    
+    // Show initial quote
+    App.updateQuoteDisplay();
+    
+    // Start rotation every 10 seconds
+    App.quoteRotationInterval = setInterval(() => {
+      App.updateQuoteDisplay();
+    }, 10000);
+  },
+  
+  // Stop quote rotation
+  stopQuoteRotation: () => {
+    if (App.quoteRotationInterval) {
+      clearInterval(App.quoteRotationInterval);
+      App.quoteRotationInterval = null;
+    }
+  },
   
   // Initialize the app
   init: async () => {
@@ -15,11 +93,8 @@ const App = {
     // Initialize themes
     Themes.init();
     
-    // Initialize sounds (will init on first click)
+    // Initialize sounds
     Sounds.init();
-    
-    // Check streak status
-    const streakStatus = Streak.checkStreak();
     
     // Setup event listeners
     App.setupEventListeners();
@@ -27,16 +102,14 @@ const App = {
     // Wait for loading animation
     await Utils.delay(2000);
     
-    // Show appropriate screen
-    if (streakStatus.status === 'lost') {
-      UI.showScreen('home');
-      App.renderGamesGrid();
-      App.updateGamesRemaining();
-      UI.showStreakLossModal(streakStatus);
+    // Check if new user needs onboarding
+    if (typeof Onboarding !== 'undefined' && Onboarding.needsOnboarding()) {
+      UI.showScreen('home'); // Show home in background
+      Onboarding.show();
     } else {
+      // Show home screen for returning users
       UI.showScreen('home');
-      App.renderGamesGrid();
-      App.updateGamesRemaining();
+      App.renderHomeScreen();
     }
     
     // Update theme buttons
@@ -44,667 +117,646 @@ const App = {
     
     // Register service worker
     App.registerServiceWorker();
-    
-    // Start timer update
-    App.startTimerUpdate();
   },
   
-  // Get game instructions
-  getGameInstructions: (game) => {
-    const instructions = {
-      // Reflex Games
-      1: { tips: ['✓ Tap green circles = +10 points', '✗ Miss or slow = -5 points', '⏱ You have 60 seconds'], demo: 'green-tap' },
-      2: { tips: ['✓ Pop bubbles before they escape', '✓ Bigger bubbles = more points', '⏱ 60 seconds of bubble mayhem'], demo: 'bubble' },
-      3: { tips: ['✓ Catch stars as they fall', '✗ Don\'t let them hit the ground', '⭐ Golden stars = 2x points'], demo: 'catch' },
-      4: { tips: ['✓ Whack moles when they appear', '✓ Faster whacks = more points', '⏱ They hide after 2 seconds'], demo: 'whack' },
-      5: { tips: ['✓ Tap the screen as fast as you can', '✓ Every tap = +1 point', '🏆 Try to beat 200 taps!'], demo: 'tap-fast' },
-      6: { tips: ['✓ Tap GREEN circles only', '✗ RED circles = -20 points', '⚡ Stay focused!'], demo: 'avoid' },
-      7: { tips: ['✓ Tap dots before they shrink away', '✓ Smaller dots = more points', '⏱ They disappear fast!'], demo: 'shrink' },
-      8: { tips: ['✓ Tap the glowing square', '✓ It moves around the grid', '⚡ Speed is key!'], demo: 'glow' },
-      9: { tips: ['✓ Tap targets as they move', '✓ Faster targets = more points', '🎯 Stay on target!'], demo: 'moving' },
-      10: { tips: ['✓ Swipe left or right to dodge', '✗ Don\'t get hit by obstacles', '⏱ Survive 60 seconds!'], demo: 'dodge' },
-      // Memory Games
-      11: { tips: ['✓ Watch the pattern carefully', '✓ Repeat it in order', '🧠 Gets harder each round'], demo: 'pattern' },
-      12: { tips: ['✓ Remember the number shown', '✓ Enter it when asked', '🔢 Numbers get longer!'], demo: 'number' },
-      13: { tips: ['✓ Find matching pairs', '✓ Fewer flips = higher score', '🃏 Train your memory!'], demo: 'pairs' },
-      14: { tips: ['✓ What color was shown?', '✓ Pick the correct color', '🎨 Colors flash briefly!'], demo: 'color-mem' },
-      15: { tips: ['✓ Remember square positions', '✓ Tap them in order', '⬛ Grid gets bigger!'], demo: 'position' },
-      16: { tips: ['✓ Watch the sequence flash', '✓ Replay it perfectly', '⚡ Gets faster each round'], demo: 'flash' },
-      17: { tips: ['✓ Remember the sequence', '✓ Was it shown before?', '🔄 Test your recall!'], demo: 'sequence' },
-      18: { tips: ['✓ Remember items briefly shown', '✓ Identify the missing one', '🕵️ Pay close attention!'], demo: 'missing' },
-      19: { tips: ['✓ Order items by size', '✓ From smallest to largest', '📏 Quick comparison!'], demo: 'order' },
-      20: { tips: ['✓ Remember shape positions', '✓ Match them correctly', '🔷 Shapes move around!'], demo: 'shape-mem' },
-      // Math Games
-      21: { tips: ['✓ Add numbers quickly', '✓ Enter the sum fast', '➕ Speed = bonus points'], demo: 'add' },
-      22: { tips: ['✓ Subtract numbers', '✓ Enter the difference', '➖ No negative answers'], demo: 'subtract' },
-      23: { tips: ['✓ Multiply numbers', '✓ Enter the product', '✖️ Tables up to 12'], demo: 'multiply' },
-      24: { tips: ['✓ Compare two numbers', '✓ Tap the bigger one', '🔢 Faster = more points'], demo: 'bigger' },
-      25: { tips: ['✓ Count objects quickly', '✓ Enter the total', '🔢 Objects appear briefly'], demo: 'count' },
-      26: { tips: ['✓ Divide numbers', '✓ Enter the result', '➗ Whole numbers only'], demo: 'divide' },
-      27: { tips: ['✓ Guess the next number', '✓ Find the pattern', '🔢 +, -, ×, or ÷'], demo: 'next' },
-      28: { tips: ['✓ Calculate the equation', '✓ Is it true or false?', '✓ Trust your math!'], demo: 'true-false' },
-      29: { tips: ['✓ Add up all numbers', '✓ Enter the total', '➕ Multiple numbers'], demo: 'sum' },
-      30: { tips: ['✓ Solve the equation', '✓ Find X', '🔢 Algebra basics'], demo: 'solve' },
-      // Reaction Games
-      31: { tips: ['✓ Wait for green light', '✓ Tap immediately when green', '🚦 Don\'t tap on red!'], demo: 'green-light' },
-      32: { tips: ['✓ Wait... wait...', '✓ Tap when you see GO!', '⏱ Patience is key'], demo: 'wait' },
-      33: { tips: ['✓ Tap as fast as possible', '✓ Beat the countdown', '⚡ Reaction speed test'], demo: 'speed-tap' },
-      34: { tips: ['✓ Match the color shown', '✓ Tap the matching button', '🎨 Colors appear fast!'], demo: 'color-match' },
-      35: { tips: ['✓ When target appears, TAP!', '✓ Fastest time wins', '🎯 Milliseconds matter'], demo: 'target-tap' },
-      36: { tips: ['✓ Shapes fall from above', '✓ Catch the right shape', '🔷 Avoid wrong shapes'], demo: 'falling' },
-      37: { tips: ['✓ Follow the arrow direction', '✓ Swipe that way quickly', '➡️ Left, Right, Up, Down'], demo: 'arrow' },
-      38: { tips: ['✓ Stop timer at exact moment', '✓ Hit the target zone', '⏱ Precision timing!'], demo: 'stop' },
-      39: { tips: ['✓ Tap when colors match', '✓ Don\'t tap on different colors', '🎨 Watch carefully!'], demo: 'dual-color' },
-      40: { tips: ['✓ Quick fire questions', '✓ Answer before time runs out', '⚡ Think fast!'], demo: 'rapid' },
-      // Words Games
-      41: { tips: ['✓ Type the word shown', '✓ Speed and accuracy count', '⌨️ Typos lose points'], demo: 'type' },
-      42: { tips: ['✓ Find words in the grid', '✓ Swipe to select', '🔤 Words hide everywhere'], demo: 'word-search' },
-      43: { tips: ['✓ Unscramble the letters', '✓ Find the hidden word', '🔀 Think fast!'], demo: 'scramble' },
-      44: { tips: ['✓ Type word starting with letter', '✓ Any valid word works', '🔤 A, B, C...'], demo: 'first-letter' },
-      45: { tips: ['✓ Fill in the missing letter', '✓ Complete the word', '_at = Cat!'], demo: 'missing-letter' },
-      46: { tips: ['✓ Find the rhyming word', '✓ Cat rhymes with Hat!', '🎵 Listen to the sound'], demo: 'rhyme' },
-      47: { tips: ['✓ Find the opposite word', '✓ Hot → Cold', '↔️ Antonyms only'], demo: 'opposite' },
-      48: { tips: ['✓ Is it spelled correctly?', '✓ Yes or No?', '📝 Spot the errors'], demo: 'spell-check' },
-      49: { tips: ['✓ Make words from letters', '✓ Longer words = more points', '🔤 Use all letters!'], demo: 'anagram' },
-      50: { tips: ['✓ Guess the word from hint', '✓ Limited guesses', '💭 Think carefully!'], demo: 'guess-word' },
-      // Visual Games
-      51: { tips: ['✓ Find the odd one out', '✓ One item is different', '👁️ Look closely!'], demo: 'odd-one' },
-      52: { tips: ['✓ Count items by color', '✓ Enter the count', '🔴🔵🟢 Quick counting!'], demo: 'count-color' },
-      53: { tips: ['✓ Find the hidden shape', '✓ Tap when you see it', '🔷 Shapes blend in'], demo: 'find-shape' },
-      54: { tips: ['✓ Find the matching pair', '✓ Two items are the same', '👯 Quick matching!'], demo: 'same' },
-      55: { tips: ['✓ Spot all differences', '✓ Two images, find changes', '🔍 5 differences total'], demo: 'spot-diff' },
-      56: { tips: ['✓ Track the moving ball', '✓ Which cup has it?', '👁️ Don\'t lose sight!'], demo: 'track' },
-      57: { tips: ['✓ Find the hidden object', '✓ It\'s camouflaged', '🔍 Look carefully!'], demo: 'hidden' },
-      58: { tips: ['✓ Match the silhouette', '✓ Find the right shape', '⬛ Shadows only!'], demo: 'shadow' },
-      59: { tips: ['✓ Complete the pattern', '✓ What comes next?', '🔷 Logic required!'], demo: 'complete' },
-      60: { tips: ['✓ Count overlapping shapes', '✓ Some are hidden', '🔢 Tricky counting!'], demo: 'overlap' }
-    };
-    
-    return instructions[game.id] || { tips: ['✓ Follow the instructions', '✓ Score as high as you can', '⏱ 60 seconds'], demo: 'default' };
-  },
-  
-  // Render only UNLOCKED games - keep locked games a surprise!
-  renderGamesGrid: () => {
-    const grid = document.getElementById('games-grid');
-    grid.innerHTML = '';
-    
-    // Check if premium user
-    const isPremium = localStorage.getItem('streakrush_premium') === 'true';
-    
-    // Only show unlocked games (first 10 for free, all 60 for premium)
-    const maxGames = isPremium ? 60 : 10;
-    
-    GAMES.slice(0, maxGames).forEach(game => {
-      const card = document.createElement('div');
-      card.className = `game-card category-${game.category}`;
-      card.dataset.gameId = game.id;
-      
-      card.innerHTML = `
-        <span class="game-icon">${game.icon}</span>
-        <span class="game-name">${game.name}</span>
-        <span class="game-category">${game.category}</span>
-      `;
-      
-      card.addEventListener('click', () => {
-        Sounds.click();
-        App.selectGame(game);
-      });
-      grid.appendChild(card);
-    });
-    
-    // If not premium, add "Unlock More" card
-    if (!isPremium) {
-      const unlockCard = document.createElement('div');
-      unlockCard.className = 'game-card unlock-more-card';
-      unlockCard.innerHTML = `
-        <span class="game-icon">👑</span>
-        <span class="game-name">50 More Games!</span>
-        <span class="game-category">GO PREMIUM</span>
-      `;
-      unlockCard.addEventListener('click', () => {
-        Sounds.click();
-        App.showPremiumModal();
-      });
-      grid.appendChild(unlockCard);
-    }
-  },
-  
-  // Update games remaining display
-  updateGamesRemaining: () => {
-    const banner = document.getElementById('games-remaining-banner');
-    const countEl = document.getElementById('games-remaining-count');
-    const timerEl = document.getElementById('games-timer');
-    const metaEl = document.getElementById('games-left-meta');
-    
-    if (GameLimit.isUnlocked()) {
-      banner.classList.add('unlimited');
-      countEl.textContent = '∞';
-      timerEl.textContent = 'UNLIMITED';
-      if (metaEl) metaEl.textContent = '∞';
-    } else {
-      banner.classList.remove('unlimited');
-      const remaining = GameLimit.getRemainingGames();
-      countEl.textContent = remaining;
-      timerEl.textContent = `Resets in ${GameLimit.formatTimeUntilReset()}`;
-      if (metaEl) metaEl.textContent = remaining;
-    }
-  },
-  
-  // Start timer update interval
-  startTimerUpdate: () => {
-    setInterval(() => {
-      App.updateGamesRemaining();
-    }, 60000);
-  },
-  
-  // Select a game to play
-  selectGame: (game) => {
-    if (!GameLimit.canPlayMore()) {
-      App.showUnlockModal(game.id);
-      return;
-    }
-    
-    App.selectedGame = game;
-    
-    document.getElementById('games-grid').style.display = 'none';
-    document.getElementById('games-remaining-banner').style.display = 'none';
-    
-    const card = document.getElementById('selected-game-card');
-    card.style.display = 'block';
-    
-    document.getElementById('selected-game-icon').textContent = game.icon;
-    document.getElementById('challenge-title').textContent = game.name;
-    document.getElementById('challenge-description').textContent = game.instruction;
-    
+  // Render the home screen based on user progress
+  renderHomeScreen: () => {
     const user = Storage.getUser();
-    const bestScore = user.personalBests?.[`game-${game.id}`] || '---';
-    document.getElementById('personal-best').textContent = bestScore;
+    const highestUnlocked = UnlockSystem.getHighestUnlocked();
+    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
     
-    App.updateGamesRemaining();
+    // Update home streak badge
+    const currentStreak = user.currentStreak || 0;
+    const streakText = document.getElementById('home-streak-text');
+    const streakFlames = document.getElementById('home-streak-flames');
+    const streakBadge = document.getElementById('streak-badge');
+    
+    if (streakText && streakFlames && streakBadge) {
+      if (currentStreak > 0) {
+        streakText.textContent = `${currentStreak}-Game Win Streak!`;
+        streakFlames.textContent = Streak.getFlames(currentStreak);
+        streakBadge.style.display = 'flex';
+      } else {
+        streakText.textContent = 'Start Your Win Streak!';
+        streakFlames.textContent = '🎯';
+        streakBadge.style.display = 'flex';
+      }
+    }
+    
+    // Determine the next game to play
+    let nextGameId;
+    
+    if (user.isPremium) {
+      // Premium: Continue from where they left off
+      nextGameId = highestUnlocked;
+    } else {
+      // Free: Play up to game 20
+      if (highestUnlocked > 20) {
+        // Completed all 20 - show commitment screen
+        App.showCommitmentScreen();
+        return;
+      }
+      nextGameId = highestUnlocked;
+    }
+    
+    // Get the next game
+    const nextGame = getGameById(nextGameId);
+    if (!nextGame) return;
+    
+    App.currentGame = nextGame;
+    
+    // Update progress display
+    const completedCount = Math.min(highestUnlocked - 1, user.isPremium ? 365 : 20);
+    const totalGames = user.isPremium ? 365 : 20;
+    const progressPercent = (completedCount / totalGames) * 100;
+    
+    const journeyStep = document.getElementById('journey-step');
+    const journeyFill = document.getElementById('journey-fill');
+    
+    if (journeyStep) {
+      if (user.isPremium) {
+        journeyStep.textContent = `Game ${highestUnlocked} of 365`;
+      } else {
+        journeyStep.textContent = `Game ${highestUnlocked} of 20`;
+      }
+    }
+    if (journeyFill) {
+      journeyFill.style.width = `${progressPercent}%`;
+    }
+    
+    // Update next game display
+    document.getElementById('next-game-icon').textContent = nextGame.icon;
+    document.getElementById('next-game-title').textContent = nextGame.name;
+    document.getElementById('next-game-instruction').textContent = nextGame.instruction;
+    
+    // Update motivational quote with rotation
+    const quoteBox = document.getElementById('game-quote-box');
+    
+    if (quoteBox) {
+      quoteBox.style.display = 'block';
+      // Start rotating quotes every 10 seconds
+      App.startQuoteRotation();
+    }
+    
+    // Show best score if exists
+    const bestScore = scores[nextGameId];
+    const bestDisplay = document.getElementById('best-score-display');
+    const displayBest = document.getElementById('display-best');
+    if (bestScore && bestDisplay && displayBest) {
+      bestDisplay.style.display = 'block';
+      displayBest.textContent = `${bestScore.percentage}%`;
+    } else if (bestDisplay) {
+      bestDisplay.style.display = 'none';
+    }
+    
+    // Render completed games for replay
+    App.renderCompletedGames(scores, highestUnlocked, user.isPremium);
   },
   
-  // Back to games grid
-  backToGames: () => {
-    App.selectedGame = null;
-    document.getElementById('games-grid').style.display = 'grid';
-    document.getElementById('games-remaining-banner').style.display = 'flex';
-    document.getElementById('selected-game-card').style.display = 'none';
+  // Render completed games that can be replayed
+  renderCompletedGames: (scores, highestUnlocked, isPremium) => {
+    const section = document.getElementById('completed-section');
+    const grid = document.getElementById('completed-games-grid');
+    
+    if (!section || !grid) return;
+    
+    const completedCount = highestUnlocked - 1;
+    
+    if (completedCount > 0) {
+      section.style.display = 'block';
+      grid.innerHTML = '';
+      
+      // Show completed games (limit to last 10 for scrolling)
+      const startFrom = Math.max(1, completedCount - 9);
+      
+      for (let i = startFrom; i <= completedCount; i++) {
+        const game = getGameById(i);
+        if (!game) continue;
+        
+        // For free users, only show games 1-10
+        if (!isPremium && i > 10) break;
+        
+        const score = scores[i];
+        const scoreText = score ? `${score.percentage}%` : '-';
+        
+        const card = document.createElement('div');
+        card.className = 'completed-game-card';
+        card.innerHTML = `
+          <span class="completed-icon">${game.icon}</span>
+          <span class="completed-name">${game.name}</span>
+          <span class="completed-score">${scoreText}</span>
+        `;
+        
+        card.addEventListener('click', () => {
+          Sounds.click();
+          App.playGame(game, true); // true = replay mode
+        });
+        
+        grid.appendChild(card);
+      }
+    } else {
+      section.style.display = 'none';
+    }
   },
   
-  // Show instructions before game
+  // Show commitment screen after game 20
+  showCommitmentScreen: () => {
+    // Use the new CommitmentScreen module if available
+    if (typeof CommitmentScreen !== 'undefined') {
+      CommitmentScreen.show();
+    } else {
+      // Fallback to basic modal
+      const modal = document.getElementById('commitment-modal');
+      if (modal) modal.classList.add('active');
+    }
+    
+    // Update home to show replay options
+    const nextCard = document.getElementById('next-game-card');
+    const journeyProgress = document.getElementById('journey-progress');
+    
+    if (nextCard) {
+      nextCard.innerHTML = `
+        <div class="journey-complete">
+          <div class="complete-icon">🏆</div>
+          <h2>You've completed 20 games!</h2>
+          <p>Your brain has improved. Ready to continue?</p>
+          <button class="unlock-preview-btn" onclick="if(typeof CommitmentScreen !== 'undefined') CommitmentScreen.show();">
+            🧠 See Your Progress
+          </button>
+        </div>
+      `;
+    }
+    
+    if (journeyProgress) {
+      const journeyStep = document.getElementById('journey-step');
+      if (journeyStep) journeyStep.textContent = '20 of 20 Complete!';
+      const journeyFill = document.getElementById('journey-fill');
+      if (journeyFill) journeyFill.style.width = '100%';
+    }
+    
+    // Still show completed games for replay
+    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    App.renderCompletedGames(scores, 21, false);
+  },
+  
+  // Play a specific game (with mode selector for replays)
+  playGame: (game, isReplay = false, skipModeSelect = false) => {
+    App.currentGame = game;
+    
+    // For replays, show mode selector; for new games, use Speed mode by default
+    if (isReplay && !skipModeSelect && typeof GameModes !== 'undefined') {
+      GameModes.showModeSelector(game.id, (modeKey) => {
+        Game.startSimpleGame(game, GameModes.getMode());
+      });
+    } else {
+      // Default to Speed mode for new games
+      if (typeof GameModes !== 'undefined') {
+        GameModes.setMode('SPEED');
+      }
+      Game.startSimpleGame(game, typeof GameModes !== 'undefined' ? GameModes.getMode() : null);
+    }
+  },
+  
+  // Play game directly with specific mode (no selector)
+  playGameWithMode: (game, modeKey) => {
+    App.currentGame = game;
+    if (typeof GameModes !== 'undefined') {
+      GameModes.setMode(modeKey);
+      Game.startSimpleGame(game, GameModes.getMode());
+    } else {
+      Game.startSimpleGame(game);
+    }
+  },
+  
+  // Show instructions screen for a game
   showGameInstructions: (game) => {
-    const instructions = App.getGameInstructions(game);
+    if (!game) return;
+    App.currentGame = game;
     
+    // Populate game info
     document.getElementById('instructions-icon').textContent = game.icon;
-    document.getElementById('instructions-title').textContent = `How to Play: ${game.name}`;
+    document.getElementById('instructions-title').textContent = game.name;
+    document.getElementById('instructions-category').textContent = game.category;
+    
+    // Populate benefits
+    const benefitsText = document.getElementById('game-benefits-text');
+    if (benefitsText) {
+      benefitsText.textContent = game.benefits || 'Builds discipline, focus, and mental strength through consistent practice.';
+    }
+    
+    // Populate instructions
     document.getElementById('instructions-text').textContent = game.instruction;
     
-    // Populate tips
-    const tipsList = document.getElementById('instructions-tips');
-    tipsList.innerHTML = instructions.tips.map(tip => `<li>${tip}</li>`).join('');
+    // Populate quote
+    const fullQuote = typeof getGameQuote === 'function' ? getGameQuote(game) : (game.quote || '"Discipline is the bridge between goals and accomplishment." — Jim Rohn');
+    const authorMatch = fullQuote.match(/— (.+)$/);
+    const author = authorMatch ? authorMatch[1] : '';
+    const quote = fullQuote.replace(/— .+$/, '').trim();
     
-    // Add demo animation
-    const demoArea = document.getElementById('instructions-demo');
-    demoArea.innerHTML = '<div class="demo-target"></div>';
+    const quoteText = document.getElementById('instr-quote-text');
+    const quoteAuthor = document.getElementById('instr-quote-author');
+    if (quoteText) quoteText.textContent = quote;
+    if (quoteAuthor) quoteAuthor.textContent = author ? `— ${author}` : '';
     
+    // Stop quote rotation when leaving home
+    App.stopQuoteRotation();
+    
+    // Show instructions screen
     UI.showScreen('instructions');
   },
   
-  // Start game after instructions
-  startGameAfterInstructions: () => {
-    if (!App.selectedGame) return;
-    Sounds.click();
-    Game.startSimpleGame(App.selectedGame);
+  // Begin the next challenge (show instructions first)
+  beginChallenge: () => {
+    if (!App.currentGame) return;
+    App.showGameInstructions(App.currentGame);
   },
   
-  // Show premium subscription modal
-  showPremiumModal: () => {
-    document.getElementById('unlock-modal').classList.add('active');
-  },
-
-  // Close unlock modal
-  closeUnlockModal: () => {
-    document.getElementById('unlock-modal').classList.remove('active');
-  },
-
-  // Handle premium purchase
-  handlePremiumPurchase: () => {
-    UI.showToast('Payment of $19.99 coming soon!', 'default');
-    
-    // Uncomment to test premium unlock:
-    // localStorage.setItem('streakrush_premium', 'true');
-    // App.closeUnlockModal();
-    // App.renderGamesGrid();
-    // UI.showToast('🎉 Welcome to Premium! All 60 games unlocked!', 'success');
-  },
-  
-  // Update theme buttons
-  updateThemeButtons: () => {
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.theme === Themes.current);
-    });
-  },
-  
-  // Setup all event listeners
+  // Setup event listeners
   setupEventListeners: () => {
-    // Navigation buttons
-    document.querySelectorAll('.nav-item').forEach(btn => {
-      btn.addEventListener('click', () => {
-        Sounds.click();
-        const screen = btn.dataset.screen;
-        App.navigateTo(screen);
-      });
-    });
-    
-    // Back to games button
-    document.getElementById('back-to-games')?.addEventListener('click', () => {
+    // Begin challenge button (shows instructions first)
+    document.getElementById('begin-button')?.addEventListener('click', () => {
       Sounds.click();
-      App.backToGames();
+      App.beginChallenge();
     });
     
-    // Play button - show instructions first
-    document.getElementById('play-button').addEventListener('click', () => {
-      if (!App.selectedGame) return;
-      Sounds.click();
-      
-      // Check if premium or has games left
-      const isPremium = localStorage.getItem('streakrush_premium') === 'true';
-      if (!isPremium && !GameLimit.canPlayMore()) {
-        App.showPremiumModal();
-        return;
-      }
-      
-      // Check if should show instructions
-      const playedGames = JSON.parse(localStorage.getItem('streakrush_played_games') || '[]');
-      if (!playedGames.includes(App.selectedGame.id)) {
-        App.showGameInstructions(App.selectedGame);
-      } else {
-        Game.startSimpleGame(App.selectedGame);
-      }
-    });
-    
-    // Instructions screen buttons
-    document.getElementById('skip-instructions')?.addEventListener('click', () => {
-      if (!App.selectedGame) return;
-      const gameId = App.selectedGame.id; // Store before async call
-      App.startGameAfterInstructions();
-      // Mark as played
-      const playedGames = JSON.parse(localStorage.getItem('streakrush_played_games') || '[]');
-      if (!playedGames.includes(gameId)) {
-        playedGames.push(gameId);
-        localStorage.setItem('streakrush_played_games', JSON.stringify(playedGames));
-      }
-    });
-    
+    // Ready button on instructions screen (starts game)
     document.getElementById('ready-button')?.addEventListener('click', () => {
-      if (!App.selectedGame) return;
-      const gameId = App.selectedGame.id; // Store before async call
-      App.startGameAfterInstructions();
-      // Mark as played
-      const playedGames = JSON.parse(localStorage.getItem('streakrush_played_games') || '[]');
-      if (!playedGames.includes(gameId)) {
-        playedGames.push(gameId);
-        localStorage.setItem('streakrush_played_games', JSON.stringify(playedGames));
+      Sounds.click();
+      if (App.currentGame) {
+        App.playGame(App.currentGame);
       }
     });
     
-    // Pause button
-    document.getElementById('pause-button').addEventListener('click', () => {
+    // Back from instructions button
+    document.getElementById('back-from-instructions')?.addEventListener('click', () => {
+      Sounds.click();
+      UI.showScreen('home');
+      App.renderHomeScreen();
+    });
+    
+    // Commitment modal buttons
+    document.getElementById('commit-continue-btn')?.addEventListener('click', () => {
+      Sounds.click();
+      UI.showToast('Premium coming soon. Thank you for your commitment.', 'info');
+    });
+    
+    document.getElementById('pause-here-btn')?.addEventListener('click', () => {
+      Sounds.click();
+      document.getElementById('commitment-modal').classList.remove('active');
+      UI.showToast('No rush. Take your time.', 'info');
+    });
+    
+    // Pause/Resume/Quit
+    document.getElementById('pause-button')?.addEventListener('click', () => {
       Sounds.click();
       Game.pause();
     });
     
-    // Resume button
-    document.getElementById('resume-button').addEventListener('click', () => {
+    document.getElementById('resume-button')?.addEventListener('click', () => {
       Sounds.click();
       Game.resume();
     });
     
-    // Quit button
-    document.getElementById('quit-button').addEventListener('click', () => {
+    document.getElementById('quit-button')?.addEventListener('click', () => {
       Sounds.click();
       Game.quit();
     });
     
-    // Results screen buttons
-    document.getElementById('spin-wheel-button').addEventListener('click', () => {
+    // Play again / Continue button - advances to next game if passed
+    document.getElementById('play-again-button')?.addEventListener('click', () => {
       Sounds.click();
-      UI.showWheelModal();
-    });
-    
-    document.getElementById('share-button').addEventListener('click', () => {
-      Sounds.click();
-      UI.shareScore();
-    });
-    
-    document.getElementById('challenge-friend-button').addEventListener('click', () => {
-      Sounds.click();
-      UI.shareScore();
-    });
-    
-    document.getElementById('play-again-button').addEventListener('click', () => {
-      Sounds.click();
-      const isPremium = localStorage.getItem('streakrush_premium') === 'true';
-      if (!isPremium && !GameLimit.canPlayMore()) {
-        App.showPremiumModal();
-        return;
+      
+      // Check if user passed the last game
+      const lastGameId = App.currentGame?.id;
+      if (lastGameId) {
+        const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+        const lastScore = scores[lastGameId];
+        
+        if (lastScore && lastScore.percentage >= 70) {
+          // User passed - advance to next game
+          const nextGameId = lastGameId + 1;
+          const nextGame = getGameById(nextGameId);
+          
+          if (nextGame) {
+            // Check if need premium (after game 20)
+            const user = Storage.getUser();
+            if (!user.isPremium && nextGameId > 20) {
+              // Show commitment screen
+              UI.showScreen('home');
+              App.showCommitmentScreen();
+              return;
+            }
+            
+            // Start next game directly
+            App.currentGame = nextGame;
+            App.playGame(nextGame);
+            return;
+          }
+        }
       }
-      if (App.selectedGame) {
-        Game.startSimpleGame(App.selectedGame);
-      }
-    });
-    
-    document.getElementById('back-home-button').addEventListener('click', () => {
-      Sounds.click();
-      App.backToGames();
+      
+      // Otherwise go to home
       UI.showScreen('home');
-      App.updateGamesRemaining();
+      App.renderHomeScreen();
     });
     
-    // Streak modal buttons
-    document.getElementById('streak-play-button').addEventListener('click', () => {
+    // Replay button - play same game again
+    document.getElementById('replay-button')?.addEventListener('click', () => {
       Sounds.click();
-      UI.hideStreakLossModal();
+      if (App.currentGame) {
+        App.playGame(App.currentGame, true);
+      }
     });
     
-    document.getElementById('buy-freeze-button').addEventListener('click', () => {
+    // Back to home from results
+    document.getElementById('back-home-button')?.addEventListener('click', () => {
       Sounds.click();
-      UI.showToast('Coming soon!', 'default');
+      UI.showScreen('home');
+      App.renderHomeScreen();
     });
     
-    // Premium modal buttons
-    document.getElementById('unlock-premium-button')?.addEventListener('click', () => {
+    // Profile back button
+    document.getElementById('profile-back-btn')?.addEventListener('click', () => {
       Sounds.click();
-      App.handlePremiumPurchase();
+      UI.showScreen('home');
+      App.renderHomeScreen();
     });
     
-    document.getElementById('close-unlock-modal')?.addEventListener('click', () => {
+    // Stats back button
+    document.getElementById('stats-back-btn')?.addEventListener('click', () => {
       Sounds.click();
-      App.closeUnlockModal();
+      UI.showScreen('home');
+      App.renderHomeScreen();
     });
     
-    // Wheel modal
-    document.getElementById('spin-button').addEventListener('click', () => {
+    // Profile settings button
+    document.getElementById('profile-settings-btn')?.addEventListener('click', () => {
       Sounds.click();
-      UI.spinWheel();
+      App.openSettingsModal();
     });
     
-    document.getElementById('close-wheel').addEventListener('click', () => {
-      Sounds.click();
-      UI.closeWheelModal();
-    });
-    
-    // Leaderboard tabs
-    document.querySelectorAll('.tab-button').forEach(tab => {
-      tab.addEventListener('click', () => {
-        Sounds.click();
-        document.querySelectorAll('.tab-button').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        UI.updateLeaderboard(tab.dataset.tab);
-      });
-    });
-    
-    // Shop items
-    document.querySelectorAll('.shop-item.coin-purchase').forEach(item => {
+    // Bottom navigation
+    document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', () => {
         Sounds.click();
-        const itemName = item.dataset.item;
-        const cost = parseInt(item.dataset.cost);
-        UI.buyItem(itemName, cost);
+        const screen = item.dataset.screen;
+        UI.showScreen(screen);
+        
+        // Update active nav
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        item.classList.add('active');
+        
+        // Re-render home if needed
+        if (screen === 'home') {
+          App.renderHomeScreen();
+        }
+        
+        // Update profile if navigating there
+        if (screen === 'profile') {
+          App.updateProfileStats();
+          App.renderMemoryProfile();
+        }
+        
+        // Update stats screen
+        if (screen === 'stats') {
+          Stats.render();
+        }
       });
     });
     
-    // Real money shop items
-    document.querySelectorAll('.shop-item:not(.coin-purchase)').forEach(item => {
-      item.addEventListener('click', () => {
-        Sounds.click();
-        UI.showToast('Coming soon!', 'default');
-      });
-    });
-    
-    // Premium button
-    document.querySelector('.premium-button')?.addEventListener('click', () => {
+    // Settings modal
+    document.getElementById('open-settings')?.addEventListener('click', () => {
       Sounds.click();
-      UI.showToast('Coming soon!', 'default');
+      App.openSettingsModal();
     });
     
-    // Profile name change
-    document.getElementById('display-name')?.addEventListener('change', (e) => {
-      const newName = e.target.value.trim() || 'Player';
-      Storage.updateUser({ name: newName });
-      UI.showToast('Name updated!', 'success');
-    });
-    
-    // Profile buttons
-    document.getElementById('invite-friends')?.addEventListener('click', () => {
+    document.getElementById('close-settings')?.addEventListener('click', () => {
       Sounds.click();
-      UI.shareScore();
+      App.closeSettingsModal();
     });
     
-    // Friends Hub button
-    document.getElementById('friends-hub-button')?.addEventListener('click', () => {
+    document.getElementById('settings-done')?.addEventListener('click', () => {
       Sounds.click();
-      App.navigateTo('friends-hub');
+      App.closeSettingsModal();
     });
     
-    document.getElementById('friends-back-button')?.addEventListener('click', () => {
-      Sounds.click();
-      App.navigateTo('profile');
+    // Settings sound toggle
+    document.getElementById('settings-sound-toggle')?.addEventListener('change', (e) => {
+      Sounds.enabled = e.target.checked;
+      localStorage.setItem('streakrush_sound', e.target.checked);
+      if (e.target.checked) Sounds.click();
     });
     
-    // Theme buttons
-    document.querySelectorAll('.theme-btn').forEach(btn => {
+    // Settings theme buttons
+    document.querySelectorAll('.settings-theme-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         Sounds.click();
         const theme = btn.dataset.theme;
         Themes.apply(theme);
-        App.updateThemeButtons();
-        UI.showToast(`Theme: ${Themes.themes[theme].name}`, 'success');
+        document.querySelectorAll('.settings-theme-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
       });
     });
     
-    // Sound toggle
-    document.getElementById('sound-toggle')?.addEventListener('change', (e) => {
-      Sounds.enabled = e.target.checked;
-      localStorage.setItem('streakrush_sound', e.target.checked);
-      if (e.target.checked) {
-        Sounds.click();
-      }
+    // Streak loss play button
+    document.getElementById('streak-loss-play')?.addEventListener('click', () => {
+      Sounds.click();
+      document.getElementById('streak-loss-modal').classList.remove('active');
     });
     
-    // Initialize sound toggle state
-    const soundToggle = document.getElementById('sound-toggle');
+    // Friends Hub
+    document.querySelector('[data-screen="friends-hub"]')?.addEventListener('click', () => {
+      if (typeof FriendsHub !== 'undefined') {
+        FriendsHub.show();
+      }
+    });
+  },
+  
+  // Render memory profile on profile screen
+  renderMemoryProfile: () => {
+    // Get brain score
+    const brainScore = Storage.getBrainScore();
+    
+    document.getElementById('brain-emoji').textContent = brainScore.emoji;
+    document.getElementById('brain-score').textContent = brainScore.score;
+    document.getElementById('brain-level').textContent = brainScore.level;
+    document.getElementById('brain-score-fill').style.width = `${brainScore.score}%`;
+    document.getElementById('brain-breakdown').textContent = 
+      `Base: ${brainScore.breakdown.baseScore} + Consistency: ${brainScore.breakdown.consistencyBonus} + Streak: ${brainScore.breakdown.streakBonus}`;
+    
+    // Get memory profile
+    const profile = Storage.getMemoryProfile();
+    const categories = Object.entries(profile);
+    const container = document.getElementById('memory-categories');
+    const emptyMsg = document.getElementById('memory-empty');
+    const insights = document.getElementById('memory-insights');
+    
+    if (categories.length === 0) {
+      emptyMsg.style.display = 'block';
+      insights.style.display = 'none';
+      return;
+    }
+    
+    emptyMsg.style.display = 'none';
+    container.innerHTML = '';
+    
+    // Trend emoji mapping
+    const trendEmoji = {
+      'improving': '📈',
+      'stable': '➡️',
+      'declining': '📉'
+    };
+    
+    // Render each category
+    categories.forEach(([name, data]) => {
+      const categoryEl = document.createElement('div');
+      categoryEl.className = 'memory-category';
+      categoryEl.innerHTML = `
+        <span class="memory-category-icon">${data.emoji}</span>
+        <div class="memory-category-info">
+          <div class="memory-category-name">${name}</div>
+          <div class="memory-category-bar">
+            <div class="memory-category-fill ${name.toLowerCase()}" style="width: ${data.average}%"></div>
+          </div>
+        </div>
+        <span class="memory-category-score">${data.average}%</span>
+        <span class="memory-category-trend">${trendEmoji[data.trend] || '➡️'}</span>
+      `;
+      container.appendChild(categoryEl);
+    });
+    
+    // Show strengths/weaknesses
+    const strengths = Storage.getMemoryStrengths();
+    
+    if (strengths.strongest && strengths.weakest) {
+      insights.style.display = 'flex';
+      document.getElementById('strongest-area').textContent = 
+        `${strengths.strongest.emoji} ${strengths.strongest.name} (${strengths.strongest.average}%)`;
+      document.getElementById('weakest-area').textContent = 
+        `${strengths.weakest.emoji} ${strengths.weakest.name} (${strengths.weakest.average}%)`;
+    }
+  },
+  
+  // Update profile stats dynamically
+  updateProfileStats: () => {
+    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const highestUnlocked = UnlockSystem.getHighestUnlocked();
+    const user = Storage.getUser();
+    
+    // Get streak info
+    const currentStreak = user.currentStreak || 0;
+    const bestStreak = user.bestStreak || 0;
+    const totalGamesPlayed = user.totalGamesPlayed || 0;
+    
+    // Calculate stats from scores
+    const scoreValues = Object.values(scores);
+    const gamesCompleted = Object.keys(scores).length;
+    const totalPlays = scoreValues.reduce((acc, s) => acc + (s.plays || 1), 0);
+    
+    let avgScore = 0;
+    let bestScore = 0;
+    let passedGames = 0;
+    
+    if (gamesCompleted > 0) {
+      const percentages = scoreValues.map(s => s.percentage);
+      avgScore = Math.round(percentages.reduce((a, b) => a + b, 0) / percentages.length);
+      bestScore = Math.max(...percentages);
+      passedGames = percentages.filter(p => p >= 70).length;
+    }
+    
+    const passRate = totalGamesPlayed > 0 ? Math.round((passedGames / totalGamesPlayed) * 100) : 0;
+    
+    // Update NEW streak stats card
+    const currentRunEl = document.getElementById('current-run');
+    const bestRunEl = document.getElementById('best-run');
+    const totalPlayedEl = document.getElementById('total-played');
+    const passRateValueEl = document.getElementById('pass-rate-value');
+    
+    if (currentRunEl) currentRunEl.textContent = `${currentStreak} games`;
+    if (bestRunEl) bestRunEl.textContent = `${bestStreak} games`;
+    if (totalPlayedEl) totalPlayedEl.textContent = `${totalGamesPlayed} games`;
+    if (passRateValueEl) passRateValueEl.textContent = `${passRate}%`;
+    
+    // Update journey progress
+    const gamesCompletedEl = document.getElementById('games-completed');
+    const highestGameEl = document.getElementById('highest-game');
+    
+    if (gamesCompletedEl) gamesCompletedEl.textContent = gamesCompleted;
+    if (highestGameEl) highestGameEl.textContent = highestUnlocked;
+    
+    // Update progress bar
+    const progressFill = document.getElementById('profile-progress-fill');
+    const progressText = document.getElementById('profile-progress-text');
+    const totalGames = user.isPremium ? 365 : 10;
+    const progressPercent = (gamesCompleted / totalGames) * 100;
+    
+    if (progressFill) progressFill.style.width = `${Math.min(progressPercent, 100)}%`;
+    if (progressText) progressText.textContent = `${gamesCompleted} / ${totalGames} games`;
+    
+    // Update top scores list
+    const bestsList = document.getElementById('bests-list');
+    const noGamesMessage = document.getElementById('no-games-message');
+    
+    if (gamesCompleted > 0 && bestsList) {
+      // Sort scores by percentage (highest first)
+      const sortedScores = Object.entries(scores)
+        .map(([id, data]) => {
+          const game = getGameById(parseInt(id));
+          return { id: parseInt(id), ...data, game };
+        })
+        .filter(s => s.game)
+        .sort((a, b) => b.percentage - a.percentage)
+        .slice(0, 5); // Top 5
+      
+      if (noGamesMessage) noGamesMessage.style.display = 'none';
+      
+      // Clear and rebuild the list
+      bestsList.innerHTML = sortedScores.map(s => `
+        <div class="best-item">
+          <span class="best-type">${s.game.icon} ${s.game.name}</span>
+          <span class="best-score ${s.percentage >= 70 ? 'passed' : 'failed'}">${s.percentage}%</span>
+        </div>
+      `).join('');
+    } else if (noGamesMessage) {
+      noGamesMessage.style.display = 'block';
+    }
+  },
+  
+  // Open settings modal
+  openSettingsModal: () => {
+    const modal = document.getElementById('settings-modal');
+    modal.classList.add('active');
+    
+    // Update toggle states
+    const soundToggle = document.getElementById('settings-sound-toggle');
     if (soundToggle) {
       soundToggle.checked = localStorage.getItem('streakrush_sound') !== 'false';
     }
-    
-    // Friends Hub - Join Room
-    document.getElementById('join-room-button')?.addEventListener('click', () => {
-      Sounds.click();
-      const code = document.getElementById('join-room-code').value.toUpperCase();
-      if (code.length !== 6) {
-        UI.showToast('Enter a 6-character room code', 'error');
-        return;
-      }
-      
-      const user = Storage.getUser();
-      const result = FriendsHub.joinRoom(code, user.name);
-      
-      if (result.success) {
-        App.showHubLobby();
-        UI.showToast('Joined room!', 'success');
-      } else {
-        UI.showToast(result.error, 'error');
-      }
-    });
-    
-    // Friends Hub - Create Room
-    document.getElementById('create-room-button')?.addEventListener('click', () => {
-      Sounds.click();
-      
-      if (!FriendsHub.hasAdminAccess()) {
-        UI.showToast('Admin access: $30 (Coming soon)', 'default');
-        return;
-      }
-      
-      const user = Storage.getUser();
-      const result = FriendsHub.createRoom(user.name);
-      
-      if (result.success) {
-        App.showHubLobby();
-        UI.showToast(`Room created: ${result.roomCode}`, 'success');
-      }
-    });
-    
-    // Copy room code
-    document.getElementById('copy-code-button')?.addEventListener('click', () => {
-      Sounds.click();
-      const code = FriendsHub.roomCode;
-      if (code && navigator.clipboard) {
-        navigator.clipboard.writeText(code);
-        UI.showToast('Code copied!', 'success');
-      }
-    });
-    
-    // Leave room
-    document.getElementById('leave-room-button')?.addEventListener('click', () => {
-      Sounds.click();
-      FriendsHub.leaveRoom();
-      App.showHubWelcome();
-    });
-    
-    // Start party game
-    document.getElementById('start-party-button')?.addEventListener('click', () => {
-      Sounds.click();
-      if (FriendsHub.startGame()) {
-        App.startPartyGame();
-      }
-    });
-    
-    // Prevent default touch behaviors
-    document.addEventListener('touchmove', (e) => {
-      if (e.target.closest('.game-area')) {
-        e.preventDefault();
-      }
-    }, { passive: false });
   },
   
-  // Show Hub Welcome
-  showHubWelcome: () => {
-    document.getElementById('hub-welcome').style.display = 'block';
-    document.getElementById('hub-lobby').style.display = 'none';
-    document.getElementById('hub-playing').style.display = 'none';
-    document.getElementById('hub-results').style.display = 'none';
-    
-    // Update host button based on admin access
-    if (FriendsHub.hasAdminAccess()) {
-      document.getElementById('admin-price-section').style.display = 'none';
-      document.getElementById('host-button-text').textContent = 'CREATE ROOM';
-    }
+  // Close settings modal
+  closeSettingsModal: () => {
+    const modal = document.getElementById('settings-modal');
+    modal.classList.remove('active');
   },
   
-  // Show Hub Lobby
-  showHubLobby: () => {
-    document.getElementById('hub-welcome').style.display = 'none';
-    document.getElementById('hub-lobby').style.display = 'block';
-    document.getElementById('hub-playing').style.display = 'none';
-    document.getElementById('hub-results').style.display = 'none';
-    
-    document.getElementById('display-room-code').textContent = FriendsHub.roomCode;
-    App.updatePlayersDisplay();
-    
-    // Update start button
-    const startBtn = document.getElementById('start-party-button');
-    if (FriendsHub.isAdmin) {
-      startBtn.disabled = FriendsHub.players.length < 2;
-      startBtn.textContent = FriendsHub.players.length < 2 ? 'WAITING FOR PLAYERS...' : 'START GAME!';
-    } else {
-      startBtn.textContent = 'WAITING FOR HOST...';
-      startBtn.disabled = true;
-    }
-  },
-  
-  // Update players display
-  updatePlayersDisplay: () => {
-    const list = document.getElementById('players-list');
-    document.getElementById('player-count').textContent = FriendsHub.players.length;
-    
-    list.innerHTML = FriendsHub.players.map(p => `
-      <div class="player-item">
-        <div class="player-avatar">${p.name[0]}</div>
-        <span class="player-name">${p.name}</span>
-        ${p.isAdmin ? '<span class="admin-badge">HOST</span>' : ''}
-        <span class="player-status ${p.ready ? '' : 'waiting'}">${p.ready ? '✓ Ready' : 'Waiting...'}</span>
-      </div>
-    `).join('');
-  },
-  
-  // Start party game (placeholder)
-  startPartyGame: () => {
-    document.getElementById('hub-lobby').style.display = 'none';
-    document.getElementById('hub-playing').style.display = 'block';
-    document.getElementById('round-number').textContent = FriendsHub.currentRound;
-    
-    // For now, show placeholder
-    document.getElementById('party-game-area').innerHTML = `
-      <div style="text-align: center; padding: 40px;">
-        <div style="font-size: 4rem; margin-bottom: 20px;">🎮</div>
-        <h2>Party Mode</h2>
-        <p style="color: var(--text-secondary);">
-          Multiplayer gameplay coming soon!<br>
-          This feature requires a server backend.
-        </p>
-      </div>
-    `;
-  },
-  
-  // Navigate to a screen
-  navigateTo: (screen) => {
-    // Update nav buttons
-    document.querySelectorAll('.nav-item').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.screen === screen);
+  // Update theme buttons
+  updateThemeButtons: () => {
+    const currentTheme = localStorage.getItem('streakrush_theme') || 'fire';
+    document.querySelectorAll('.settings-theme-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.theme === currentTheme);
     });
-    
-    // Show screen
-    UI.showScreen(screen);
-    
-    // Update screen-specific content
-    switch (screen) {
-      case 'home':
-        App.backToGames();
-        App.renderGamesGrid();
-        App.updateGamesRemaining();
-        break;
-      case 'leaderboard':
-        UI.updateLeaderboard();
-        break;
-      case 'shop':
-        UI.updateShop();
-        break;
-      case 'profile':
-        UI.updateProfile();
-        break;
-      case 'friends-hub':
-        App.showHubWelcome();
-        break;
-    }
   },
   
-  // Register service worker for PWA
+  // Register service worker
   registerServiceWorker: () => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js')
-        .then(reg => {
-          console.log('Service Worker registered:', reg.scope);
-        })
-        .catch(err => {
-          console.log('Service Worker registration failed:', err);
-        });
+        .then(reg => console.log('SW registered'))
+        .catch(err => console.log('SW failed'));
     }
   }
 };
 
-// Initialize app when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  App.init();
-});
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', App.init);

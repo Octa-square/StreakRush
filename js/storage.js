@@ -3,6 +3,11 @@
 // ========================================
 
 const Storage = {
+  // ========================================
+  // 🎮 DEMO MODE - SET TO TRUE TO UNLOCK ALL
+  // ========================================
+  DEMO_MODE: false,  // <-- Set to true to test premium features
+  
   KEYS: {
     USER: 'streakrush_user',
     STATS: 'streakrush_stats',
@@ -12,18 +17,21 @@ const Storage = {
     SETTINGS: 'streakrush_settings'
   },
   
-  // Default user data
+  // Default user data (DEMO MODE gives premium + host access + coins)
   defaultUser: () => ({
     id: Utils.uuid(),
     name: 'Player',
     avatar: '👤',
     joinDate: Utils.getToday(),
-    lastPlayed: null,
-    streak: 0,
-    lastCheckpoint: 0,
-    coins: 100, // Starting coins
-    todayPlayed: false,
-    attemptsToday: 3
+    lastSession: null,
+    // NEW STREAK: consecutive games passed (70%+)
+    currentStreak: Storage.DEMO_MODE ? 12 : 0,   // Current consecutive passes
+    bestStreak: Storage.DEMO_MODE ? 25 : 0,       // Longest streak ever
+    totalGamesPlayed: Storage.DEMO_MODE ? 45 : 0, // Lifetime game count
+    sessionsCompleted: Storage.DEMO_MODE ? 10 : 0, // Play sessions
+    coins: Storage.DEMO_MODE ? 9999 : 100,  // Demo: lots of coins
+    isPremium: Storage.DEMO_MODE,  // Demo: Premium unlocked
+    isHost: Storage.DEMO_MODE      // Demo: Host access unlocked
   }),
   
   // Default stats
@@ -286,6 +294,221 @@ const Storage = {
     Object.values(Storage.KEYS).forEach(key => {
       localStorage.removeItem(key);
     });
+  },
+  
+  // ========================================
+  // MEMORY CATEGORY TRACKING
+  // ========================================
+  
+  // Memory categories mapped to game names
+  MEMORY_CATEGORIES: {
+    SPATIAL: ['World Capitals', 'Flag Match', 'Continent Sort', 'Population Battle'],
+    NUMERIC: ['Speed Math', 'Number Sequence', 'Math Challenge', 'Ultimate Quiz'],
+    VISUAL: ['Memory Sequence', 'Color Match', 'Pattern Recognition'],
+    VERBAL: ['Word Scramble', 'Vocabulary', 'True or False'],
+    SPEED: ['Reaction Test', 'Quick Fire', 'Time Trial']
+  },
+  
+  // Find game ID by name
+  findGameIdByName: (gameName) => {
+    if (typeof GAMES === 'undefined') return null;
+    const game = GAMES.find(g => g.name === gameName);
+    return game ? game.id : null;
+  },
+  
+  // Calculate trend from scores array
+  calculateTrend: (scores) => {
+    if (scores.length < 3) return 'stable';
+    
+    const recent = scores.slice(-3);
+    const earlier = scores.slice(0, 3);
+    
+    const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
+    const earlierAvg = earlier.reduce((a, b) => a + b, 0) / earlier.length;
+    
+    const diff = recentAvg - earlierAvg;
+    
+    if (diff > 5) return 'improving';
+    if (diff < -5) return 'declining';
+    return 'stable';
+  },
+  
+  // Get memory performance profile by category
+  getMemoryProfile: () => {
+    const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
+    const profile = {};
+    
+    for (const [category, gameNames] of Object.entries(Storage.MEMORY_CATEGORIES)) {
+      const categoryScores = gameNames
+        .map(gameName => {
+          const gameId = Storage.findGameIdByName(gameName);
+          return gameId && scores[gameId] ? scores[gameId].percentage : 0;
+        })
+        .filter(score => score > 0);
+      
+      if (categoryScores.length > 0) {
+        profile[category] = {
+          average: Math.round(categoryScores.reduce((a, b) => a + b, 0) / categoryScores.length),
+          gamesPlayed: categoryScores.length,
+          totalGames: gameNames.length,
+          trend: Storage.calculateTrend(categoryScores),
+          emoji: Storage.getCategoryEmoji(category)
+        };
+      }
+    }
+    
+    return profile;
+  },
+  
+  // Get emoji for memory category
+  getCategoryEmoji: (category) => {
+    const emojis = {
+      SPATIAL: '🗺️',
+      NUMERIC: '🔢',
+      VISUAL: '👁️',
+      VERBAL: '🔤',
+      SPEED: '⚡'
+    };
+    return emojis[category] || '🧠';
+  },
+  
+  // Get strongest and weakest memory areas
+  getMemoryStrengths: () => {
+    const profile = Storage.getMemoryProfile();
+    const categories = Object.entries(profile);
+    
+    if (categories.length === 0) {
+      return { strongest: null, weakest: null };
+    }
+    
+    categories.sort((a, b) => b[1].average - a[1].average);
+    
+    return {
+      strongest: categories[0] ? { name: categories[0][0], ...categories[0][1] } : null,
+      weakest: categories[categories.length - 1] ? { name: categories[categories.length - 1][0], ...categories[categories.length - 1][1] } : null
+    };
+  },
+  
+  // ========================================
+  // REACTION TIME TRACKING
+  // ========================================
+  
+  // Track reaction time for speed games
+  trackReactionTime: (gameId, reactionTimeMs) => {
+    const key = `streakrush_reaction_${gameId}`;
+    const history = JSON.parse(localStorage.getItem(key) || '[]');
+    
+    history.push({
+      time: reactionTimeMs,
+      date: new Date().toISOString()
+    });
+    
+    // Keep last 10 attempts
+    if (history.length > 10) history.shift();
+    
+    localStorage.setItem(key, JSON.stringify(history));
+    
+    const times = history.map(h => h.time);
+    const average = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
+    const best = Math.min(...times);
+    
+    return {
+      current: reactionTimeMs,
+      average: average,
+      best: best,
+      attempts: history.length,
+      improvement: history.length > 1 
+        ? Math.round(history[0].time - reactionTimeMs)
+        : 0,
+      isPersonalBest: reactionTimeMs === best
+    };
+  },
+  
+  // Get reaction time history for a game
+  getReactionHistory: (gameId) => {
+    const key = `streakrush_reaction_${gameId}`;
+    const history = JSON.parse(localStorage.getItem(key) || '[]');
+    
+    if (history.length === 0) {
+      return null;
+    }
+    
+    const times = history.map(h => h.time);
+    
+    return {
+      history: history,
+      average: Math.round(times.reduce((a, b) => a + b, 0) / times.length),
+      best: Math.min(...times),
+      worst: Math.max(...times),
+      attempts: history.length,
+      trend: Storage.calculateReactionTrend(times)
+    };
+  },
+  
+  // Calculate reaction time trend
+  calculateReactionTrend: (times) => {
+    if (times.length < 3) return 'stable';
+    
+    const recent = times.slice(-3);
+    const earlier = times.slice(0, 3);
+    
+    const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
+    const earlierAvg = earlier.reduce((a, b) => a + b, 0) / earlier.length;
+    
+    const diff = earlierAvg - recentAvg; // Lower is better for reaction time
+    
+    if (diff > 20) return 'improving';
+    if (diff < -20) return 'declining';
+    return 'stable';
+  },
+  
+  // ========================================
+  // OVERALL BRAIN SCORE
+  // ========================================
+  
+  // Calculate overall brain/memory score
+  getBrainScore: () => {
+    const profile = Storage.getMemoryProfile();
+    const categories = Object.values(profile);
+    
+    if (categories.length === 0) {
+      return { score: 0, level: 'Beginner', emoji: '🌱' };
+    }
+    
+    // Weighted average of all category averages
+    const totalAvg = categories.reduce((sum, cat) => sum + cat.average, 0) / categories.length;
+    
+    // Get user stats
+    const user = Storage.getUser();
+    const gamesPlayed = user.totalGamesPlayed || 0;
+    
+    // Factor in consistency (games played)
+    const consistencyBonus = Math.min(gamesPlayed * 0.5, 20);
+    
+    // Factor in streaks
+    const streakBonus = Math.min((user.bestStreak || 0) * 0.3, 15);
+    
+    const finalScore = Math.round(Math.min(totalAvg + consistencyBonus + streakBonus, 100));
+    
+    // Determine level
+    let level, emoji;
+    if (finalScore >= 90) { level = 'Memory Master'; emoji = '🧠💎'; }
+    else if (finalScore >= 80) { level = 'Expert'; emoji = '🧠🥇'; }
+    else if (finalScore >= 70) { level = 'Advanced'; emoji = '🧠⭐'; }
+    else if (finalScore >= 60) { level = 'Intermediate'; emoji = '🧠'; }
+    else if (finalScore >= 40) { level = 'Developing'; emoji = '🌿'; }
+    else { level = 'Beginner'; emoji = '🌱'; }
+    
+    return {
+      score: finalScore,
+      level: level,
+      emoji: emoji,
+      breakdown: {
+        baseScore: Math.round(totalAvg),
+        consistencyBonus: Math.round(consistencyBonus),
+        streakBonus: Math.round(streakBonus)
+      }
+    };
   }
 };
 

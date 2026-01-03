@@ -139,6 +139,35 @@ const Sounds = {
     oscillator.stop(ctx.currentTime + 0.6);
   },
   
+  // Play achievement/celebration sound
+  achievement: () => {
+    if (!Sounds.enabled || !Sounds.ctx) return;
+    
+    const ctx = Sounds.ctx;
+    
+    // Play a fanfare-like sound
+    const notes = [523, 659, 784, 1047]; // C5, E5, G5, C6
+    const duration = 0.15;
+    
+    notes.forEach((freq, i) => {
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      
+      oscillator.frequency.setValueAtTime(freq, ctx.currentTime + i * duration);
+      oscillator.type = 'sine';
+      
+      const startTime = ctx.currentTime + i * duration;
+      gainNode.gain.setValueAtTime(0.25, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, startTime + duration * 1.5);
+      
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration * 1.5);
+    });
+  },
+  
   // Play button click
   click: () => {
     if (!Sounds.enabled || !Sounds.ctx) return;

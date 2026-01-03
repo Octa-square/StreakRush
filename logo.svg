@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <defs>
+    <!-- Fire gradient -->
+    <linearGradient id="fireGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff4500"/>
+      <stop offset="50%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#ffd700"/>
+    </linearGradient>
+    <!-- Inner flame gradient -->
+    <linearGradient id="innerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#fff3cd"/>
+    </linearGradient>
+    <!-- Speed lines gradient -->
+    <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/>
+    </linearGradient>
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background circle (optional, for icon versions) -->
+  <circle cx="60" cy="60" r="56" fill="#1a1a2e" stroke="url(#fireGrad)" stroke-width="2"/>
+  
+  <!-- Speed lines behind flame -->
+  <g opacity="0.6">
+    <rect x="10" y="45" width="25" height="3" rx="1.5" fill="url(#speedGrad)"/>
+    <rect x="5" y="55" width="30" height="2" rx="1" fill="url(#speedGrad)"/>
+    <rect x="12" y="65" width="22" height="3" rx="1.5" fill="url(#speedGrad)"/>
+  </g>
+  
+  <!-- Main flame shape -->
+  <g filter="url(#glow)">
+    <!-- Outer flame -->
+    <path d="M60 15 
+             C45 35, 35 45, 35 65 
+             C35 85, 45 100, 60 100 
+             C75 100, 85 85, 85 65 
+             C85 45, 75 35, 60 15
+             M55 45 C50 55, 48 65, 55 75 C58 80, 62 80, 65 75 C72 65, 70 55, 65 45 C62 40, 58 40, 55 45" 
+          fill="url(#fireGrad)" 
+          fill-rule="evenodd"/>
+    
+    <!-- Inner bright flame -->
+    <path d="M60 40 
+             C52 50, 48 58, 50 70 
+             C52 80, 56 85, 60 85 
+             C64 85, 68 80, 70 70 
+             C72 58, 68 50, 60 40" 
+          fill="url(#innerFlame)"/>
+    
+    <!-- Flame highlight -->
+    <ellipse cx="58" cy="55" rx="4" ry="8" fill="#fff9e6" opacity="0.8"/>
+  </g>
+  
+  <!-- Streak number indicator -->
+  <circle cx="90" cy="30" r="15" fill="#00d4ff"/>
+  <text x="90" y="35" font-family="Arial Black, sans-serif" font-size="14" font-weight="bold" fill="#1a1a2e" text-anchor="middle">7</text>
+</svg>
+

@@ -1,0 +1,11 @@
+{
+  "appId": "com.streakrush.app",
+  "appName": "StreakRush",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "always"
+  }
+}
