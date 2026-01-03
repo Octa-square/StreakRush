@@ -13,7 +13,7 @@ const GAMES = [
     id: 1,
     name: 'Color Sequence',
     category: 'Visual',
-    icon: '🌈',
+    icon: '🎨',
     difficulty: 'easy',
     timeLimit: 60,
     instruction: 'Watch the color sequence, then repeat it in the exact order!',

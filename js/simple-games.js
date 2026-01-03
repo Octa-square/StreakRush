@@ -1400,7 +1400,7 @@ const SimpleGames = {
         <div class="game-instruction" style="text-align: center; padding: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.9rem; color: #aaa;">
           📝 Watch the flashing colors, then tap them in the SAME ORDER!
         </div>
-        <div class="sequence-display" id="sequence-display" style="font-size: 1.5rem; text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 120px; transition: all 0.15s ease; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div style="font-size: 2rem;">🌈</div><div>Get ready...</div></div>
+        <div class="sequence-display" id="sequence-display" style="font-size: 1.5rem; text-align: center; padding: 40px 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 120px; transition: all 0.15s ease; display: flex; flex-direction: column; justify-content: center; align-items: center;"><div style="font-size: 2rem;">🎨</div><div>Get ready...</div></div>
         <div class="color-grid" id="color-grid" style="display: none;"></div>
         <div class="sequence-level" style="text-align: center; margin-top: 15px; font-size: 1.1rem;">Level: <span id="seq-level">1</span></div>
       </div>
