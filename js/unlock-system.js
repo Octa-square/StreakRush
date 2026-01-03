@@ -76,7 +76,9 @@ const UnlockSystem = {
   
   // Record a game score and check if next game is unlocked
   recordGameScore: (gameId, score, maxPossibleScore, questionsAnswered = 0) => {
-    const percentage = maxPossibleScore > 0 ? Math.round((score / maxPossibleScore) * 100) : 0;
+    // Calculate percentage and cap at 100% (bonuses can push score above max)
+    const rawPercentage = maxPossibleScore > 0 ? Math.round((score / maxPossibleScore) * 100) : 0;
+    const percentage = Math.min(100, rawPercentage);
     const tier = UnlockSystem.getMasteryTier(percentage);
     const tierInfo = UnlockSystem.getTierInfo(tier);
     
