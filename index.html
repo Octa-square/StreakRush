@@ -40,7 +40,18 @@
                     <img src="logo.svg" alt="CogniXis" class="app-logo-img">
                     <span class="app-name">Cogni<span style="color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;">X</span>is</span>
                 </div>
-                <!-- Brain Score Display (between logo and settings) -->
+                
+                <!-- Focus Sounds - Help with brain concentration -->
+                <div class="ambient-sounds-bar" id="ambient-sounds-bar">
+                    <button class="ambient-btn" id="ambient-water" data-sound="water" title="Rain sounds - Masks distractions">🌧️</button>
+                    <button class="ambient-btn" id="ambient-binaural" data-sound="binaural" title="Focus tones - Alpha waves">🎵</button>
+                    <button class="ambient-btn" id="ambient-nature" data-sound="nature" title="Forest sounds - Reduces stress">🌲</button>
+                    <div class="ambient-volume" id="ambient-volume-control">
+                        <input type="range" id="ambient-volume" min="0" max="100" value="50" class="volume-slider">
+                    </div>
+                    <button class="ambient-info-btn" id="ambient-info-btn" title="Why focus sounds help">ℹ️</button>
+                </div>
+                
                 <button class="settings-button" id="open-settings">⚙️</button>
             </div>
 
@@ -1138,6 +1149,45 @@
     <script src="js/room-manager.js?v=1"></script>
     <script src="js/party-ui.js?v=1"></script>
     <script src="js/app.js?v=5"></script>
+
+        <!-- Ambient Sounds Info Modal -->
+        <div class="ambient-info-modal" id="ambient-info-modal">
+            <div class="ambient-info-content">
+                <h3>🧠 Focus Sounds for Your Brain</h3>
+                <p style="color: var(--text-secondary); font-size: 12px; text-align: center; margin-bottom: 16px;">
+                    Scientific studies show these sounds improve concentration and cognitive performance
+                </p>
+                <div class="ambient-info-item">
+                    <span class="icon">🌧️</span>
+                    <div class="text">
+                        <h4>Rain Sounds</h4>
+                        <p>Gentle rain creates a consistent sound that masks sudden noises and distractions</p>
+                        <span class="benefit">✓ Reduces anxiety, promotes calm focus</span>
+                    </div>
+                </div>
+                <div class="ambient-info-item">
+                    <span class="icon">🎵</span>
+                    <div class="text">
+                        <h4>Binaural Focus Tones</h4>
+                        <p>10Hz alpha wave frequencies sync your brainwaves to an optimal focus state</p>
+                        <span class="benefit">✓ Boosts memory, increases attention span</span>
+                    </div>
+                </div>
+                <div class="ambient-info-item">
+                    <span class="icon">🌲</span>
+                    <div class="text">
+                        <h4>Forest Ambience</h4>
+                        <p>Nature sounds lower cortisol (stress hormone) and improve cognitive performance</p>
+                        <span class="benefit">✓ Reduces stress, enhances mental clarity</span>
+                    </div>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 11px; text-align: center; margin-top: 12px;">
+                    💡 Tip: Use headphones for the best binaural beats effect
+                </p>
+                <button class="ambient-info-close" id="close-ambient-info">Got it!</button>
+            </div>
+        </div>
+
 </body>
 </html>
 

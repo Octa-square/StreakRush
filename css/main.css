@@ -8282,3 +8282,210 @@ h1, h2, h3, h4, h5, h6 {
   transition: transform 0.2s ease, opacity 0.2s ease !important;
 }
 
+
+/* ========================================
+   AMBIENT FOCUS SOUNDS BAR
+   ======================================== */
+
+.ambient-sounds-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ambient-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.6;
+}
+
+.ambient-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  opacity: 0.9;
+}
+
+.ambient-btn.active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  opacity: 1;
+  box-shadow: 0 0 12px rgba(0, 212, 255, 0.4);
+  animation: ambientPulse 2s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.ambient-volume {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px;
+}
+
+.volume-slider {
+  width: 50px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(0, 212, 255, 0.4);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--primary);
+  cursor: pointer;
+  border: none;
+}
+
+.ambient-info-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.ambient-info-btn:hover {
+  opacity: 1;
+}
+
+/* Ambient Info Modal */
+.ambient-info-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.ambient-info-modal.active {
+  display: flex;
+}
+
+.ambient-info-content {
+  background: var(--bg-secondary);
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ambient-info-content h3 {
+  color: var(--primary);
+  font-size: 18px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.ambient-info-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
+
+.ambient-info-item .icon {
+  font-size: 24px;
+}
+
+.ambient-info-item .text h4 {
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.ambient-info-item .text p {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.ambient-info-item .text .benefit {
+  color: var(--success);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.ambient-info-close {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+  .ambient-sounds-bar {
+    gap: 4px;
+    padding: 3px 6px;
+  }
+  
+  .ambient-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+  
+  .volume-slider {
+    width: 35px;
+  }
+  
+  .ambient-info-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 350px) {
+  .ambient-volume {
+    display: none;
+  }
+}
