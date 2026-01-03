@@ -60,17 +60,14 @@ const UnlockSystem = {
     return gameId <= highest;
   },
   
-  // Check if game can be played (unlocked AND within free tier or premium)
+  // Check if game can be played (free games always playable, premium games need subscription)
   canPlayGame: (gameId) => {
     const user = Storage.getUser();
     
     // Premium can play anything
     if (user.isPremium) return true;
     
-    // Must be unlocked
-    if (!UnlockSystem.isGameUnlocked(gameId)) return false;
-    
-    // Must be within free tier
+    // Free users can play all games 1-15 without restriction
     return gameId <= UnlockSystem.FREE_GAMES;
   },
   
@@ -181,14 +178,14 @@ const UnlockSystem = {
     return highest > UnlockSystem.FREE_GAMES;
   },
   
-  // Get available games for display (only unlocked ones)
+  // Get available games for display (all free games always available)
   getAvailableGames: () => {
-    const highest = UnlockSystem.getHighestUnlocked();
     const user = Storage.getUser();
     
     return GAMES.filter(game => {
       if (user.isPremium) return true;
-      return game.id <= highest && game.id <= UnlockSystem.FREE_GAMES;
+      // Free users get all 15 free games
+      return game.id <= UnlockSystem.FREE_GAMES;
     });
   },
   

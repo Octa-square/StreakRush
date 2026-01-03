@@ -224,74 +224,76 @@ const App = {
     if (sectionTitle) sectionTitle.textContent = 'Games';
     if (sectionSubtitle) sectionSubtitle.textContent = 'Tap to play any game';
     
-    // Determine max games to show
-    const maxGames = isPremium ? 60 : 15;
-    const totalGames = Math.min(highestUnlocked, maxGames);
+    // FREE USERS: Show all 15 free games (no padlock on any free game)
+    // PREMIUM USERS: Show all 60 games
+    const FREE_GAMES = 15;
+    const totalGames = isPremium ? 60 : FREE_GAMES;
     
-    if (totalGames > 0) {
-      section.style.display = 'block';
-      grid.innerHTML = '';
+    section.style.display = 'block';
+    grid.innerHTML = '';
+    
+    // Show games up to current limit
+    const showCount = Math.min(App.gamesShown, totalGames);
+    
+    for (let i = 1; i <= showCount; i++) {
+      const game = getGameById(i);
+      if (!game) continue;
       
-      // Show games up to current limit
-      const showCount = Math.min(App.gamesShown, totalGames);
+      const score = scores[i];
+      const hasPlayed = score && score.percentage !== undefined;
+      // Use the 'passed' flag from latest attempt (not just percentage check)
+      const passed = hasPlayed && score.passed === true;
+      const failed = hasPlayed && score.passed === false;
       
-      for (let i = 1; i <= showCount; i++) {
-        const game = getGameById(i);
-        if (!game) continue;
-        
-        const score = scores[i];
-        const hasPlayed = score && score.percentage !== undefined;
-        // Use the 'passed' flag from latest attempt (not just percentage check)
-        const passed = hasPlayed && score.passed === true;
-        const failed = hasPlayed && score.passed === false;
-        
-        // Determine card state
-        let cardClass = 'game-card';
-        if (passed) cardClass += ' game-passed';
-        if (failed) cardClass += ' game-failed';
-        if (!hasPlayed && i < highestUnlocked) cardClass += ' game-unlocked';
-        if (i >= highestUnlocked) cardClass += ' game-locked';
-        
-        const scoreText = hasPlayed ? `${score.percentage}%` : (i < highestUnlocked ? 'Play' : '🔒');
-        
-        const card = document.createElement('div');
-        card.className = cardClass;
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('aria-label', `Game ${i}: ${game.name}${hasPlayed ? `, score ${score.percentage}%` : ''}`);
-        card.innerHTML = `
-          <span class="game-number">${i}</span>
-          <span class="game-icon">${game.icon}</span>
-          <span class="game-name">${game.name}</span>
-          <span class="game-score ${passed ? 'score-pass' : ''} ${failed ? 'score-fail' : ''}">${scoreText}</span>
-        `;
-        
-        // Only allow click if unlocked
-        if (i < highestUnlocked || (i === highestUnlocked && i <= maxGames)) {
-          card.addEventListener('click', () => {
-            Sounds.click();
-            // Show instructions first, then play
-            App.showGameInstructions(game);
-          });
-        }
-        
-        grid.appendChild(card);
-      }
+      // Determine if game is free (1-15) or premium (16-60)
+      const isFreeGame = i <= FREE_GAMES;
+      const isLocked = !isPremium && !isFreeGame; // Only lock premium games for free users
       
-      // Add "Load More" button if there are more games
-      if (showCount < totalGames) {
-        const loadMoreBtn = document.createElement('button');
-        loadMoreBtn.className = 'load-more-btn';
-        loadMoreBtn.innerHTML = `Load More Games (${totalGames - showCount} remaining)`;
-        loadMoreBtn.addEventListener('click', () => {
+      // Determine card state
+      let cardClass = 'game-card';
+      if (passed) cardClass += ' game-passed';
+      if (failed) cardClass += ' game-failed';
+      if (!hasPlayed && !isLocked) cardClass += ' game-unlocked';
+      if (isLocked) cardClass += ' game-locked';
+      
+      // Score text: show percentage if played, "Play" if unlocked, 🔒 only for premium games
+      const scoreText = hasPlayed ? `${score.percentage}%` : (isLocked ? '🔒' : 'Play');
+      
+      const card = document.createElement('div');
+      card.className = cardClass;
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('aria-label', `Game ${i}: ${game.name}${hasPlayed ? `, score ${score.percentage}%` : ''}`);
+      card.innerHTML = `
+        <span class="game-number">${i}</span>
+        <span class="game-icon">${game.icon}</span>
+        <span class="game-name">${game.name}</span>
+        <span class="game-score ${passed ? 'score-pass' : ''} ${failed ? 'score-fail' : ''}">${scoreText}</span>
+      `;
+      
+      // All free games are playable, premium games need subscription
+      if (!isLocked) {
+        card.addEventListener('click', () => {
           Sounds.click();
-          App.gamesShown += 12;
-          App.renderCompletedGames(scores, highestUnlocked, isPremium);
+          // Show instructions first, then play
+          App.showGameInstructions(game);
         });
-        grid.appendChild(loadMoreBtn);
       }
-    } else {
-      section.style.display = 'none';
+      
+      grid.appendChild(card);
+    }
+    
+    // Add "Load More" button if there are more games
+    if (showCount < totalGames) {
+      const loadMoreBtn = document.createElement('button');
+      loadMoreBtn.className = 'load-more-btn';
+      loadMoreBtn.innerHTML = `Load More Games (${totalGames - showCount} remaining)`;
+      loadMoreBtn.addEventListener('click', () => {
+        Sounds.click();
+        App.gamesShown += 12;
+        App.renderCompletedGames(scores, highestUnlocked, isPremium);
+      });
+      grid.appendChild(loadMoreBtn);
     }
   },
   
@@ -1253,6 +1255,24 @@ const Progress = {
     }
     if (remainingEl) remainingEl.textContent = remaining;
     if (masteryEl) masteryEl.textContent = mastery;
+    
+    // Update trail icon based on progress
+    const trailIcon = document.getElementById('trail-icon');
+    if (trailIcon) {
+      trailIcon.style.left = `${percentage}%`;
+      // Change icon based on progress
+      if (percentage >= 100) {
+        trailIcon.textContent = '🏆';
+      } else if (percentage >= 75) {
+        trailIcon.textContent = '🔥';
+      } else if (percentage >= 50) {
+        trailIcon.textContent = '⚡';
+      } else if (percentage >= 25) {
+        trailIcon.textContent = '🎯';
+      } else {
+        trailIcon.textContent = '🚀';
+      }
+    }
     
     // Update milestone badge
     const badgeEl = document.getElementById('milestone-badge');
