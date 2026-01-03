@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Option 1: Brain on Fire - Brain with flame streak -->
+  <defs>
+    <linearGradient id="brainGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#f72585"/>
+    </linearGradient>
+    <linearGradient id="flameGrad1" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff4500"/>
+      <stop offset="50%" style="stop-color:#ff6b35"/>
+      <stop offset="100%" style="stop-color:#ffd700"/>
+    </linearGradient>
+    <filter id="glow1">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <circle cx="100" cy="100" r="95" fill="#1a1a2e"/>
+  <circle cx="100" cy="100" r="90" fill="none" stroke="url(#brainGrad1)" stroke-width="3"/>
+  
+  <!-- Brain shape -->
+  <g filter="url(#glow1)" transform="translate(50, 40)">
+    <!-- Left hemisphere -->
+    <path d="M45 20 
+             C25 20, 10 40, 10 60 
+             C10 85, 25 100, 45 105 
+             C45 105, 50 105, 50 100
+             C50 90, 45 85, 45 75
+             C45 65, 50 55, 50 45
+             C50 35, 45 25, 45 20" 
+          fill="url(#brainGrad1)"/>
+    <!-- Right hemisphere -->
+    <path d="M55 20 
+             C75 20, 90 40, 90 60 
+             C90 85, 75 100, 55 105 
+             C55 105, 50 105, 50 100
+             C50 90, 55 85, 55 75
+             C55 65, 50 55, 50 45
+             C50 35, 55 25, 55 20" 
+          fill="url(#brainGrad1)"/>
+    <!-- Brain folds -->
+    <path d="M30 45 Q40 50 30 60 M35 70 Q45 75 35 85" stroke="#fff" stroke-width="2" fill="none" opacity="0.5"/>
+    <path d="M70 45 Q60 50 70 60 M65 70 Q55 75 65 85" stroke="#fff" stroke-width="2" fill="none" opacity="0.5"/>
+  </g>
+  
+  <!-- Flame at bottom of brain -->
+  <g transform="translate(75, 130)">
+    <path d="M25 0 C15 15, 5 25, 5 35 C5 50, 15 55, 25 55 C35 55, 45 50, 45 35 C45 25, 35 15, 25 0" 
+          fill="url(#flameGrad1)"/>
+    <path d="M25 15 C20 25, 15 30, 18 40 C20 48, 25 50, 30 40 C33 30, 28 25, 25 15" 
+          fill="#fff3cd" opacity="0.8"/>
+  </g>
+  
+  <!-- Streak number -->
+  <circle cx="160" cy="45" r="20" fill="#00d4ff"/>
+  <text x="160" y="52" font-family="Arial Black" font-size="18" font-weight="bold" fill="#1a1a2e" text-anchor="middle">7</text>
+</svg>
+

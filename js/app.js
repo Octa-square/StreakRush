@@ -125,6 +125,17 @@ const App = {
     const highestUnlocked = UnlockSystem.getHighestUnlocked();
     const scores = JSON.parse(localStorage.getItem('streakrush_game_scores') || '{}');
     
+    // Update header stats (brain score and streak)
+    const headerBrainScore = document.getElementById('header-brain-score');
+    const headerStreak = document.getElementById('header-streak');
+    if (headerBrainScore) {
+      const brainScore = Storage.getBrainScore ? Storage.getBrainScore() : 0;
+      headerBrainScore.textContent = brainScore;
+    }
+    if (headerStreak) {
+      headerStreak.textContent = user.currentStreak || 0;
+    }
+    
     // Update home streak badge
     const currentStreak = user.currentStreak || 0;
     const streakText = document.getElementById('home-streak-text');
@@ -174,14 +185,12 @@ const App = {
     const journeyFill = document.getElementById('journey-fill');
     
     if (journeyStep) {
-      if (user.isPremium) {
-        journeyStep.textContent = `Game ${highestUnlocked} of 60`;
-      } else {
-        journeyStep.textContent = `Game ${highestUnlocked} of 20`;
-      }
+      // Show brain score and completed games instead of "Game X of Y"
+      const brainScore = Storage.getBrainScore ? Storage.getBrainScore() : 0;
+      journeyStep.textContent = `🧠 ${brainScore} · ${completedCount} games completed`;
     }
     if (journeyFill) {
-      journeyFill.style.width = `${progressPercent}%`;
+      journeyFill.style.width = `${Math.min(100, progressPercent)}%`;
     }
     
     // Update next game display
@@ -241,14 +250,14 @@ const App = {
         
         const card = document.createElement('div');
         card.className = 'completed-game-card';
-        card.innerHTML = `
+      card.innerHTML = `
           <span class="completed-icon">${game.icon}</span>
           <span class="completed-name">${game.name}</span>
           <span class="completed-score">${scoreText}</span>
-        `;
-        
-        card.addEventListener('click', () => {
-          Sounds.click();
+      `;
+      
+      card.addEventListener('click', () => {
+        Sounds.click();
           App.playGame(game, true); // true = replay mode
         });
         
@@ -375,7 +384,7 @@ const App = {
   setupEventListeners: () => {
     // Begin challenge button (shows instructions first)
     document.getElementById('begin-button')?.addEventListener('click', () => {
-      Sounds.click();
+        Sounds.click();
       App.beginChallenge();
     });
     
@@ -450,11 +459,11 @@ const App = {
             // Start next game directly
             App.currentGame = nextGame;
             App.playGame(nextGame);
-            return;
-          }
+        return;
+      }
         }
       }
-      
+    
       // Otherwise go to home
       UI.showScreen('home');
       App.renderHomeScreen();
@@ -558,9 +567,30 @@ const App = {
       });
     });
     
+    // Difficulty buttons (premium feature)
+    document.querySelectorAll('.difficulty-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (btn.classList.contains('locked')) {
+          Sounds.error();
+          UI.showToast('🔒 Unlock with Premium to access difficulty modes', 'info');
+          return;
+        }
+        Sounds.click();
+        document.querySelectorAll('.difficulty-option').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        localStorage.setItem('streakrush_difficulty', btn.dataset.difficulty);
+      });
+    });
+    
+    // Reset progress button
+    document.getElementById('reset-progress-btn')?.addEventListener('click', () => {
+      Sounds.click();
+      App.showResetConfirmation();
+    });
+    
     // Streak loss play button
     document.getElementById('streak-loss-play')?.addEventListener('click', () => {
-      Sounds.click();
+        Sounds.click();
       document.getElementById('streak-loss-modal').classList.remove('active');
     });
     
@@ -594,9 +624,9 @@ const App = {
     if (categories.length === 0) {
       emptyMsg.style.display = 'block';
       insights.style.display = 'none';
-      return;
-    }
-    
+        return;
+      }
+      
     emptyMsg.style.display = 'none';
     container.innerHTML = '';
     
@@ -738,6 +768,74 @@ const App = {
   closeSettingsModal: () => {
     const modal = document.getElementById('settings-modal');
     modal.classList.remove('active');
+  },
+  
+  // Show reset confirmation
+  showResetConfirmation: () => {
+    // Create confirmation modal
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'reset-confirm-modal';
+    modal.innerHTML = `
+      <div class="reset-confirm-modal">
+        <h3>⚠️ Reset All Progress?</h3>
+        <p>This will delete all your scores, streaks, and achievements. This cannot be undone.</p>
+        <div class="reset-confirm-buttons">
+          <button class="cancel-btn" id="reset-cancel">Cancel</button>
+          <button class="confirm-btn" id="reset-confirm">Reset</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Cancel button
+    document.getElementById('reset-cancel').addEventListener('click', () => {
+      Sounds.click();
+      modal.remove();
+    });
+    
+    // Confirm button
+    document.getElementById('reset-confirm').addEventListener('click', () => {
+      Sounds.error();
+      App.resetAllProgress();
+      modal.remove();
+    });
+    
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.remove();
+      }
+    });
+  },
+  
+  // Reset all progress
+  resetAllProgress: () => {
+    // Clear all game-related storage
+    localStorage.removeItem('streakrush_game_scores');
+    localStorage.removeItem('streakrush_game_attempts');
+    localStorage.removeItem('streakrush_skipped_games');
+    
+    // Reset user data but keep name and settings
+    const user = Storage.getUser();
+    const resetUser = {
+      name: user.name,
+      avatar: user.avatar,
+      isPremium: user.isPremium,
+      currentStreak: 0,
+      bestStreak: 0,
+      gamesPlayed: 0,
+      gamesPassed: 0,
+      totalScore: 0,
+      lastPlayed: null,
+      joinDate: user.joinDate
+    };
+    localStorage.setItem('streakrush_user', JSON.stringify(resetUser));
+    
+    // Close settings and refresh
+    App.closeSettingsModal();
+    UI.showToast('✅ Progress reset successfully', 'success');
+    App.renderHomeScreen();
   },
   
   // Update theme buttons

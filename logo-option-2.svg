@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Option 2: Lightning Brain - Brain with electric bolt -->
+  <defs>
+    <linearGradient id="brainGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4cc9f0"/>
+      <stop offset="100%" style="stop-color:#4361ee"/>
+    </linearGradient>
+    <linearGradient id="boltGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd700"/>
+      <stop offset="100%" style="stop-color:#ff6b35"/>
+    </linearGradient>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background hexagon -->
+  <polygon points="100,5 185,52.5 185,147.5 100,195 15,147.5 15,52.5" fill="#1a1a2e"/>
+  <polygon points="100,12 178,55 178,145 100,188 22,145 22,55" fill="none" stroke="url(#brainGrad2)" stroke-width="3"/>
+  
+  <!-- Stylized brain outline -->
+  <g filter="url(#glow2)" transform="translate(40, 35)">
+    <!-- Brain silhouette -->
+    <ellipse cx="60" cy="55" rx="50" ry="45" fill="url(#brainGrad2)" opacity="0.3"/>
+    <path d="M60 15 
+             C30 15, 15 35, 15 55 
+             C15 80, 35 100, 60 100 
+             C85 100, 105 80, 105 55 
+             C105 35, 90 15, 60 15
+             M60 15 L60 100" 
+          fill="none" stroke="url(#brainGrad2)" stroke-width="4"/>
+    <!-- Brain curves -->
+    <path d="M35 35 Q45 45 35 55 Q45 65 35 80" stroke="url(#brainGrad2)" stroke-width="3" fill="none"/>
+    <path d="M85 35 Q75 45 85 55 Q75 65 85 80" stroke="url(#brainGrad2)" stroke-width="3" fill="none"/>
+  </g>
+  
+  <!-- Lightning bolt through brain -->
+  <g filter="url(#glow2)">
+    <polygon points="115,25 85,80 105,80 75,140 130,70 105,70 130,25" fill="url(#boltGrad)"/>
+    <polygon points="110,35 90,75 100,75 85,120 120,75 105,75 120,35" fill="#fff" opacity="0.5"/>
+  </g>
+  
+  <!-- Speed lines -->
+  <g stroke="#4cc9f0" stroke-width="2" opacity="0.6">
+    <line x1="20" y1="80" x2="45" y2="80"/>
+    <line x1="25" y1="100" x2="50" y2="100"/>
+    <line x1="20" y1="120" x2="45" y2="120"/>
+  </g>
+  
+  <!-- Streak badge -->
+  <circle cx="165" cy="40" r="18" fill="#ff6b35"/>
+  <text x="165" y="47" font-family="Arial Black" font-size="16" font-weight="bold" fill="#fff" text-anchor="middle">7</text>
+</svg>
+

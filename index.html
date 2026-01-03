@@ -39,6 +39,17 @@
                     <img src="logo.svg" alt="StreakRush" class="app-logo-img">
                     <span class="app-name">StreakRush</span>
                 </div>
+                <!-- Brain Score Display (between logo and settings) -->
+                <div class="header-stats" id="header-stats">
+                    <div class="header-stat">
+                        <span class="header-stat-icon">🧠</span>
+                        <span class="header-stat-value" id="header-brain-score">0</span>
+                    </div>
+                    <div class="header-stat">
+                        <span class="header-stat-icon">🔥</span>
+                        <span class="header-stat-value" id="header-streak">0</span>
+                    </div>
+                </div>
                 <button class="settings-button" id="open-settings">⚙️</button>
             </div>
 
@@ -919,6 +930,7 @@
                 
                 <div class="settings-section">
                     <h3>🎨 Theme</h3>
+                    <p class="settings-section-subtitle">Dark Themes</p>
                     <div class="settings-theme-grid">
                         <button class="settings-theme-btn active" data-theme="fire">
                             <span class="theme-preview fire"></span>
@@ -937,6 +949,44 @@
                             <span>Galaxy Mode</span>
                         </button>
                     </div>
+                    <p class="settings-section-subtitle">Light Themes</p>
+                    <div class="settings-theme-grid">
+                        <button class="settings-theme-btn" data-theme="light">
+                            <span class="theme-preview light"></span>
+                            <span>Light Mode</span>
+                        </button>
+                        <button class="settings-theme-btn" data-theme="lightBlue">
+                            <span class="theme-preview lightBlue"></span>
+                            <span>Clean Blue</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>🎮 Difficulty</h3>
+                    <div class="difficulty-options">
+                        <button class="difficulty-option active" data-difficulty="normal">
+                            <span class="diff-name">Normal</span>
+                            <span class="diff-desc">60 sec · Standard scoring</span>
+                        </button>
+                        <button class="difficulty-option locked" data-difficulty="hard" id="hard-difficulty-btn">
+                            <span class="diff-name">Hard <span class="premium-lock">🔒</span></span>
+                            <span class="diff-desc">45 sec · 1.5x score multiplier</span>
+                        </button>
+                        <button class="difficulty-option locked" data-difficulty="extreme" id="extreme-difficulty-btn">
+                            <span class="diff-name">Extreme <span class="premium-lock">🔒</span></span>
+                            <span class="diff-desc">30 sec · 2x score multiplier</span>
+                        </button>
+                    </div>
+                    <p class="premium-hint">🔒 Unlock difficulty modes with Premium</p>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>🔄 Progress</h3>
+                    <button class="settings-action-btn danger" id="reset-progress-btn">
+                        <span>Reset All Progress</span>
+                        <span class="action-desc">Clear all scores and start fresh</span>
+                    </button>
                 </div>
                 
                 
