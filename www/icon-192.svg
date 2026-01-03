@@ -1,39 +1,72 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
   <defs>
+    <!-- Fire gradient -->
     <linearGradient id="fireGrad" x1="0%" y1="100%" x2="0%" y2="0%">
       <stop offset="0%" style="stop-color:#ff4500"/>
       <stop offset="50%" style="stop-color:#ff6b35"/>
       <stop offset="100%" style="stop-color:#ffd700"/>
     </linearGradient>
+    <!-- Inner flame gradient -->
     <linearGradient id="innerFlame" x1="0%" y1="100%" x2="0%" y2="0%">
       <stop offset="0%" style="stop-color:#ff6b35"/>
       <stop offset="100%" style="stop-color:#fff3cd"/>
     </linearGradient>
+    <!-- Speed lines gradient -->
+    <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:0"/>
+      <stop offset="50%" style="stop-color:#00d4ff"/>
+      <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:0"/>
+    </linearGradient>
+    <!-- Glow filter -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
   </defs>
   
   <!-- Background -->
-  <rect width="192" height="192" rx="40" fill="#1a1a2e"/>
+  <rect width="192" height="192" rx="38" fill="#1a1a2e"/>
   
-  <!-- Main flame -->
-  <g transform="translate(96, 96) scale(1.4) translate(-60, -60)">
+  <!-- Subtle border glow -->
+  <rect x="3" y="3" width="186" height="186" rx="35" fill="none" stroke="url(#fireGrad)" stroke-width="2" opacity="0.5"/>
+  
+  <!-- Speed lines behind flame -->
+  <g opacity="0.5">
+    <rect x="15" y="68" width="38" height="5" rx="2.5" fill="url(#speedGrad)"/>
+    <rect x="12" y="83" width="45" height="4" rx="2" fill="url(#speedGrad)"/>
+    <rect x="18" y="98" width="34" height="5" rx="2.5" fill="url(#speedGrad)"/>
+  </g>
+  
+  <!-- Main flame shape -->
+  <g filter="url(#glow)">
     <!-- Outer flame -->
-    <path d="M60 20 
-             C42 45, 30 55, 30 80 
-             C30 105, 42 120, 60 120 
-             C78 120, 90 105, 90 80 
-             C90 55, 78 45, 60 20" 
-          fill="url(#fireGrad)"/>
+    <path d="M96 22 
+             C71 49, 56 68, 56 98 
+             C56 132, 71 158, 96 158 
+             C121 158, 136 132, 136 98 
+             C136 68, 121 49, 96 22
+             M88 60 C79 75, 75 94, 88 117 C93 124, 99 124, 104 117 C117 94, 113 75, 104 60 C99 51, 93 51, 88 60" 
+          fill="url(#fireGrad)" 
+          fill-rule="evenodd"/>
     
-    <!-- Inner flame -->
-    <path d="M60 45 
-             C50 58, 45 70, 48 85 
-             C50 95, 55 100, 60 100 
-             C65 100, 70 95, 72 85 
-             C75 70, 70 58, 60 45" 
+    <!-- Inner bright flame -->
+    <path d="M96 56 
+             C83 75, 75 94, 79 117 
+             C83 135, 90 143, 96 143 
+             C102 143, 109 135, 113 117 
+             C117 94, 109 75, 96 56" 
           fill="url(#innerFlame)"/>
     
-    <!-- Highlight -->
-    <ellipse cx="55" cy="60" rx="6" ry="12" fill="#fff9e6" opacity="0.7"/>
+    <!-- Flame highlight -->
+    <ellipse cx="92" cy="83" rx="7" ry="13" fill="#fff9e6" opacity="0.7"/>
   </g>
+  
+  <!-- Streak number badge -->
+  <circle cx="143" cy="45" r="21" fill="#00d4ff"/>
+  <circle cx="143" cy="45" r="18" fill="#1a1a2e"/>
+  <circle cx="143" cy="45" r="16" fill="#00d4ff"/>
+  <text x="143" y="51" font-family="Arial Black, sans-serif" font-size="18" font-weight="bold" fill="#1a1a2e" text-anchor="middle">7</text>
 </svg>
-
