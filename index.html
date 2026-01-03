@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="StreakRush - 60-second daily challenges. Build your streak, climb the leaderboard!">
+    
+    <title>StreakRush 🔥</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/game-themes.css?v=2">
+</head>
+<body>
+    <div id="app">
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="screen active">
+            <div class="loader-container">
+                <div class="logo-flame">🔥</div>
+                <h1 class="logo-text">STREAK<span>RUSH</span></h1>
+                <div class="loader-bar">
+                    <div class="loader-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen">
+            <div class="home-header">
+                <div class="streak-display">
+                    <div class="streak-flames" id="streak-flames">🔥</div>
+                    <div class="streak-info">
+                        <span class="streak-label">YOUR STREAK</span>
+                        <span class="streak-count" id="streak-count">0</span>
+                        <span class="streak-days">DAYS</span>
+                    </div>
+                    <div class="streak-tier" id="streak-tier"></div>
+                </div>
+            </div>
+
+            <div class="home-content">
+                <!-- Games Remaining Banner -->
+                <div class="games-remaining-banner" id="games-remaining-banner">
+                    <div class="games-remaining-info">
+                        <span class="games-count" id="games-remaining-count">10</span>
+                        <span class="games-label">games left today</span>
+                    </div>
+                    <div class="games-timer" id="games-timer">Resets in 8h 30m</div>
+                </div>
+
+                <!-- Game Selection Grid -->
+                <div class="games-grid" id="games-grid">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Selected Game Card -->
+                <div class="challenge-card" id="selected-game-card" style="display: none;">
+                    <button class="back-to-games" id="back-to-games">← All Games</button>
+                    <div class="selected-game-icon" id="selected-game-icon">🟢</div>
+                    <h2 class="challenge-title" id="challenge-title">Tap Green</h2>
+                    <p class="challenge-description" id="challenge-description">Tap the GREEN circles!</p>
+                    
+                    <button class="play-button pulse" id="play-button">
+                        <span class="play-icon">▶</span>
+                        PLAY NOW
+                    </button>
+                    
+                    <div class="challenge-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Games Left</span>
+                            <span class="meta-value" id="games-left-meta">10</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Best</span>
+                            <span class="meta-value" id="personal-best">---</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-item active" data-screen="home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </button>
+                <button class="nav-item" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
+                </button>
+                <button class="nav-item" data-screen="leaderboard">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-label">Ranks</span>
+                </button>
+                <button class="nav-item" data-screen="profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Me</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Pre-Challenge Screen -->
+        <div id="pre-challenge-screen" class="screen">
+            <button class="back-button" id="pre-back-button">← Back</button>
+            
+            <div class="pre-challenge-content">
+                <div class="challenge-icon" id="pre-challenge-icon">🎯</div>
+                <h1 class="pre-challenge-title" id="pre-challenge-title">Reflex</h1>
+                <p class="pre-challenge-desc" id="pre-challenge-desc">Tap green targets for +10 points. Avoid red fakes (-15 points)!</p>
+                
+                <div class="pre-stats">
+                    <div class="pre-stat">
+                        <span class="pre-stat-label">Personal Best</span>
+                        <span class="pre-stat-value" id="pre-personal-best">---</span>
+                    </div>
+                    <div class="pre-stat">
+                        <span class="pre-stat-label">Duration</span>
+                        <span class="pre-stat-value">60s</span>
+                    </div>
+                </div>
+
+                <div class="powerup-section">
+                    <h3>Power-Ups</h3>
+                    <div class="powerup-grid" id="powerup-grid">
+                        <button class="powerup-item" data-powerup="slowmo">
+                            <span class="powerup-icon">🐢</span>
+                            <span class="powerup-name">Slow-Mo</span>
+                            <span class="powerup-count" id="slowmo-count">0</span>
+                        </button>
+                        <button class="powerup-item" data-powerup="double">
+                            <span class="powerup-icon">✖️2</span>
+                            <span class="powerup-name">Double</span>
+                            <span class="powerup-count" id="double-count">0</span>
+                        </button>
+                        <button class="powerup-item" data-powerup="second-chance">
+                            <span class="powerup-icon">💫</span>
+                            <span class="powerup-name">Retry</span>
+                            <span class="powerup-count" id="second-chance-count">0</span>
+                        </button>
+                        <button class="powerup-item" data-powerup="freeze">
+                            <span class="powerup-icon">❄️</span>
+                            <span class="powerup-name">Freeze</span>
+                            <span class="powerup-count" id="freeze-count">0</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button class="start-challenge-button" id="start-challenge-button">
+                    START CHALLENGE
+                </button>
+            </div>
+        </div>
+
+        <!-- Instructions Screen -->
+        <div id="instructions-screen" class="screen">
+            <div class="instructions-content">
+                <div class="instructions-icon" id="instructions-icon">🟢</div>
+                <h1 class="instructions-title" id="instructions-title">How to Play</h1>
+                <div class="instructions-box">
+                    <p class="instructions-text" id="instructions-text">
+                        Tap the GREEN circles as fast as you can!
+                    </p>
+                    <div class="instructions-demo" id="instructions-demo">
+                        <!-- Animated demo will be inserted here -->
+                    </div>
+                    <ul class="instructions-tips" id="instructions-tips">
+                        <li>✓ Tap green circles = +10 points</li>
+                        <li>✗ Avoid red circles = -15 points</li>
+                        <li>⏱ You have 60 seconds</li>
+                    </ul>
+                </div>
+                <div class="instructions-buttons">
+                    <button class="skip-button" id="skip-instructions">SKIP →</button>
+                    <button class="ready-button pulse" id="ready-button">I'M READY!</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Countdown Screen -->
+        <div id="countdown-screen" class="screen">
+            <div class="countdown-container">
+                <div class="countdown-number" id="countdown-number">3</div>
+                <div class="countdown-text">GET READY!</div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-header">
+                <div class="game-score">
+                    <span class="score-label">SCORE</span>
+                    <span class="score-value" id="game-score">0</span>
+                </div>
+                <button class="pause-button" id="pause-button">⏸</button>
+                <div class="game-timer">
+                    <span class="timer-value" id="game-timer">60</span>
+                    <span class="timer-label">SEC</span>
+                </div>
+            </div>
+            
+            <div class="game-area" id="game-area">
+                <!-- Challenge-specific content renders here -->
+            </div>
+        </div>
+
+        <!-- Pause Modal -->
+        <div id="pause-modal" class="modal">
+            <div class="modal-content">
+                <h2>PAUSED</h2>
+                <button class="modal-button primary" id="resume-button">RESUME</button>
+                <button class="modal-button secondary" id="quit-button">QUIT</button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <div class="results-content">
+                <div class="results-header">
+                    <div class="result-badge" id="result-badge">🎯</div>
+                    <h1 class="result-title" id="result-title">CHALLENGE COMPLETE!</h1>
+                </div>
+
+                <div class="score-display">
+                    <div class="final-score" id="final-score">0</div>
+                    <div class="score-suffix">POINTS</div>
+                    <div class="new-record" id="new-record" style="display: none;">🎉 NEW RECORD!</div>
+                </div>
+
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <span class="result-stat-icon">🪙</span>
+                        <span class="result-stat-value" id="coins-earned">+0</span>
+                        <span class="result-stat-label">Coins</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="result-stat-icon">🏆</span>
+                        <span class="result-stat-value" id="rank-position">#---</span>
+                        <span class="result-stat-label">Rank</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="result-stat-icon">🔥</span>
+                        <span class="result-stat-value" id="streak-update">0</span>
+                        <span class="result-stat-label">Streak</span>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="result-button wheel" id="spin-wheel-button">
+                        <span class="button-icon">🎰</span>
+                        Spin Wheel
+                    </button>
+                    <button class="result-button share" id="share-button">
+                        <span class="button-icon">📤</span>
+                        Share Score
+                    </button>
+                    <button class="result-button challenge" id="challenge-friend-button">
+                        <span class="button-icon">⚔️</span>
+                        Challenge Friend
+                    </button>
+                    <button class="result-button primary" id="play-again-button">
+                        <span class="button-icon">🔄</span>
+                        Play Again
+                    </button>
+                    <button class="result-button secondary" id="back-home-button">
+                        Back to Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Streak Lost Modal -->
+        <div id="streak-modal" class="modal">
+            <div class="modal-content streak-modal-content">
+                <div class="streak-warning">⚠️</div>
+                <h2>STREAK FELL BACK</h2>
+                <p class="streak-message" id="streak-message">You missed yesterday</p>
+                <div class="streak-change">
+                    <span class="old-streak" id="old-streak">47</span>
+                    <span class="arrow">→</span>
+                    <span class="new-streak" id="new-streak">42</span>
+                    <span class="days-text">days</span>
+                </div>
+                <p class="protection-message" id="protection-message">You're still GOLD! 🔥🔥🔥</p>
+                <p class="protection-sub">Protected by checkpoint</p>
+                <button class="modal-button primary" id="streak-play-button">PLAY NOW</button>
+                <button class="modal-button freeze-offer" id="buy-freeze-button">
+                    💡 Buy Streak Freeze ($0.99)
+                </button>
+            </div>
+        </div>
+
+        <!-- Leaderboard Screen -->
+        <div id="leaderboard-screen" class="screen">
+            <div class="screen-header">
+                <h1>🏆 Leaderboard</h1>
+            </div>
+            
+            <div class="leaderboard-tabs">
+                <button class="tab-button active" data-tab="global">Global</button>
+                <button class="tab-button" data-tab="friends">Friends</button>
+                <button class="tab-button" data-tab="local">Local</button>
+            </div>
+
+            <div class="leaderboard-list" id="leaderboard-list">
+                <!-- Populated by JS -->
+            </div>
+
+            <div class="user-rank-bar" id="user-rank-bar">
+                <span class="user-rank">#234</span>
+                <span class="user-name">You</span>
+                <span class="user-score">847</span>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-item" data-screen="home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </button>
+                <button class="nav-item" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
+                </button>
+                <button class="nav-item active" data-screen="leaderboard">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-label">Ranks</span>
+                </button>
+                <button class="nav-item" data-screen="profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Me</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Shop Screen -->
+        <div id="shop-screen" class="screen">
+            <div class="screen-header">
+                <h1>🛒 Shop</h1>
+                <div class="coin-balance">
+                    <span class="coin-icon">🪙</span>
+                    <span class="coin-amount" id="shop-coins">0</span>
+                </div>
+            </div>
+
+            <div class="shop-content">
+                <section class="shop-section">
+                    <h2>💰 Coins</h2>
+                    <div class="shop-grid">
+                        <button class="shop-item" data-item="coins-1000">
+                            <span class="shop-item-icon">🪙</span>
+                            <span class="shop-item-amount">1,000</span>
+                            <span class="shop-item-price">$0.99</span>
+                        </button>
+                        <button class="shop-item best-value" data-item="coins-5000">
+                            <span class="shop-badge">Save 20%</span>
+                            <span class="shop-item-icon">🪙</span>
+                            <span class="shop-item-amount">5,000</span>
+                            <span class="shop-item-price">$3.99</span>
+                        </button>
+                        <button class="shop-item" data-item="coins-20000">
+                            <span class="shop-badge">Save 50%</span>
+                            <span class="shop-item-icon">🪙</span>
+                            <span class="shop-item-amount">20,000</span>
+                            <span class="shop-item-price">$9.99</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="shop-section">
+                    <h2>⚡ Power-Ups</h2>
+                    <div class="shop-grid">
+                        <button class="shop-item coin-purchase" data-item="slowmo" data-cost="100">
+                            <span class="shop-item-icon">🐢</span>
+                            <span class="shop-item-name">Slow-Mo</span>
+                            <span class="shop-item-price">🪙 100</span>
+                        </button>
+                        <button class="shop-item coin-purchase" data-item="double" data-cost="150">
+                            <span class="shop-item-icon">✖️2</span>
+                            <span class="shop-item-name">Double Points</span>
+                            <span class="shop-item-price">🪙 150</span>
+                        </button>
+                        <button class="shop-item coin-purchase" data-item="second-chance" data-cost="200">
+                            <span class="shop-item-icon">💫</span>
+                            <span class="shop-item-name">Second Chance</span>
+                            <span class="shop-item-price">🪙 200</span>
+                        </button>
+                        <button class="shop-item coin-purchase" data-item="freeze" data-cost="150">
+                            <span class="shop-item-icon">❄️</span>
+                            <span class="shop-item-name">Time Freeze</span>
+                            <span class="shop-item-price">🪙 150</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="shop-section">
+                    <h2>🛡️ Streak Protection</h2>
+                    <div class="shop-grid">
+                        <button class="shop-item" data-item="streak-freeze-1">
+                            <span class="shop-item-icon">🧊</span>
+                            <span class="shop-item-name">1 Day Freeze</span>
+                            <span class="shop-item-price">$0.99</span>
+                        </button>
+                        <button class="shop-item" data-item="streak-freeze-7">
+                            <span class="shop-item-icon">🧊🧊🧊</span>
+                            <span class="shop-item-name">7 Day Insurance</span>
+                            <span class="shop-item-price">$4.99</span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="shop-section premium">
+                    <h2>👑 Premium</h2>
+                    <div class="premium-card">
+                        <div class="premium-header">
+                            <span class="premium-icon">👑</span>
+                            <span class="premium-title">StreakRush Premium</span>
+                        </div>
+                        <ul class="premium-features">
+                            <li>✅ Ad-free experience</li>
+                            <li>✅ Unlimited retries</li>
+                            <li>✅ 2x coin earnings</li>
+                            <li>✅ Exclusive power-ups</li>
+                        </ul>
+                        <button class="premium-button">$4.99/month - Coming Soon</button>
+                    </div>
+                </section>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-item" data-screen="home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </button>
+                <button class="nav-item" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
+                </button>
+                <button class="nav-item" data-screen="leaderboard">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-label">Ranks</span>
+                </button>
+                <button class="nav-item" data-screen="profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Me</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profile-screen" class="screen">
+            <div class="profile-header">
+                <div class="avatar-container">
+                    <div class="avatar" id="user-avatar">👤</div>
+                    <button class="avatar-edit">✏️</button>
+                </div>
+                <input type="text" class="display-name" id="display-name" value="Player" maxlength="15">
+                <div class="profile-streak">
+                    <span class="profile-flames" id="profile-flames">🔥</span>
+                    <span class="profile-streak-count" id="profile-streak">0 day streak</span>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <h3>📊 Stats</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value" id="total-games">0</span>
+                        <span class="stat-label">Games Played</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="avg-score">0</span>
+                        <span class="stat-label">Avg Score</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="longest-streak">0</span>
+                        <span class="stat-label">Longest Streak</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="total-coins-earned">0</span>
+                        <span class="stat-label">Total Coins</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="personal-bests-card">
+                <h3>🏅 Personal Bests</h3>
+                <div class="bests-list" id="bests-list">
+                    <div class="best-item">
+                        <span class="best-type">🎯 Reflex</span>
+                        <span class="best-score" id="best-reflex">---</span>
+                    </div>
+                    <div class="best-item">
+                        <span class="best-type">🧠 Memory</span>
+                        <span class="best-score" id="best-memory">---</span>
+                    </div>
+                    <div class="best-item">
+                        <span class="best-type">⚡ Speed</span>
+                        <span class="best-score" id="best-speed">---</span>
+                    </div>
+                    <div class="best-item">
+                        <span class="best-type">🕹️ Coordination</span>
+                        <span class="best-score" id="best-coordination">---</span>
+                    </div>
+                    <div class="best-item">
+                        <span class="best-type">🧩 Logic</span>
+                        <span class="best-score" id="best-logic">---</span>
+                    </div>
+                    <div class="best-item">
+                        <span class="best-type">📝 Words</span>
+                        <span class="best-score" id="best-words">---</span>
+                    </div>
+                    <div class="best-item">
+                        <span class="best-type">🧩 Puzzle</span>
+                        <span class="best-score" id="best-puzzle">---</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theme Selector -->
+            <div class="theme-section">
+                <h3>🎨 Themes</h3>
+                <div class="theme-grid" id="theme-grid">
+                    <button class="theme-btn active" data-theme="fire">🔥 Fire Rush</button>
+                    <button class="theme-btn" data-theme="ocean">🌊 Ocean Wave</button>
+                    <button class="theme-btn" data-theme="forest">🌿 Forest Zen</button>
+                    <button class="theme-btn" data-theme="galaxy">🌌 Galaxy Mode</button>
+                </div>
+            </div>
+
+            <!-- Sound Toggle -->
+            <div class="settings-section">
+                <h3>⚙️ Settings</h3>
+                <div class="setting-item">
+                    <span>🔊 Sound Effects</span>
+                    <label class="toggle">
+                        <input type="checkbox" id="sound-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="profile-actions">
+                <button class="profile-action" id="invite-friends">
+                    <span>👥</span> Invite Friends
+                </button>
+                <button class="profile-action friends-hub-btn" id="friends-hub-button">
+                    <span>🎮</span> Friends Hub
+                </button>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-item" data-screen="home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </button>
+                <button class="nav-item" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
+                </button>
+                <button class="nav-item" data-screen="leaderboard">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-label">Ranks</span>
+                </button>
+                <button class="nav-item active" data-screen="profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Me</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Friends Hub Screen -->
+        <div id="friends-hub-screen" class="screen">
+            <div class="screen-header">
+                <button class="back-button" id="friends-back-button">← Back</button>
+                <h1>🎮 Friends Hub</h1>
+            </div>
+
+            <div class="friends-hub-content" id="friends-hub-content">
+                <!-- Initial State - Join or Create -->
+                <div class="hub-welcome" id="hub-welcome">
+                    <div class="hub-icon">🎮</div>
+                    <h2>Play With Friends!</h2>
+                    <p>Compete in real-time with up to 8 friends</p>
+                    
+                    <div class="hub-actions">
+                        <div class="hub-action-card">
+                            <h3>Join a Game</h3>
+                            <p>Enter a room code to join your friends</p>
+                            <input type="text" class="room-code-input" id="join-room-code" 
+                                   placeholder="ABCD12" maxlength="6" autocapitalize="characters">
+                            <button class="hub-button join" id="join-room-button">JOIN ROOM</button>
+                        </div>
+                        
+                        <div class="hub-divider"><span>OR</span></div>
+                        
+                        <div class="hub-action-card admin-card">
+                            <h3>🎯 Host a Game</h3>
+                            <p>Create a room and invite friends</p>
+                            <div class="admin-price" id="admin-price-section">
+                                <span>Host Access: <strong>$30</strong> (one-time)</span>
+                            </div>
+                            <button class="hub-button host" id="create-room-button">
+                                <span id="host-button-text">UNLOCK HOST ACCESS</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lobby State -->
+                <div class="hub-lobby" id="hub-lobby" style="display: none;">
+                    <div class="room-code-display">
+                        <span class="room-label">Room Code</span>
+                        <span class="room-code" id="display-room-code">ABC123</span>
+                        <button class="copy-code" id="copy-code-button">📋 Copy</button>
+                    </div>
+                    
+                    <div class="players-section">
+                        <h3>Players (<span id="player-count">1</span>/8)</h3>
+                        <div class="players-list" id="players-list">
+                            <!-- Players will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="lobby-info">
+                        <p>📱 Share the room code with friends</p>
+                        <p>🎮 Minimum 5 games will be played</p>
+                        <p>🏆 Winner crowned at the end!</p>
+                    </div>
+                    
+                    <button class="start-game-button" id="start-party-button" disabled>
+                        WAITING FOR PLAYERS...
+                    </button>
+                    <button class="leave-button" id="leave-room-button">Leave Room</button>
+                </div>
+
+                <!-- Playing State -->
+                <div class="hub-playing" id="hub-playing" style="display: none;">
+                    <div class="round-indicator">
+                        <span>Round</span>
+                        <span class="round-number" id="round-number">1</span>
+                        <span>of 5</span>
+                    </div>
+                    
+                    <div class="party-game-area" id="party-game-area">
+                        <!-- Game renders here -->
+                    </div>
+                    
+                    <div class="party-scores" id="party-scores">
+                        <!-- Live scores during game -->
+                    </div>
+                </div>
+
+                <!-- Results State -->
+                <div class="hub-results" id="hub-results" style="display: none;">
+                    <div class="winner-crown">👑</div>
+                    <h2>WINNER!</h2>
+                    <div class="winner-name" id="winner-name">Player1</div>
+                    <div class="winner-score" id="winner-score">2,450 pts</div>
+                    
+                    <div class="final-standings" id="final-standings">
+                        <!-- All player rankings -->
+                    </div>
+                    
+                    <button class="hub-button primary" id="play-again-party">PLAY AGAIN</button>
+                    <button class="hub-button secondary" id="leave-party">LEAVE</button>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <button class="nav-item" data-screen="home">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">Home</span>
+                </button>
+                <button class="nav-item active" data-screen="friends-hub">
+                    <span class="nav-icon">🎮</span>
+                    <span class="nav-label">Party</span>
+                </button>
+                <button class="nav-item" data-screen="leaderboard">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-label">Ranks</span>
+                </button>
+                <button class="nav-item" data-screen="profile">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Me</span>
+                </button>
+            </nav>
+        </div>
+
+        <!-- Spin Wheel Modal -->
+        <div id="wheel-modal" class="modal">
+            <div class="modal-content wheel-modal-content">
+                <h2>🎰 SPIN TO WIN!</h2>
+                <div class="wheel-container">
+                    <div class="wheel" id="spin-wheel">
+                        <div class="wheel-segment" data-coins="10">10</div>
+                        <div class="wheel-segment" data-coins="25">25</div>
+                        <div class="wheel-segment" data-coins="50">50</div>
+                        <div class="wheel-segment" data-coins="100">100</div>
+                        <div class="wheel-segment" data-coins="250">250</div>
+                        <div class="wheel-segment" data-coins="500">500</div>
+                        <div class="wheel-segment" data-coins="1000">1K</div>
+                        <div class="wheel-segment jackpot" data-coins="5000">5K!</div>
+                    </div>
+                    <div class="wheel-pointer">▼</div>
+                </div>
+                <button class="spin-button" id="spin-button">SPIN!</button>
+                <div class="wheel-result" id="wheel-result" style="display: none;">
+                    <span class="result-coins">+100</span>
+                    <span class="result-text">COINS!</span>
+                </div>
+                <button class="modal-button secondary" id="close-wheel" style="display: none;">Continue</button>
+            </div>
+        </div>
+
+        <!-- Premium Subscription Modal -->
+        <div id="unlock-modal" class="modal">
+            <div class="modal-content unlock-modal-content">
+                <div class="unlock-icon">👑</div>
+                <h2 id="unlock-title">YOU'VE UNLOCKED 10 GAMES!</h2>
+                <p class="unlock-message" id="unlock-message">Want to unlock all 60 games?</p>
+                
+                <div class="premium-benefits">
+                    <div class="benefit-item">✅ Unlock ALL 60 games</div>
+                    <div class="benefit-item">✅ New games every month</div>
+                    <div class="benefit-item">✅ Ad-free experience</div>
+                    <div class="benefit-item">✅ Unlimited plays per day</div>
+                    <div class="benefit-item">✅ Friends Hub hosting FREE</div>
+                </div>
+                
+                <button class="unlock-button premium-unlock" id="unlock-premium-button">
+                    <span class="unlock-price">$19.99</span>
+                    <span class="unlock-text">GO PREMIUM</span>
+                    <span class="unlock-games">One-time • Forever</span>
+                </button>
+                
+                <button class="modal-button secondary" id="close-unlock-modal">Keep Playing Free Games</button>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+    </div>
+
+    <script src="js/utils.js?v=5"></script>
+    <script src="js/storage.js?v=5"></script>
+    <script src="js/streak.js?v=5"></script>
+    <script src="js/games-list.js?v=5"></script>
+    <script src="js/game-limit.js?v=5"></script>
+    <script src="js/simple-games.js?v=6"></script>">
+    <script src="js/sounds.js?v=5"></script>
+    <script src="js/themes.js?v=5"></script>
+    <script src="js/unlock-system.js?v=5"></script>
+    <script src="js/friends-hub.js?v=5"></script>
+    <script src="js/game.js?v=5"></script>
+    <script src="js/ui.js?v=5"></script>
+    <script src="js/app.js?v=5"></script>
+</body>
+</html>
+

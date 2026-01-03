@@ -1,0 +1,14 @@
+{
+  "name": "streakrush",
+  "version": "1.0.0",
+  "description": "60-second daily challenges. Build your streak!",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -s . -p 3000",
+    "dev": "npx live-server --port=3000 --no-browser"
+  },
+  "keywords": ["game", "pwa", "mobile", "streak"],
+  "author": "",
+  "license": "MIT"
+}
+

@@ -1,0 +1,885 @@
+/* ========================================
+   STREAKRUSH - UNIQUE GAME THEMES
+   Each game has completely distinct visuals
+   ======================================== */
+
+/* ========================================
+   INDIVIDUAL GAME THEMES (1-10 REFLEX)
+   Each game has its own unique look!
+   ======================================== */
+
+/* Game 1: Tap Green - NEON GREEN MATRIX */
+.game-area[data-game="1"] {
+  background: linear-gradient(135deg, #001a0a 0%, #002915 50%, #001a0a 100%);
+}
+.game-area[data-game="1"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(0, 255, 136, 0.05) 30px, rgba(0, 255, 136, 0.05) 31px),
+    repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(0, 255, 136, 0.05) 30px, rgba(0, 255, 136, 0.05) 31px);
+  pointer-events: none;
+}
+.game-area[data-game="1"] .target.good {
+  background: radial-gradient(circle, #00ff88 0%, #00cc66 100%);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.8), 0 0 60px rgba(0, 255, 136, 0.4);
+}
+
+/* Game 2: Pop Bubbles - OCEAN BUBBLES */
+.game-area[data-game="2"] {
+  background: linear-gradient(180deg, #0077b6 0%, #00b4d8 50%, #90e0ef 100%);
+}
+.game-area[data-game="2"]::before {
+  content: '🫧';
+  font-size: 200px;
+  position: absolute;
+  bottom: -50px;
+  right: -50px;
+  opacity: 0.1;
+  pointer-events: none;
+}
+.game-area[data-game="2"] .bubble {
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, rgba(173,216,230,0.4) 40%, transparent 70%);
+  border: 2px solid rgba(255,255,255,0.5);
+  box-shadow: 0 0 20px rgba(255,255,255,0.3), inset 0 0 20px rgba(255,255,255,0.1);
+}
+
+/* Game 3: Catch Stars - NIGHT SKY */
+.game-area[data-game="3"] {
+  background: linear-gradient(180deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+}
+.game-area[data-game="3"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(2px 2px at 10% 20%, #fff, transparent),
+    radial-gradient(2px 2px at 30% 60%, #fff, transparent),
+    radial-gradient(1px 1px at 50% 30%, #fff, transparent),
+    radial-gradient(2px 2px at 70% 80%, #fff, transparent),
+    radial-gradient(1px 1px at 90% 40%, #fff, transparent);
+  animation: twinkle 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes twinkle { 0%,100%{opacity:0.5} 50%{opacity:1} }
+.game-area[data-game="3"] .star {
+  color: gold;
+  text-shadow: 0 0 20px gold, 0 0 40px orange;
+}
+
+/* Game 4: Whack Mole - FARM DIRT */
+.game-area[data-game="4"] {
+  background: linear-gradient(180deg, #87CEEB 0% 30%, #228B22 30% 40%, #654321 40% 100%);
+}
+.game-area[data-game="4"] .mole-hole {
+  background: radial-gradient(circle, #3d2314 0%, #1a0f08 100%);
+  border: 4px solid #654321;
+}
+.game-area[data-game="4"] .mole {
+  filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+}
+
+/* Game 5: Tap Fast - HOT LAVA */
+.game-area[data-game="5"] {
+  background: linear-gradient(135deg, #ff4e00 0%, #ec9f05 50%, #ff4e00 100%);
+  animation: lavaFlow 3s ease-in-out infinite;
+}
+@keyframes lavaFlow { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+.game-area[data-game="5"]::before {
+  content: '🔥';
+  font-size: 150px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+/* Game 6: Avoid Red - DANGER ZONE */
+.game-area[data-game="6"] {
+  background: 
+    repeating-linear-gradient(45deg, #1a1a1a 0px, #1a1a1a 20px, #2a2a2a 20px, #2a2a2a 40px);
+}
+.game-area[data-game="6"]::before {
+  content: '⚠️';
+  font-size: 180px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.1;
+  pointer-events: none;
+}
+.game-area[data-game="6"] .target.fake {
+  background: radial-gradient(circle, #ff0044 0%, #990022 100%);
+  box-shadow: 0 0 30px rgba(255,0,68,0.8);
+  animation: dangerPulse 0.5s ease-in-out infinite;
+}
+@keyframes dangerPulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+
+/* Game 7: Shrinking Dots - VOID SPACE */
+.game-area[data-game="7"] {
+  background: radial-gradient(circle at center, #1a1a2e 0%, #0a0a15 100%);
+}
+.game-area[data-game="7"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 0%, rgba(138,43,226,0.1) 100%);
+  pointer-events: none;
+}
+.game-area[data-game="7"] .shrinking-dot {
+  background: radial-gradient(circle, #8a2be2 0%, #4b0082 100%);
+  box-shadow: 0 0 25px rgba(138,43,226,0.8);
+}
+
+/* Game 8: Moving Targets - ARCADE RETRO */
+.game-area[data-game="8"] {
+  background: #1a1a2e;
+  background-image: 
+    linear-gradient(rgba(255,0,255,0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,0,255,0.1) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.game-area[data-game="8"]::before {
+  content: 'ARCADE';
+  font-size: 80px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255,0,255,0.05);
+  pointer-events: none;
+  font-family: monospace;
+}
+.game-area[data-game="8"] .moving-target {
+  border: 3px solid #ff00ff;
+  box-shadow: 0 0 20px rgba(255,0,255,0.6);
+}
+
+/* Game 9: Color Match - RAINBOW BURST */
+.game-area[data-game="9"] {
+  background: linear-gradient(135deg, 
+    rgba(255,0,0,0.1) 0%, 
+    rgba(255,165,0,0.1) 20%, 
+    rgba(255,255,0,0.1) 40%, 
+    rgba(0,128,0,0.1) 60%, 
+    rgba(0,0,255,0.1) 80%, 
+    rgba(75,0,130,0.1) 100%),
+    #1a1a2e;
+}
+.game-area[data-game="9"]::before {
+  content: '🎨';
+  font-size: 200px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+/* Game 10: Quick Tap - ELECTRIC STORM */
+.game-area[data-game="10"] {
+  background: linear-gradient(180deg, #0d0d0d 0%, #1a1a3e 50%, #0d0d0d 100%);
+}
+.game-area[data-game="10"]::before {
+  content: '⚡';
+  font-size: 250px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.1;
+  animation: electricFlash 0.5s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes electricFlash { 0%,100%{opacity:0.05} 50%{opacity:0.15} }
+.game-area[data-game="10"] .reaction-light {
+  box-shadow: 0 0 50px rgba(255,255,0,0.8), 0 0 100px rgba(255,255,0,0.4);
+}
+
+/* ========================================
+   🎯 REFLEX GAMES - FALLBACK
+   For any reflex games not individually styled
+   ======================================== */
+.game-area[data-category="reflex"] {
+  background: 
+    linear-gradient(135deg, #001a0a 0%, #002915 50%, #001a0a 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(0, 255, 136, 0.03) 50px, rgba(0, 255, 136, 0.03) 51px),
+    repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0, 255, 136, 0.03) 50px, rgba(0, 255, 136, 0.03) 51px);
+}
+
+.game-area[data-category="reflex"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+  pointer-events: none;
+  animation: reflexPulse 3s ease-in-out infinite;
+}
+
+@keyframes reflexPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* Reflex Targets - Neon glow */
+.game-area[data-category="reflex"] .target {
+  box-shadow: 
+    0 0 20px rgba(0, 255, 136, 0.8),
+    0 0 40px rgba(0, 255, 136, 0.4),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+.game-area[data-category="reflex"] .target.good {
+  background: radial-gradient(circle, #00ff88 0%, #00cc66 50%, #009944 100%);
+  animation: neonFlicker 0.1s ease-in-out infinite alternate;
+}
+
+@keyframes neonFlicker {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.2); }
+}
+
+.game-area[data-category="reflex"] .target.fake {
+  background: radial-gradient(circle, #ff0044 0%, #cc0033 50%, #990022 100%);
+  box-shadow: 
+    0 0 20px rgba(255, 0, 68, 0.8),
+    0 0 40px rgba(255, 0, 68, 0.4);
+}
+
+/* ========================================
+   🧠 MEMORY GAMES - MYSTICAL PURPLE
+   Deep purple with starfield/galaxy effect
+   ======================================== */
+.game-area[data-category="memory"] {
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(147, 51, 234, 0.3) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(236, 72, 153, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(88, 28, 135, 0.8) 0%, #1a0a2e 100%);
+}
+
+.game-area[data-category="memory"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(255, 255, 255, 0.6), transparent),
+    radial-gradient(2px 2px at 130px 80px, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 160px 120px, rgba(255, 255, 255, 0.5), transparent);
+  background-size: 200px 150px;
+  animation: starsTwinkle 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes starsTwinkle {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.game-area[data-category="memory"] .memory-game-container {
+  background: transparent;
+}
+
+.game-area[data-category="memory"] .memory-grid {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 24px;
+  border: 2px solid rgba(147, 51, 234, 0.3);
+  box-shadow: 0 0 40px rgba(147, 51, 234, 0.3);
+}
+
+.game-area[data-category="memory"] .memory-tile {
+  background: linear-gradient(145deg, #2d1b4e 0%, #1a0a2e 100%);
+  border: 2px solid rgba(147, 51, 234, 0.4);
+  border-radius: 12px;
+  box-shadow: 
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.game-area[data-category="memory"] .memory-tile:hover {
+  border-color: rgba(236, 72, 153, 0.6);
+  transform: translateY(-2px);
+}
+
+.game-area[data-category="memory"] .memory-status {
+  color: #e879f9;
+  text-shadow: 0 0 10px rgba(232, 121, 249, 0.5);
+  font-size: 1.3rem;
+}
+
+/* ========================================
+   ➕ MATH GAMES - DIGITAL BLUE
+   Tech/calculator style with matrix effect
+   ======================================== */
+.game-area[data-category="math"] {
+  background: 
+    linear-gradient(180deg, #0a1628 0%, #0f2847 50%, #0a1628 100%);
+  overflow: hidden;
+}
+
+.game-area[data-category="math"]::before {
+  content: '+ - × ÷ = % √ π ∑ ∞';
+  position: absolute;
+  inset: 0;
+  font-family: 'Courier New', monospace;
+  font-size: 24px;
+  color: rgba(59, 130, 246, 0.08);
+  letter-spacing: 20px;
+  line-height: 50px;
+  word-spacing: 30px;
+  overflow: hidden;
+  animation: mathScroll 20s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes mathScroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+.game-area[data-category="math"] .math-game-container {
+  background: rgba(15, 40, 71, 0.8);
+  border-radius: 24px;
+  padding: 32px;
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 0 50px rgba(59, 130, 246, 0.2),
+    inset 0 0 30px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  max-width: 400px;
+  margin: auto;
+}
+
+.game-area[data-category="math"] .math-problem {
+  font-family: 'Orbitron', 'Courier New', monospace;
+  color: #60a5fa;
+  text-shadow: 
+    0 0 10px rgba(96, 165, 250, 0.8),
+    0 0 20px rgba(96, 165, 250, 0.4);
+  font-size: 2.5rem;
+  letter-spacing: 4px;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  margin-bottom: 32px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.game-area[data-category="math"] .math-option {
+  background: linear-gradient(145deg, #1e3a5f 0%, #0f2847 100%);
+  border: 2px solid rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+  font-family: 'Orbitron', monospace;
+  transition: all 0.2s ease;
+}
+
+.game-area[data-category="math"] .math-option:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+.game-area[data-category="math"] .math-option.correct {
+  background: linear-gradient(145deg, #065f46 0%, #047857 100%);
+  border-color: #10b981;
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.6);
+}
+
+.game-area[data-category="math"] .math-option.wrong {
+  background: linear-gradient(145deg, #7f1d1d 0%, #991b1b 100%);
+  border-color: #ef4444;
+  animation: mathWrong 0.3s ease;
+}
+
+@keyframes mathWrong {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ========================================
+   ⚡ REACTION GAMES - ELECTRIC YELLOW
+   Lightning/energy with spark effects
+   ======================================== */
+.game-area[data-category="reaction"] {
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(250, 204, 21, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 100%, rgba(245, 158, 11, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, #1a1500 0%, #2d2400 50%, #1a1500 100%);
+}
+
+.game-area[data-category="reaction"]::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent, rgba(250, 204, 21, 0.5), transparent);
+  animation: lightningPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes lightningPulse {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) scaleY(1); }
+  50% { opacity: 0.8; transform: translateX(-50%) scaleY(1.02); }
+}
+
+.game-area[data-category="reaction"] .reaction-container,
+.game-area[data-category="reaction"] .speed-tap-container,
+.game-area[data-category="reaction"] .swipe-container {
+  position: relative;
+  z-index: 1;
+}
+
+.game-area[data-category="reaction"] .reaction-light {
+  box-shadow: 
+    0 0 30px rgba(250, 204, 21, 0.6),
+    0 0 60px rgba(250, 204, 21, 0.3),
+    inset 0 0 30px rgba(255, 255, 255, 0.1);
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  font-weight: 900;
+  letter-spacing: 3px;
+}
+
+.game-area[data-category="reaction"] .big-tap-button {
+  background: radial-gradient(circle, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  box-shadow: 
+    0 0 40px rgba(251, 191, 36, 0.7),
+    0 0 80px rgba(251, 191, 36, 0.4),
+    inset 0 -10px 20px rgba(0, 0, 0, 0.2),
+    inset 0 10px 20px rgba(255, 255, 255, 0.2);
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: electricPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes electricPulse {
+  0%, 100% { 
+    box-shadow: 
+      0 0 40px rgba(251, 191, 36, 0.7),
+      0 0 80px rgba(251, 191, 36, 0.4);
+  }
+  50% { 
+    box-shadow: 
+      0 0 60px rgba(251, 191, 36, 0.9),
+      0 0 100px rgba(251, 191, 36, 0.6);
+  }
+}
+
+.game-area[data-category="reaction"] .tap-counter {
+  color: #fbbf24;
+  text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
+}
+
+.game-area[data-category="reaction"] .swipe-instruction {
+  color: #fcd34d;
+  text-shadow: 0 0 15px rgba(252, 211, 77, 0.7);
+  font-size: 2.5rem;
+}
+
+.game-area[data-category="reaction"] .swipe-area {
+  background: linear-gradient(145deg, #3d3000 0%, #2d2400 100%);
+  border: 3px solid rgba(250, 204, 21, 0.4);
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.2);
+}
+
+/* ========================================
+   📝 WORDS GAMES - TYPEWRITER CYAN
+   Vintage paper/ink aesthetic
+   ======================================== */
+.game-area[data-category="words"] {
+  background: 
+    linear-gradient(180deg, #0c1a24 0%, #0f2937 50%, #0c1a24 100%);
+  position: relative;
+}
+
+.game-area[data-category="words"]::before {
+  content: '';
+  position: absolute;
+  inset: 20px;
+  background: 
+    repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      rgba(34, 211, 238, 0.05) 31px,
+      rgba(34, 211, 238, 0.05) 32px
+    );
+  pointer-events: none;
+  border-radius: 8px;
+}
+
+.game-area[data-category="words"] .typing-game-container,
+.game-area[data-category="words"] .word-game-container {
+  background: rgba(15, 41, 55, 0.9);
+  border-radius: 20px;
+  padding: 32px;
+  border: 2px solid rgba(34, 211, 238, 0.2);
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  max-width: 400px;
+  margin: auto;
+}
+
+.game-area[data-category="words"] .target-word {
+  font-family: 'Courier New', 'Lucida Console', monospace;
+  color: #22d3ee;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.6);
+  font-size: 2.5rem;
+  letter-spacing: 8px;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 12px;
+  border-left: 4px solid #22d3ee;
+}
+
+.game-area[data-category="words"] .typing-input {
+  font-family: 'Courier New', monospace;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(34, 211, 238, 0.4);
+  color: #a5f3fc;
+  font-size: 1.8rem;
+  letter-spacing: 4px;
+}
+
+.game-area[data-category="words"] .typing-input:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
+}
+
+.game-area[data-category="words"] .word-question {
+  color: #67e8f9;
+  font-family: 'Courier New', monospace;
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+}
+
+.game-area[data-category="words"] .word-option {
+  font-family: 'Courier New', monospace;
+  background: linear-gradient(145deg, #164e63 0%, #0e3a4a 100%);
+  border: 2px solid rgba(34, 211, 238, 0.3);
+  color: #a5f3fc;
+  letter-spacing: 1px;
+}
+
+.game-area[data-category="words"] .word-option:hover {
+  border-color: #22d3ee;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(34, 211, 238, 0.2);
+}
+
+/* ========================================
+   👁️ VISUAL GAMES - PSYCHEDELIC PINK
+   Abstract patterns, optical illusion feel
+   ======================================== */
+.game-area[data-category="visual"] {
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(168, 85, 247, 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(244, 114, 182, 0.1) 0%, transparent 60%),
+    linear-gradient(135deg, #2d0a2e 0%, #1a0a2e 50%, #2d0a2e 100%);
+  overflow: hidden;
+}
+
+.game-area[data-category="visual"]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    conic-gradient(from 0deg at 50% 50%, 
+      transparent 0deg, 
+      rgba(236, 72, 153, 0.05) 60deg, 
+      transparent 120deg,
+      rgba(168, 85, 247, 0.05) 180deg,
+      transparent 240deg,
+      rgba(244, 114, 182, 0.05) 300deg,
+      transparent 360deg
+    );
+  animation: visualRotate 30s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes visualRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.game-area[data-category="visual"] .visual-game-container {
+  position: relative;
+  z-index: 1;
+  background: rgba(45, 10, 46, 0.7);
+  border-radius: 24px;
+  padding: 32px;
+  border: 2px solid rgba(236, 72, 153, 0.3);
+  backdrop-filter: blur(10px);
+  max-width: 400px;
+  margin: auto;
+}
+
+.game-area[data-category="visual"] .visual-question {
+  color: #f472b6;
+  text-shadow: 0 0 15px rgba(244, 114, 182, 0.6);
+  font-size: 1.4rem;
+  letter-spacing: 2px;
+}
+
+.game-area[data-category="visual"] .visual-grid {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  gap: 12px;
+}
+
+.game-area[data-category="visual"] .visual-item {
+  background: linear-gradient(145deg, #4a1a4e 0%, #2d0a2e 100%);
+  border: 2px solid rgba(236, 72, 153, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.game-area[data-category="visual"] .visual-item:hover {
+  transform: scale(1.05) rotate(2deg);
+  border-color: #ec4899;
+  box-shadow: 0 0 25px rgba(236, 72, 153, 0.4);
+}
+
+.game-area[data-category="visual"] .visual-item.correct {
+  background: linear-gradient(145deg, #065f46 0%, #047857 100%);
+  border-color: #10b981;
+  animation: visualCorrect 0.5s ease;
+}
+
+@keyframes visualCorrect {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2) rotate(10deg); }
+  100% { transform: scale(1); }
+}
+
+.game-area[data-category="visual"] .visual-option {
+  background: linear-gradient(145deg, #581c87 0%, #3b0764 100%);
+  border: 2px solid rgba(168, 85, 247, 0.4);
+  color: #e9d5ff;
+}
+
+/* ========================================
+   GAME-SPECIFIC UNIQUE ELEMENTS
+   Individual games have distinct feels
+   ======================================== */
+
+/* Pop Bubbles - Underwater theme */
+.game-area[data-game="2"] {
+  background: 
+    linear-gradient(180deg, #001a33 0%, #003366 50%, #004080 100%) !important;
+}
+
+.game-area[data-game="2"] .target {
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(255, 255, 255, 0.9) 0%, 
+    rgba(135, 206, 250, 0.8) 30%, 
+    rgba(70, 130, 180, 0.6) 60%, 
+    rgba(30, 80, 150, 0.4) 100%) !important;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 
+    inset -10px -10px 20px rgba(0, 0, 0, 0.1),
+    inset 10px 10px 20px rgba(255, 255, 255, 0.4),
+    0 0 30px rgba(135, 206, 250, 0.5) !important;
+  animation: bubbleFloat 3s ease-in-out infinite !important;
+}
+
+@keyframes bubbleFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.02); }
+}
+
+/* Catch Stars - Night sky */
+.game-area[data-game="3"] {
+  background: 
+    radial-gradient(ellipse at 50% 0%, rgba(50, 50, 100, 0.5) 0%, transparent 50%),
+    linear-gradient(180deg, #0a0a1a 0%, #1a1a3a 100%) !important;
+}
+
+.game-area[data-game="3"] .target {
+  background: radial-gradient(circle, #ffd700 0%, #ffaa00 50%, #ff8800 100%) !important;
+  box-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.8),
+    0 0 40px rgba(255, 215, 0, 0.4),
+    0 0 60px rgba(255, 215, 0, 0.2) !important;
+  animation: starSparkle 0.5s ease-in-out infinite alternate !important;
+}
+
+@keyframes starSparkle {
+  from { filter: brightness(1); }
+  to { filter: brightness(1.3); }
+}
+
+/* Whack Mole - Garden theme */
+.game-area[data-game="4"] {
+  background: 
+    linear-gradient(180deg, #2d5a27 0%, #1a3d15 50%, #0f2d0a 100%) !important;
+}
+
+.game-area[data-game="4"]::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: 
+    radial-gradient(ellipse at 50% 100%, rgba(139, 90, 43, 0.8) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.game-area[data-game="4"] .target {
+  background: radial-gradient(circle at 50% 30%, #8b6914 0%, #6b4f10 50%, #4a370a 100%) !important;
+  border-radius: 40% 40% 50% 50% !important;
+  animation: molePopup 0.2s ease-out !important;
+}
+
+@keyframes molePopup {
+  from { transform: translateY(50px) scale(0.5); }
+  to { transform: translateY(0) scale(1); }
+}
+
+/* Speed Tap - Arcade feel */
+.game-area[data-game="33"] .big-tap-button {
+  background: 
+    radial-gradient(circle at 50% 30%, #ff4444 0%, #cc0000 50%, #880000 100%) !important;
+  font-size: 2.5rem !important;
+}
+
+/* Green Light - Traffic light */
+.game-area[data-game="31"] {
+  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+}
+
+.game-area[data-game="31"] .reaction-light {
+  border: 8px solid #333 !important;
+  box-shadow: 
+    inset 0 0 30px rgba(0, 0, 0, 0.5),
+    0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Copy Pattern - Simon Says style */
+.game-area[data-game="11"] .memory-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 16px !important;
+  max-width: 280px !important;
+}
+
+.game-area[data-game="11"] .memory-tile {
+  border-radius: 50% !important;
+  aspect-ratio: 1 !important;
+}
+
+/* Find Pairs - Card game */
+.game-area[data-game="12"] .memory-tile {
+  background: 
+    linear-gradient(145deg, #1e3a5f 0%, #0f2847 100%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.02) 10px, rgba(255,255,255,0.02) 20px) !important;
+  border-radius: 8px !important;
+}
+
+/* Odd One Out - Spotlight effect */
+.game-area[data-game="51"]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, transparent 30%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+}
+
+/* ========================================
+   SCORE POPUPS - Category themed
+   ======================================== */
+.game-area[data-category="reflex"] .score-popup.positive {
+  color: #00ff88;
+  text-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+}
+
+.game-area[data-category="memory"] .score-popup.positive {
+  color: #e879f9;
+  text-shadow: 0 0 10px rgba(232, 121, 249, 0.8);
+}
+
+.game-area[data-category="math"] .score-popup.positive {
+  color: #60a5fa;
+  text-shadow: 0 0 10px rgba(96, 165, 250, 0.8);
+}
+
+.game-area[data-category="reaction"] .score-popup.positive {
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.8);
+}
+
+.game-area[data-category="words"] .score-popup.positive {
+  color: #22d3ee;
+  text-shadow: 0 0 10px rgba(34, 211, 238, 0.8);
+}
+
+.game-area[data-category="visual"] .score-popup.positive {
+  color: #f472b6;
+  text-shadow: 0 0 10px rgba(244, 114, 182, 0.8);
+}
+
+/* ========================================
+   GAME HEADER - Category themed
+   ======================================== */
+.game-header[data-category="reflex"] {
+  background: linear-gradient(180deg, #001a0a 0%, rgba(0, 26, 10, 0.8) 100%);
+  border-bottom: 2px solid rgba(0, 255, 136, 0.3);
+}
+
+.game-header[data-category="memory"] {
+  background: linear-gradient(180deg, #1a0a2e 0%, rgba(26, 10, 46, 0.8) 100%);
+  border-bottom: 2px solid rgba(147, 51, 234, 0.3);
+}
+
+.game-header[data-category="math"] {
+  background: linear-gradient(180deg, #0a1628 0%, rgba(10, 22, 40, 0.8) 100%);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+.game-header[data-category="reaction"] {
+  background: linear-gradient(180deg, #1a1500 0%, rgba(26, 21, 0, 0.8) 100%);
+  border-bottom: 2px solid rgba(250, 204, 21, 0.3);
+}
+
+.game-header[data-category="words"] {
+  background: linear-gradient(180deg, #0c1a24 0%, rgba(12, 26, 36, 0.8) 100%);
+  border-bottom: 2px solid rgba(34, 211, 238, 0.3);
+}
+
+.game-header[data-category="visual"] {
+  background: linear-gradient(180deg, #2d0a2e 0%, rgba(45, 10, 46, 0.8) 100%);
+  border-bottom: 2px solid rgba(236, 72, 153, 0.3);
+}
+
+/* Timer colors per category */
+.game-header[data-category="reflex"] .timer-value { color: #00ff88; }
+.game-header[data-category="memory"] .timer-value { color: #e879f9; }
+.game-header[data-category="math"] .timer-value { color: #60a5fa; }
+.game-header[data-category="reaction"] .timer-value { color: #fbbf24; }
+.game-header[data-category="words"] .timer-value { color: #22d3ee; }
+.game-header[data-category="visual"] .timer-value { color: #f472b6; }
+
+/* Score colors per category */
+.game-header[data-category="reflex"] .score-value { color: #00ff88; }
+.game-header[data-category="memory"] .score-value { color: #e879f9; }
+.game-header[data-category="math"] .score-value { color: #60a5fa; }
+.game-header[data-category="reaction"] .score-value { color: #fbbf24; }
+.game-header[data-category="words"] .score-value { color: #22d3ee; }
+.game-header[data-category="visual"] .score-value { color: #f472b6; }
+
