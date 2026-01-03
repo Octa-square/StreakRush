@@ -1397,9 +1397,12 @@ const SimpleGames = {
     
     zone.innerHTML = `
       <div class="sequence-game">
-        <div class="sequence-display" id="sequence-display">Watch the sequence...</div>
+        <div class="game-instruction" style="text-align: center; padding: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.9rem; color: #aaa;">
+          📝 Watch the flashing colors, then tap them in the SAME ORDER!
+        </div>
+        <div class="sequence-display" id="sequence-display" style="font-size: 1.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 80px; transition: background 0.2s;">Watch the sequence...</div>
         <div class="color-grid" id="color-grid" style="display: none;"></div>
-        <div class="sequence-level">Level: <span id="seq-level">1</span></div>
+        <div class="sequence-level" style="text-align: center; margin-top: 15px; font-size: 1.1rem;">Level: <span id="seq-level">1</span></div>
       </div>
     `;
     
@@ -1421,20 +1424,25 @@ const SimpleGames = {
     };
     
     const playSequence = async () => {
-      display.textContent = 'Watch...';
+      display.textContent = '👀 Watch carefully...';
+      display.style.background = 'rgba(255,255,255,0.1)';
       grid.style.display = 'none';
       
+      await new Promise(r => setTimeout(r, 800));
+      
       for (let i = 0; i < sequence.length; i++) {
-        await new Promise(r => setTimeout(r, 400));
         display.style.background = colors[sequence[i]];
-        display.textContent = '';
-        await new Promise(r => setTimeout(r, 500));
+        display.textContent = `${i + 1} of ${sequence.length}`;
+        if (typeof Sounds !== 'undefined') Sounds.tap();
+        await new Promise(r => setTimeout(r, 600));
         display.style.background = 'rgba(255,255,255,0.1)';
         display.textContent = '';
+        await new Promise(r => setTimeout(r, 300));
       }
       
-      await new Promise(r => setTimeout(r, 300));
-      display.textContent = 'Your turn!';
+      await new Promise(r => setTimeout(r, 400));
+      display.textContent = '👆 YOUR TURN! Tap the colors!';
+      display.style.background = 'linear-gradient(135deg, #22c55e22, #3b82f622)';
       grid.style.display = 'grid';
       grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
       grid.style.justifyItems = 'center';
@@ -1483,8 +1491,11 @@ const SimpleGames = {
     
     zone.innerHTML = `
       <div class="number-flash-game">
+        <div class="game-instruction" style="text-align: center; padding: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); border-radius: 10px; font-size: 0.9rem; color: #aaa;">
+          📝 Watch the numbers flash, then type them in ORDER!
+        </div>
         <div class="flash-display" id="flash-display" style="font-size: 3rem; text-align: center; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 100px;"></div>
-        <input type="text" id="number-input" placeholder="Type the numbers..." style="display: none; width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #3b82f6; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;">
+        <input type="text" id="number-input" placeholder="Type the numbers you saw..." style="display: none; width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #3b82f6; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;" inputmode="numeric">
         <div class="flash-level" style="margin-top: 15px; text-align: center;">Digits: <span id="digit-count">3</span></div>
       </div>
     `;
