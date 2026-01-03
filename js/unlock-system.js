@@ -1,14 +1,16 @@
 // ========================================
 // STREAKRUSH - SEQUENTIAL UNLOCK SYSTEM
 // Must score 70%+ to unlock next game
-// Premium required after game 20
+// Premium required after game 15
+// 60 total games (15 free + 45 premium)
 // Mastery tiers: Bronze, Silver, Gold, Platinum
 // ========================================
 
 const UnlockSystem = {
   UNLOCK_THRESHOLD: 70, // 70% required to pass
-  FREE_GAMES: 20, // Games 1-20 are free (changed from 10)
-  PREMIUM_REQUIRED: 21, // Premium starts at game 21
+  FREE_GAMES: 15, // Games 1-15 are free
+  PREMIUM_REQUIRED: 16, // Premium starts at game 16
+  TOTAL_GAMES: 60, // Total games in the app
   
   // Mastery tiers based on score percentage
   MASTERY_TIERS: {
@@ -43,7 +45,7 @@ const UnlockSystem = {
   // Get the highest unlocked game (1-based)
   getHighestUnlocked: () => {
     const user = Storage.getUser();
-    if (user.isPremium) return 365; // Premium unlocks all
+    if (user.isPremium) return UnlockSystem.TOTAL_GAMES; // Premium unlocks all 60
     
     const progress = JSON.parse(localStorage.getItem('streakrush_game_progress') || '{"highest": 1}');
     return Math.min(progress.highest || 1, UnlockSystem.FREE_GAMES + 1);
@@ -115,7 +117,7 @@ const UnlockSystem = {
       const progress = JSON.parse(localStorage.getItem('streakrush_game_progress') || '{"highest": 1}');
       
       // Unlock next game if this was the highest
-      if (gameId >= progress.highest && gameId < 365) {
+      if (gameId >= progress.highest && gameId < UnlockSystem.TOTAL_GAMES) {
         progress.highest = gameId + 1;
         localStorage.setItem('streakrush_game_progress', JSON.stringify(progress));
       }

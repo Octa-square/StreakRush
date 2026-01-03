@@ -62,7 +62,7 @@ const CommitmentScreen = {
   // Get improvement data
   getImprovementData: () => {
     const firstFiveAvg = CommitmentScreen.calculateAverageScore(1, 5);
-    const lastFiveAvg = CommitmentScreen.calculateAverageScore(16, 20);
+    const lastFiveAvg = CommitmentScreen.calculateAverageScore(11, 15);
     const improvement = Math.max(0, lastFiveAvg - firstFiveAvg);
     const reactionImprovement = CommitmentScreen.calculateReactionImprovement();
     const topPercentile = CommitmentScreen.calculateUserPercentile(lastFiveAvg);
@@ -95,7 +95,7 @@ const CommitmentScreen = {
         <div class="commitment-header">
           <div class="brain-icon">🧠</div>
           <h2>YOUR BRAIN HAS IMPROVED</h2>
-          <p class="subtitle">20 games completed • Real progress made</p>
+          <p class="subtitle">15 games completed • Real progress made</p>
         </div>
         
         <div class="improvement-stats">
@@ -122,7 +122,7 @@ const CommitmentScreen = {
         
         <div class="unlock-message">
           <p>You've mastered the foundations.</p>
-          <p class="highlight"><strong>345 more brain challenges await.</strong></p>
+          <p class="highlight"><strong>45 more brain challenges await.</strong></p>
         </div>
         
         <div class="premium-preview-section">
@@ -130,7 +130,7 @@ const CommitmentScreen = {
           <div class="preview-games">
             ${CommitmentScreen.getPreviewGames()}
           </div>
-          <p class="more-games">...and 335 more challenging games</p>
+          <p class="more-games">...and 39 more challenging games</p>
         </div>
         
         <div class="pricing-section">
@@ -139,10 +139,10 @@ const CommitmentScreen = {
             <div class="price-amount">$19.99</div>
             <div class="price-type">One-Time Payment</div>
             <ul class="features-list">
-              <li>✅ Unlock all 365 games</li>
-              <li>✅ Lifetime access</li>
+              <li>✅ Unlock all 60 games</li>
+              <li>✅ All memory categories mastered</li>
               <li>✅ Challenge Mode (2x points)</li>
-              <li>✅ Advanced brain analytics</li>
+              <li>✅ Lifetime access</li>
               <li>✅ All future updates</li>
             </ul>
             <button class="unlock-button" id="purchase-premium-btn">
@@ -188,9 +188,9 @@ const CommitmentScreen = {
     });
   },
   
-  // Get preview games HTML
+  // Get preview games HTML (show first 6 premium games: 16-21)
   getPreviewGames: () => {
-    const premiumGames = typeof GAMES !== 'undefined' ? GAMES.slice(20, 26) : [];
+    const premiumGames = typeof GAMES !== 'undefined' ? GAMES.slice(15, 21) : [];
     
     return premiumGames.map(game => `
       <div class="preview-game">

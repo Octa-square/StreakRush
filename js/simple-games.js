@@ -321,18 +321,76 @@ const SimpleGames = {
     
     const zone = document.getElementById('game-zone');
     
-    // Route to specific unique game based on ID
+    // Route to specific unique game based on ID (60 games total)
     switch(gameId) {
-      case 1: SimpleGames.game1_WorldCapitals(zone); break;
-      case 2: SimpleGames.game2_FlagMatch(zone); break;
-      case 3: SimpleGames.game3_ContinentSort(zone); break;
-      case 4: SimpleGames.game4_SpeedMath(zone); break;
-      case 5: SimpleGames.game5_CountryPopulation(zone); break;
-      case 6: SimpleGames.game6_ReactionTest(zone); break;
-      case 7: SimpleGames.game7_MemorySequence(zone); break;
-      case 8: SimpleGames.game8_WordScramble(zone); break;
-      case 9: SimpleGames.game9_TrueFalseBlitz(zone); break;
-      case 10: SimpleGames.game10_UltimateQuiz(zone); break;
+      // FREE TIER: Games 1-15
+      case 1: SimpleGames.game_ColorSequence(zone); break;
+      case 2: SimpleGames.game_NumberFlash(zone); break;
+      case 3: SimpleGames.game_ReactionTest(zone); break;
+      case 4: SimpleGames.game_CardMatch(zone); break;
+      case 5: SimpleGames.game_ShapeShifter(zone); break;
+      case 6: SimpleGames.game_SpeedMath(zone); break;
+      case 7: SimpleGames.game_WorldCapitals(zone); break;
+      case 8: SimpleGames.game_WordChain(zone); break;
+      case 9: SimpleGames.game_WhatsMissing(zone); break;
+      case 10: SimpleGames.game_PositionPerfect(zone); break;
+      case 11: SimpleGames.game_EmojiStory(zone); break;
+      case 12: SimpleGames.game_PatternBreaker(zone); break;
+      case 13: SimpleGames.game_SoundSequence(zone); break;
+      case 14: SimpleGames.game_FaceMemory(zone); break;
+      case 15: SimpleGames.game_NumberGrid(zone); break;
+      
+      // PREMIUM BATCH 1: Games 16-30
+      case 16: SimpleGames.game_DualNBack(zone); break;
+      case 17: SimpleGames.game_SpeedTyping(zone); break;
+      case 18: SimpleGames.game_BackwardsSpell(zone); break;
+      case 19: SimpleGames.game_ColorWordClash(zone); break;
+      case 20: SimpleGames.game_SequenceBuilder(zone); break;
+      case 21: SimpleGames.game_RapidRecall(zone); break;
+      case 22: SimpleGames.game_MathChains(zone); break;
+      case 23: SimpleGames.game_WordMorph(zone); break;
+      case 24: SimpleGames.game_GridNavigator(zone); break;
+      case 25: SimpleGames.game_SymbolMatch(zone); break;
+      case 26: SimpleGames.game_TrueFalseBlitz(zone); break;
+      case 27: SimpleGames.game_RhythmRecall(zone); break;
+      case 28: SimpleGames.game_FlagFinder(zone); break;
+      case 29: SimpleGames.game_OddOneOut(zone); break;
+      case 30: SimpleGames.game_QuickCount(zone); break;
+      
+      // PREMIUM BATCH 2: Games 31-45
+      case 31: SimpleGames.game_TripleNBack(zone); break;
+      case 32: SimpleGames.game_ReverseOrder(zone); break;
+      case 33: SimpleGames.game_LetterEquations(zone); break;
+      case 34: SimpleGames.game_MemoryPalace(zone); break;
+      case 35: SimpleGames.game_LandmarkMemory(zone); break;
+      case 36: SimpleGames.game_MentalRotation(zone); break;
+      case 37: SimpleGames.game_WordRecall(zone); break;
+      case 38: SimpleGames.game_CalculationSprint(zone); break;
+      case 39: SimpleGames.game_EmotionalFaces(zone); break;
+      case 40: SimpleGames.game_SynonymSprint(zone); break;
+      case 41: SimpleGames.game_PhotoMemory(zone); break;
+      case 42: SimpleGames.game_MelodyMemory(zone); break;
+      case 43: SimpleGames.game_SplitAttention(zone); break;
+      case 44: SimpleGames.game_NumberBonds(zone); break;
+      case 45: SimpleGames.game_ContextSwitch(zone); break;
+      
+      // PREMIUM BATCH 3: Games 46-60
+      case 46: SimpleGames.game_SpeedPatterns(zone); break;
+      case 47: SimpleGames.game_LogicChains(zone); break;
+      case 48: SimpleGames.game_CategorySort(zone); break;
+      case 49: SimpleGames.game_MazeMemory(zone); break;
+      case 50: SimpleGames.game_VerbalFluency(zone); break;
+      case 51: SimpleGames.game_PrimeTime(zone); break;
+      case 52: SimpleGames.game_VisualEquations(zone); break;
+      case 53: SimpleGames.game_AttentionFilter(zone); break;
+      case 54: SimpleGames.game_StorySequence(zone); break;
+      case 55: SimpleGames.game_PeripheralVision(zone); break;
+      case 56: SimpleGames.game_EstimationMaster(zone); break;
+      case 57: SimpleGames.game_CodeBreaker(zone); break;
+      case 58: SimpleGames.game_AudioLocation(zone); break;
+      case 59: SimpleGames.game_MultiModalMatch(zone); break;
+      case 60: SimpleGames.game_UltimateChallenge(zone); break;
+      
       default: SimpleGames.gameGeneric(zone, game); break;
     }
   },
@@ -1325,15 +1383,1358 @@ const SimpleGames = {
     askQuestion();
   },
 
-  // Generic game for IDs > 10
+  // ==========================================
+  // NEW 60-GAME IMPLEMENTATIONS
+  // ==========================================
+  
+  // GAME 1: Color Sequence
+  game_ColorSequence: (zone) => {
+    const colors = ['#ef4444', '#3b82f6', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899'];
+    const colorNames = ['Red', 'Blue', 'Green', 'Yellow', 'Purple', 'Pink'];
+    let sequence = [];
+    let playerSequence = [];
+    let level = 1;
+    
+    zone.innerHTML = `
+      <div class="sequence-game">
+        <div class="sequence-display" id="sequence-display">Watch the sequence...</div>
+        <div class="color-grid" id="color-grid" style="display: none;"></div>
+        <div class="sequence-level">Level: <span id="seq-level">1</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('sequence-display');
+    const grid = document.getElementById('color-grid');
+    
+    // Create color buttons
+    colors.forEach((color, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'color-btn';
+      btn.style.cssText = `background: ${color}; width: 80px; height: 80px; border: none; border-radius: 15px; margin: 8px; cursor: pointer; transition: transform 0.1s;`;
+      btn.dataset.index = i;
+      btn.onclick = () => handleColorClick(i);
+      grid.appendChild(btn);
+    });
+    
+    const addToSequence = () => {
+      sequence.push(Math.floor(Math.random() * colors.length));
+    };
+    
+    const playSequence = async () => {
+      display.textContent = 'Watch...';
+      grid.style.display = 'none';
+      
+      for (let i = 0; i < sequence.length; i++) {
+        await new Promise(r => setTimeout(r, 400));
+        display.style.background = colors[sequence[i]];
+        display.textContent = '';
+        await new Promise(r => setTimeout(r, 500));
+        display.style.background = 'rgba(255,255,255,0.1)';
+        display.textContent = '';
+      }
+      
+      await new Promise(r => setTimeout(r, 300));
+      display.textContent = 'Your turn!';
+      grid.style.display = 'grid';
+      grid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+      grid.style.justifyItems = 'center';
+      playerSequence = [];
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const handleColorClick = (colorIndex) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      playerSequence.push(colorIndex);
+      const btn = grid.children[colorIndex];
+      btn.style.transform = 'scale(0.9)';
+      setTimeout(() => btn.style.transform = 'scale(1)', 100);
+      
+      // Check if correct so far
+      const currentPos = playerSequence.length - 1;
+      if (playerSequence[currentPos] !== sequence[currentPos]) {
+        SimpleGames.loseScore(15);
+        level = Math.max(1, level - 1);
+        sequence = sequence.slice(0, level);
+        setTimeout(playSequence, 1000);
+        return;
+      }
+      
+      // Check if sequence complete
+      if (playerSequence.length === sequence.length) {
+        SimpleGames.addScore(25 + (level * 5));
+        level++;
+        document.getElementById('seq-level').textContent = level;
+        addToSequence();
+        setTimeout(playSequence, 800);
+      }
+    };
+    
+    // Start
+    addToSequence();
+    setTimeout(playSequence, 500);
+  },
+  
+  // GAME 2: Number Flash
+  game_NumberFlash: (zone) => {
+    let level = 3;
+    let numbers = [];
+    
+    zone.innerHTML = `
+      <div class="number-flash-game">
+        <div class="flash-display" id="flash-display" style="font-size: 3rem; text-align: center; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 100px;"></div>
+        <input type="text" id="number-input" placeholder="Type the numbers..." style="display: none; width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #3b82f6; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;">
+        <div class="flash-level" style="margin-top: 15px; text-align: center;">Digits: <span id="digit-count">3</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('flash-display');
+    const input = document.getElementById('number-input');
+    
+    const generateNumbers = () => {
+      numbers = [];
+      for (let i = 0; i < level; i++) {
+        numbers.push(Math.floor(Math.random() * 10));
+      }
+    };
+    
+    const showNumbers = async () => {
+      generateNumbers();
+      display.textContent = numbers.join('');
+      input.style.display = 'none';
+      
+      await new Promise(r => setTimeout(r, 1000 + (level * 200)));
+      
+      display.textContent = '?';
+      input.style.display = 'block';
+      input.value = '';
+      input.focus();
+      SimpleGames.startQuestionTimer();
+    };
+    
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter' && SimpleGames.isActive) {
+        const answer = input.value.trim();
+        const correct = numbers.join('');
+        
+        if (answer === correct) {
+          SimpleGames.addScore(25 + (level * 3));
+          level++;
+          document.getElementById('digit-count').textContent = level;
+        } else {
+          SimpleGames.loseScore(15);
+          SimpleGames.showExplanation(correct, `The sequence was ${correct}. Try chunking numbers into groups!`, () => {});
+          level = Math.max(3, level - 1);
+        }
+        
+        setTimeout(showNumbers, 500);
+      }
+    };
+    
+    showNumbers();
+  },
+  
+  // GAME 3: Reaction Test (enhanced)
+  game_ReactionTest: (zone) => {
+    SimpleGames.game6_ReactionTest(zone);
+  },
+  
+  // GAME 4: Card Match
+  game_CardMatch: (zone) => {
+    const emojis = ['🍎', '🌟', '🎈', '🌺', '🦋', '🌙', '🔥', '💎'];
+    const cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+    let flipped = [];
+    let matched = 0;
+    let canFlip = true;
+    
+    zone.innerHTML = `
+      <div class="card-match-game">
+        <div class="cards-grid" id="cards-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;"></div>
+        <div class="match-progress" style="margin-top: 15px; text-align: center;">Matched: <span id="match-count">0</span>/8</div>
+      </div>
+    `;
+    
+    const grid = document.getElementById('cards-grid');
+    
+    cards.forEach((emoji, i) => {
+      const card = document.createElement('div');
+      card.className = 'memory-card';
+      card.dataset.index = i;
+      card.dataset.emoji = emoji;
+      card.innerHTML = '❓';
+      card.style.cssText = 'aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: linear-gradient(135deg, #1e3a5f, #0d1b2a); border-radius: 12px; cursor: pointer; transition: transform 0.3s;';
+      card.onclick = () => flipCard(card);
+      grid.appendChild(card);
+    });
+    
+    const flipCard = (card) => {
+      if (!canFlip || !SimpleGames.isActive || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+      
+      SimpleGames.startQuestionTimer();
+      Sounds.tap();
+      card.innerHTML = card.dataset.emoji;
+      card.classList.add('flipped');
+      card.style.background = 'linear-gradient(135deg, #3b82f6, #1d4ed8)';
+      flipped.push(card);
+      
+      if (flipped.length === 2) {
+        canFlip = false;
+        
+        if (flipped[0].dataset.emoji === flipped[1].dataset.emoji) {
+          matched++;
+          document.getElementById('match-count').textContent = matched;
+          flipped.forEach(c => c.classList.add('matched'));
+          SimpleGames.addScore(25);
+          flipped = [];
+          canFlip = true;
+          
+          if (matched === 8) {
+            // Bonus for completing all
+            SimpleGames.addScore(50);
+            // Reset for more rounds
+            setTimeout(() => location.reload(), 1500);
+          }
+        } else {
+          SimpleGames.loseScore(10);
+          setTimeout(() => {
+            flipped.forEach(c => {
+              c.innerHTML = '❓';
+              c.classList.remove('flipped');
+              c.style.background = 'linear-gradient(135deg, #1e3a5f, #0d1b2a)';
+            });
+            flipped = [];
+            canFlip = true;
+          }, 800);
+        }
+      }
+    };
+  },
+  
+  // GAME 5: Shape Shifter
+  game_ShapeShifter: (zone) => {
+    const shapes = ['●', '■', '▲', '◆', '★', '⬟'];
+    let sequence = [];
+    let playerSequence = [];
+    let level = 2;
+    
+    zone.innerHTML = `
+      <div class="shape-game">
+        <div class="shape-display" id="shape-display" style="font-size: 4rem; text-align: center; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 120px;"></div>
+        <div class="shape-buttons" id="shape-buttons" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px;"></div>
+        <div class="shape-level" style="margin-top: 15px; text-align: center;">Level: <span id="shape-level">2</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('shape-display');
+    const buttons = document.getElementById('shape-buttons');
+    
+    shapes.forEach((shape, i) => {
+      const btn = document.createElement('button');
+      btn.textContent = shape;
+      btn.style.cssText = 'font-size: 2.5rem; padding: 20px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 15px; cursor: pointer; transition: all 0.2s;';
+      btn.onclick = () => handleShapeClick(i);
+      buttons.appendChild(btn);
+    });
+    
+    const generateSequence = () => {
+      sequence = [];
+      for (let i = 0; i < level; i++) {
+        sequence.push(Math.floor(Math.random() * shapes.length));
+      }
+    };
+    
+    const playSequence = async () => {
+      buttons.style.display = 'none';
+      display.textContent = 'Watch...';
+      
+      for (const shapeIndex of sequence) {
+        await new Promise(r => setTimeout(r, 500));
+        display.textContent = shapes[shapeIndex];
+        await new Promise(r => setTimeout(r, 700));
+        display.textContent = '';
+      }
+      
+      display.textContent = 'Your turn!';
+      buttons.style.display = 'grid';
+      playerSequence = [];
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const handleShapeClick = (shapeIndex) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      playerSequence.push(shapeIndex);
+      const pos = playerSequence.length - 1;
+      
+      if (playerSequence[pos] !== sequence[pos]) {
+        SimpleGames.loseScore(15);
+        level = Math.max(2, level - 1);
+        generateSequence();
+        setTimeout(playSequence, 800);
+        return;
+      }
+      
+      if (playerSequence.length === sequence.length) {
+        SimpleGames.addScore(25 + (level * 5));
+        level++;
+        document.getElementById('shape-level').textContent = level;
+        generateSequence();
+        setTimeout(playSequence, 600);
+      }
+    };
+    
+    generateSequence();
+    setTimeout(playSequence, 500);
+  },
+  
+  // GAME 6: Speed Math
+  game_SpeedMath: (zone) => {
+    SimpleGames.game4_SpeedMath(zone);
+  },
+  
+  // GAME 7: World Capitals
+  game_WorldCapitals: (zone) => {
+    SimpleGames.game1_WorldCapitals(zone);
+  },
+  
+  // GAME 8: Word Chain
+  game_WordChain: (zone) => {
+    const words = ['CAT', 'DOG', 'RUN', 'SUN', 'HAT', 'BAT', 'MAP', 'CAP', 'TOP', 'HOT', 'POT', 'LOT', 'BOX', 'FOX', 'MIX'];
+    let chain = [];
+    let level = 2;
+    
+    zone.innerHTML = `
+      <div class="word-chain-game">
+        <div class="chain-display" id="chain-display" style="font-size: 1.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 80px; margin-bottom: 20px;"></div>
+        <div class="word-options" id="word-options" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;"></div>
+        <div class="chain-level" style="margin-top: 15px; text-align: center;">Chain length: <span id="chain-length">2</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('chain-display');
+    const options = document.getElementById('word-options');
+    
+    const buildChain = () => {
+      chain = [];
+      const shuffled = [...words].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < level; i++) {
+        chain.push(shuffled[i]);
+      }
+    };
+    
+    const showChain = async () => {
+      options.innerHTML = '';
+      display.textContent = 'Memorize...';
+      
+      await new Promise(r => setTimeout(r, 500));
+      
+      for (let i = 0; i < chain.length; i++) {
+        display.textContent = chain.slice(0, i + 1).join(' → ');
+        await new Promise(r => setTimeout(r, 800));
+      }
+      
+      await new Promise(r => setTimeout(r, 500));
+      display.textContent = 'What was the chain?';
+      
+      // Create shuffled options
+      const shuffledChain = [...chain].sort(() => Math.random() - 0.5);
+      shuffledChain.forEach(word => {
+        const btn = document.createElement('button');
+        btn.textContent = word;
+        btn.style.cssText = 'padding: 18px; font-size: 1.3rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; cursor: pointer; color: white;';
+        btn.onclick = () => checkWord(word, btn);
+        options.appendChild(btn);
+      });
+      
+      SimpleGames.startQuestionTimer();
+      SimpleGames.gameData.currentIndex = 0;
+    };
+    
+    const checkWord = (word, btn) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      const expectedWord = chain[SimpleGames.gameData.currentIndex];
+      
+      if (word === expectedWord) {
+        btn.style.background = '#22c55e';
+        btn.disabled = true;
+        SimpleGames.gameData.currentIndex++;
+        
+        if (SimpleGames.gameData.currentIndex === chain.length) {
+          SimpleGames.addScore(25 + (level * 5));
+          level++;
+          document.getElementById('chain-length').textContent = level;
+          buildChain();
+          setTimeout(showChain, 800);
+        }
+      } else {
+        SimpleGames.loseScore(15);
+        level = Math.max(2, level - 1);
+        buildChain();
+        setTimeout(showChain, 800);
+      }
+    };
+    
+    buildChain();
+    showChain();
+  },
+  
+  // GAME 9: What's Missing
+  game_WhatsMissing: (zone) => {
+    const allItems = ['🍎', '🌟', '🎈', '🌺', '🦋', '🌙', '🔥', '💎', '🎨', '🎸', '📚', '⚽', '🎭', '🌈', '🍕'];
+    let items = [];
+    let missingItem = null;
+    let level = 4;
+    
+    zone.innerHTML = `
+      <div class="missing-game">
+        <div class="items-display" id="items-display" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 100px;"></div>
+        <div class="missing-question" id="missing-question" style="text-align: center; margin: 20px 0; font-size: 1.2rem; display: none;">What's missing?</div>
+        <div class="answer-options" id="answer-options" style="display: none; grid-template-columns: repeat(3, 1fr); gap: 12px;"></div>
+        <div class="missing-level" style="margin-top: 15px; text-align: center;">Items: <span id="item-count">${level}</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('items-display');
+    const question = document.getElementById('missing-question');
+    const options = document.getElementById('answer-options');
+    
+    const startRound = async () => {
+      options.style.display = 'none';
+      question.style.display = 'none';
+      
+      // Pick random items
+      const shuffled = [...allItems].sort(() => Math.random() - 0.5);
+      items = shuffled.slice(0, level);
+      
+      // Show all items
+      display.innerHTML = items.map(item => `<span style="font-size: 2.5rem;">${item}</span>`).join('');
+      
+      await new Promise(r => setTimeout(r, 2000 + (level * 300)));
+      
+      // Remove one item
+      const missingIndex = Math.floor(Math.random() * items.length);
+      missingItem = items[missingIndex];
+      const remainingItems = items.filter((_, i) => i !== missingIndex);
+      
+      display.innerHTML = remainingItems.map(item => `<span style="font-size: 2.5rem;">${item}</span>`).join('');
+      question.style.display = 'block';
+      
+      // Create options (correct + 2 wrong)
+      const wrongOptions = allItems.filter(i => !items.includes(i)).slice(0, 2);
+      const allOptions = [missingItem, ...wrongOptions].sort(() => Math.random() - 0.5);
+      
+      options.innerHTML = '';
+      allOptions.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.style.cssText = 'font-size: 2rem; padding: 20px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 15px; cursor: pointer;';
+        btn.onclick = () => checkAnswer(opt);
+        options.appendChild(btn);
+      });
+      options.style.display = 'grid';
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const checkAnswer = (answer) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      if (answer === missingItem) {
+        SimpleGames.addScore(25);
+        level = Math.min(10, level + 1);
+      } else {
+        SimpleGames.loseScore(15);
+        level = Math.max(4, level - 1);
+      }
+      
+      document.getElementById('item-count').textContent = level;
+      setTimeout(startRound, 600);
+    };
+    
+    startRound();
+  },
+  
+  // GAME 10: Position Perfect
+  game_PositionPerfect: (zone) => {
+    const icons = ['🍎', '🌟', '🎈', '🌺', '🦋', '🌙', '🔥', '💎', '🎨'];
+    let positions = {};
+    let gridSize = 3;
+    let itemCount = 3;
+    
+    zone.innerHTML = `
+      <div class="position-game">
+        <div class="position-grid" id="position-grid" style="display: grid; gap: 8px; aspect-ratio: 1; max-width: 300px; margin: 0 auto;"></div>
+        <div class="position-status" id="position-status" style="text-align: center; margin-top: 15px; font-size: 1.1rem;">Memorize positions...</div>
+        <div class="position-level" style="margin-top: 10px; text-align: center;">Level: <span id="pos-level">1</span></div>
+      </div>
+    `;
+    
+    const grid = document.getElementById('position-grid');
+    const status = document.getElementById('position-status');
+    
+    const createGrid = () => {
+      grid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+      grid.innerHTML = '';
+      
+      for (let i = 0; i < gridSize * gridSize; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.dataset.index = i;
+        cell.style.cssText = 'aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; cursor: pointer; transition: all 0.2s;';
+        grid.appendChild(cell);
+      }
+    };
+    
+    const startRound = async () => {
+      createGrid();
+      positions = {};
+      status.textContent = 'Memorize...';
+      
+      // Place random items
+      const cells = [...grid.children];
+      const shuffledCells = [...cells].sort(() => Math.random() - 0.5);
+      const shuffledIcons = [...icons].sort(() => Math.random() - 0.5);
+      
+      for (let i = 0; i < itemCount; i++) {
+        const cell = shuffledCells[i];
+        const icon = shuffledIcons[i];
+        cell.textContent = icon;
+        positions[cell.dataset.index] = icon;
+      }
+      
+      await new Promise(r => setTimeout(r, 2000 + (itemCount * 400)));
+      
+      // Clear grid
+      cells.forEach(cell => cell.textContent = '');
+      status.textContent = 'Place the items!';
+      
+      // Show items to place
+      const itemsToPlace = Object.values(positions);
+      SimpleGames.gameData.itemsToPlace = [...itemsToPlace];
+      SimpleGames.gameData.currentItem = 0;
+      
+      status.innerHTML = `Place: <span style="font-size: 2rem;">${SimpleGames.gameData.itemsToPlace[0]}</span>`;
+      
+      // Add click handlers
+      cells.forEach(cell => {
+        cell.onclick = () => placeItem(cell);
+      });
+      
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const placeItem = (cell) => {
+      if (!SimpleGames.isActive || SimpleGames.gameData.currentItem >= SimpleGames.gameData.itemsToPlace.length) return;
+      Sounds.tap();
+      
+      const currentIcon = SimpleGames.gameData.itemsToPlace[SimpleGames.gameData.currentItem];
+      const correctIndex = Object.entries(positions).find(([_, icon]) => icon === currentIcon)?.[0];
+      
+      if (cell.dataset.index === correctIndex) {
+        cell.textContent = currentIcon;
+        cell.style.background = 'rgba(34, 197, 94, 0.3)';
+        SimpleGames.addScore(25);
+      } else {
+        cell.style.background = 'rgba(239, 68, 68, 0.3)';
+        SimpleGames.loseScore(15);
+        // Show correct position
+        grid.children[correctIndex].textContent = currentIcon;
+        grid.children[correctIndex].style.background = 'rgba(34, 197, 94, 0.3)';
+      }
+      
+      SimpleGames.gameData.currentItem++;
+      
+      if (SimpleGames.gameData.currentItem < SimpleGames.gameData.itemsToPlace.length) {
+        status.innerHTML = `Place: <span style="font-size: 2rem;">${SimpleGames.gameData.itemsToPlace[SimpleGames.gameData.currentItem]}</span>`;
+      } else {
+        itemCount = Math.min(8, itemCount + 1);
+        document.getElementById('pos-level').textContent = itemCount - 2;
+        setTimeout(startRound, 1000);
+      }
+    };
+    
+    startRound();
+  },
+  
+  // GAME 11: Emoji Story
+  game_EmojiStory: (zone) => {
+    const storyEmojis = ['😀', '🐕', '🎾', '🏠', '🌳', '☀️', '🌧️', '🚗', '🍎', '📚', '🎵', '🌙'];
+    let story = [];
+    let level = 3;
+    
+    zone.innerHTML = `
+      <div class="emoji-story-game">
+        <div class="story-display" id="story-display" style="font-size: 2.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 80px; letter-spacing: 10px;"></div>
+        <div class="story-options" id="story-options" style="display: none; margin-top: 20px;"></div>
+        <div class="story-progress" id="story-progress" style="margin-top: 15px; text-align: center; font-size: 1rem;"></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('story-display');
+    const options = document.getElementById('story-options');
+    const progress = document.getElementById('story-progress');
+    
+    const generateStory = () => {
+      story = [];
+      const shuffled = [...storyEmojis].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < level; i++) {
+        story.push(shuffled[i]);
+      }
+    };
+    
+    const showStory = async () => {
+      options.style.display = 'none';
+      options.innerHTML = '';
+      progress.textContent = `Story length: ${level} emojis`;
+      
+      display.textContent = 'Watch the story...';
+      await new Promise(r => setTimeout(r, 500));
+      
+      display.textContent = story.join(' ');
+      await new Promise(r => setTimeout(r, 1500 + (level * 400)));
+      
+      display.textContent = 'Put them in order!';
+      
+      // Create shuffled buttons
+      const shuffled = [...story].sort(() => Math.random() - 0.5);
+      shuffled.forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.textContent = emoji;
+        btn.style.cssText = 'font-size: 2rem; padding: 15px 25px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 15px; cursor: pointer; margin: 5px;';
+        btn.onclick = () => selectEmoji(emoji, btn);
+        options.appendChild(btn);
+      });
+      options.style.display = 'flex';
+      options.style.flexWrap = 'wrap';
+      options.style.justifyContent = 'center';
+      
+      SimpleGames.gameData.userOrder = [];
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const selectEmoji = (emoji, btn) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      const expectedEmoji = story[SimpleGames.gameData.userOrder.length];
+      
+      if (emoji === expectedEmoji) {
+        btn.style.background = '#22c55e';
+        btn.disabled = true;
+        SimpleGames.gameData.userOrder.push(emoji);
+        
+        if (SimpleGames.gameData.userOrder.length === story.length) {
+          SimpleGames.addScore(25 + (level * 5));
+          level = Math.min(8, level + 1);
+          generateStory();
+          setTimeout(showStory, 800);
+        }
+      } else {
+        SimpleGames.loseScore(15);
+        level = Math.max(3, level - 1);
+        generateStory();
+        setTimeout(showStory, 800);
+      }
+    };
+    
+    generateStory();
+    showStory();
+  },
+  
+  // GAME 12: Pattern Breaker
+  game_PatternBreaker: (zone) => {
+    zone.innerHTML = `
+      <div class="pattern-breaker-game">
+        <div class="pattern-instruction" style="text-align: center; margin-bottom: 15px; font-size: 1.1rem;">Find the one that doesn't belong!</div>
+        <div class="pattern-grid" id="pattern-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;"></div>
+        <div class="pattern-score" style="margin-top: 15px; text-align: center;">Patterns found: <span id="pattern-count">0</span></div>
+      </div>
+    `;
+    
+    const grid = document.getElementById('pattern-grid');
+    let patternsFound = 0;
+    
+    const patterns = [
+      { items: ['🍎', '🍊', '🍋', '🚗'], odd: '🚗', rule: 'Fruits' },
+      { items: ['2', '4', '6', '7'], odd: '7', rule: 'Even numbers' },
+      { items: ['🐕', '🐈', '🐁', '🌳'], odd: '🌳', rule: 'Animals' },
+      { items: ['■', '■', '■', '●'], odd: '●', rule: 'Same shape' },
+      { items: ['A', 'E', 'I', 'B'], odd: 'B', rule: 'Vowels' },
+      { items: ['🔴', '🔵', '🟢', '⬛'], odd: '⬛', rule: 'Primary colors' },
+    ];
+    
+    let currentPattern;
+    
+    const showPattern = () => {
+      const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+      currentPattern = pattern;
+      
+      const shuffled = [...pattern.items].sort(() => Math.random() - 0.5);
+      
+      grid.innerHTML = '';
+      shuffled.forEach(item => {
+        const btn = document.createElement('button');
+        btn.textContent = item;
+        btn.style.cssText = 'font-size: 2.5rem; padding: 30px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 15px; cursor: pointer; transition: all 0.2s;';
+        btn.onclick = () => checkAnswer(item, btn);
+        grid.appendChild(btn);
+      });
+      
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const checkAnswer = (item, btn) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      if (item === currentPattern.odd) {
+        btn.style.background = '#22c55e';
+        SimpleGames.addScore(25);
+        patternsFound++;
+        document.getElementById('pattern-count').textContent = patternsFound;
+      } else {
+        btn.style.background = '#ef4444';
+        SimpleGames.loseScore(15);
+        SimpleGames.showExplanation(currentPattern.odd, `The pattern was: ${currentPattern.rule}`, () => {});
+      }
+      
+      setTimeout(showPattern, 600);
+    };
+    
+    showPattern();
+  },
+  
+  // GAME 13: Sound Sequence (simplified - uses visual representation)
+  game_SoundSequence: (zone) => {
+    const sounds = [
+      { name: 'Bell', emoji: '🔔', freq: 800 },
+      { name: 'Drum', emoji: '🥁', freq: 200 },
+      { name: 'Horn', emoji: '📯', freq: 400 },
+      { name: 'Whistle', emoji: '🎵', freq: 1000 }
+    ];
+    let sequence = [];
+    let level = 2;
+    
+    zone.innerHTML = `
+      <div class="sound-game">
+        <div class="sound-display" id="sound-display" style="font-size: 4rem; text-align: center; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px; min-height: 100px;"></div>
+        <div class="sound-buttons" id="sound-buttons" style="display: none; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;"></div>
+        <div class="sound-level" style="margin-top: 15px; text-align: center;">Level: <span id="sound-level">2</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('sound-display');
+    const buttons = document.getElementById('sound-buttons');
+    
+    // Create sound buttons
+    sounds.forEach((sound, i) => {
+      const btn = document.createElement('button');
+      btn.innerHTML = `${sound.emoji}<br><span style="font-size: 0.8rem;">${sound.name}</span>`;
+      btn.style.cssText = 'font-size: 2rem; padding: 20px; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 15px; cursor: pointer;';
+      btn.onclick = () => handleSoundClick(i);
+      buttons.appendChild(btn);
+    });
+    
+    const playTone = (freq) => {
+      if (typeof Sounds !== 'undefined' && Sounds.ctx) {
+        const ctx = Sounds.ctx;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.3);
+      }
+    };
+    
+    const generateSequence = () => {
+      sequence = [];
+      for (let i = 0; i < level; i++) {
+        sequence.push(Math.floor(Math.random() * sounds.length));
+      }
+    };
+    
+    const playSequence = async () => {
+      buttons.style.display = 'none';
+      display.textContent = 'Listen...';
+      
+      for (const soundIndex of sequence) {
+        await new Promise(r => setTimeout(r, 500));
+        display.textContent = sounds[soundIndex].emoji;
+        playTone(sounds[soundIndex].freq);
+        await new Promise(r => setTimeout(r, 600));
+        display.textContent = '';
+      }
+      
+      display.textContent = 'Your turn!';
+      buttons.style.display = 'grid';
+      SimpleGames.gameData.playerSequence = [];
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const handleSoundClick = (soundIndex) => {
+      if (!SimpleGames.isActive) return;
+      playTone(sounds[soundIndex].freq);
+      
+      SimpleGames.gameData.playerSequence.push(soundIndex);
+      const pos = SimpleGames.gameData.playerSequence.length - 1;
+      
+      if (SimpleGames.gameData.playerSequence[pos] !== sequence[pos]) {
+        SimpleGames.loseScore(15);
+        level = Math.max(2, level - 1);
+        generateSequence();
+        setTimeout(playSequence, 800);
+        return;
+      }
+      
+      if (SimpleGames.gameData.playerSequence.length === sequence.length) {
+        SimpleGames.addScore(25 + (level * 5));
+        level++;
+        document.getElementById('sound-level').textContent = level;
+        generateSequence();
+        setTimeout(playSequence, 600);
+      }
+    };
+    
+    generateSequence();
+    setTimeout(playSequence, 500);
+  },
+  
+  // GAME 14: Face Memory (simplified with emoji faces)
+  game_FaceMemory: (zone) => {
+    const faces = [
+      { face: '👨', name: 'John' },
+      { face: '👩', name: 'Sarah' },
+      { face: '👴', name: 'Bob' },
+      { face: '👵', name: 'Mary' },
+      { face: '👦', name: 'Tom' },
+      { face: '👧', name: 'Emma' },
+      { face: '👨‍🦱', name: 'Mike' },
+      { face: '👩‍🦰', name: 'Lisa' }
+    ];
+    let currentFaces = [];
+    let level = 2;
+    
+    zone.innerHTML = `
+      <div class="face-game">
+        <div class="face-display" id="face-display" style="text-align: center; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 20px;"></div>
+        <div class="face-question" id="face-question" style="display: none; text-align: center; margin-top: 20px;"></div>
+        <div class="face-options" id="face-options" style="display: none; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 15px;"></div>
+        <div class="face-level" style="margin-top: 15px; text-align: center;">Faces: <span id="face-count">${level}</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('face-display');
+    const question = document.getElementById('face-question');
+    const options = document.getElementById('face-options');
+    
+    const startRound = async () => {
+      options.style.display = 'none';
+      question.style.display = 'none';
+      
+      // Pick random faces
+      const shuffled = [...faces].sort(() => Math.random() - 0.5);
+      currentFaces = shuffled.slice(0, level);
+      
+      // Show faces with names
+      display.innerHTML = '<div style="margin-bottom: 10px;">Memorize these faces:</div>' +
+        currentFaces.map(f => `<div style="display: inline-block; margin: 10px; text-align: center;"><div style="font-size: 3rem;">${f.face}</div><div>${f.name}</div></div>`).join('');
+      
+      await new Promise(r => setTimeout(r, 2000 + (level * 800)));
+      
+      // Ask about a random face
+      const targetFace = currentFaces[Math.floor(Math.random() * currentFaces.length)];
+      
+      display.innerHTML = `<div style="font-size: 4rem;">${targetFace.face}</div>`;
+      question.innerHTML = 'What is this person\'s name?';
+      question.style.display = 'block';
+      
+      // Create options
+      const wrongNames = faces.filter(f => !currentFaces.includes(f)).map(f => f.name).slice(0, 3);
+      const allOptions = [targetFace.name, ...wrongNames].sort(() => Math.random() - 0.5);
+      
+      options.innerHTML = '';
+      allOptions.forEach(name => {
+        const btn = document.createElement('button');
+        btn.textContent = name;
+        btn.style.cssText = 'padding: 15px; font-size: 1.1rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; cursor: pointer; color: white;';
+        btn.onclick = () => checkName(name, targetFace.name);
+        options.appendChild(btn);
+      });
+      options.style.display = 'grid';
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const checkName = (selected, correct) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      if (selected === correct) {
+        SimpleGames.addScore(25);
+        level = Math.min(6, level + 1);
+      } else {
+        SimpleGames.loseScore(15);
+        level = Math.max(2, level - 1);
+      }
+      
+      document.getElementById('face-count').textContent = level;
+      setTimeout(startRound, 600);
+    };
+    
+    startRound();
+  },
+  
+  // GAME 15: Number Grid
+  game_NumberGrid: (zone) => {
+    let grid = [];
+    let gridSize = 3;
+    let numbersToShow = 4;
+    
+    zone.innerHTML = `
+      <div class="number-grid-game">
+        <div class="grid-display" id="grid-display" style="display: grid; gap: 8px; max-width: 280px; margin: 0 auto;"></div>
+        <div class="grid-status" id="grid-status" style="text-align: center; margin-top: 15px; font-size: 1.1rem;">Memorize the numbers...</div>
+        <div class="grid-level" style="margin-top: 10px; text-align: center;">Level: <span id="grid-level">1</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('grid-display');
+    const status = document.getElementById('grid-status');
+    
+    const startRound = async () => {
+      display.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+      display.innerHTML = '';
+      
+      // Create empty grid
+      grid = [];
+      for (let i = 0; i < gridSize * gridSize; i++) {
+        grid.push(null);
+        const cell = document.createElement('div');
+        cell.dataset.index = i;
+        cell.style.cssText = 'aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold;';
+        display.appendChild(cell);
+      }
+      
+      // Place random numbers
+      const positions = [];
+      while (positions.length < numbersToShow) {
+        const pos = Math.floor(Math.random() * gridSize * gridSize);
+        if (!positions.includes(pos)) positions.push(pos);
+      }
+      
+      positions.forEach((pos, i) => {
+        grid[pos] = i + 1;
+        display.children[pos].textContent = i + 1;
+      });
+      
+      status.textContent = 'Memorize...';
+      await new Promise(r => setTimeout(r, 2000 + (numbersToShow * 300)));
+      
+      // Hide numbers
+      positions.forEach(pos => {
+        display.children[pos].textContent = '?';
+        display.children[pos].style.cursor = 'pointer';
+        display.children[pos].style.background = 'rgba(59, 130, 246, 0.3)';
+      });
+      
+      status.textContent = 'Click cells in order: 1, 2, 3...';
+      SimpleGames.gameData.expectedNext = 1;
+      SimpleGames.gameData.positions = positions;
+      
+      // Add click handlers
+      positions.forEach(pos => {
+        display.children[pos].onclick = () => checkCell(pos);
+      });
+      
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const checkCell = (pos) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      const cell = display.children[pos];
+      const expectedNum = SimpleGames.gameData.expectedNext;
+      
+      if (grid[pos] === expectedNum) {
+        cell.textContent = expectedNum;
+        cell.style.background = 'rgba(34, 197, 94, 0.3)';
+        cell.onclick = null;
+        SimpleGames.gameData.expectedNext++;
+        
+        if (SimpleGames.gameData.expectedNext > numbersToShow) {
+          SimpleGames.addScore(25 + (numbersToShow * 3));
+          numbersToShow = Math.min(8, numbersToShow + 1);
+          document.getElementById('grid-level').textContent = numbersToShow - 3;
+          setTimeout(startRound, 800);
+        }
+      } else {
+        cell.style.background = 'rgba(239, 68, 68, 0.3)';
+        SimpleGames.loseScore(15);
+        numbersToShow = Math.max(4, numbersToShow - 1);
+        setTimeout(startRound, 800);
+      }
+    };
+    
+    startRound();
+  },
+
+  // ==========================================
+  // PREMIUM GAMES 16-30 (Aliases to existing + new)
+  // ==========================================
+  
+  game_DualNBack: (zone) => {
+    // N-Back implementation
+    let n = 1;
+    let sequence = [];
+    let position = 0;
+    const gridPositions = 9;
+    
+    zone.innerHTML = `
+      <div class="nback-game">
+        <div class="nback-info" style="text-align: center; margin-bottom: 15px;">N = <span id="n-value">1</span></div>
+        <div class="nback-grid" id="nback-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 240px; margin: 0 auto;"></div>
+        <div class="nback-buttons" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+          <button id="nback-position" style="padding: 15px 30px; font-size: 1.1rem; background: #3b82f6; border: none; border-radius: 10px; color: white; cursor: pointer;">Position Match</button>
+          <button id="nback-letter" style="padding: 15px 30px; font-size: 1.1rem; background: #8b5cf6; border: none; border-radius: 10px; color: white; cursor: pointer;">Letter Match</button>
+        </div>
+        <div class="nback-score" style="margin-top: 15px; text-align: center;">Correct: <span id="nback-correct">0</span></div>
+      </div>
+    `;
+    
+    const grid = document.getElementById('nback-grid');
+    let correctCount = 0;
+    
+    // Create grid
+    for (let i = 0; i < gridPositions; i++) {
+      const cell = document.createElement('div');
+      cell.style.cssText = 'aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold;';
+      grid.appendChild(cell);
+    }
+    
+    const letters = 'ABCDEFGH'.split('');
+    let currentPos = -1;
+    let currentLetter = '';
+    
+    const showNext = () => {
+      if (!SimpleGames.isActive) return;
+      
+      // Clear previous
+      [...grid.children].forEach(c => {
+        c.style.background = 'rgba(255,255,255,0.1)';
+        c.textContent = '';
+      });
+      
+      // Generate new
+      currentPos = Math.floor(Math.random() * gridPositions);
+      currentLetter = letters[Math.floor(Math.random() * letters.length)];
+      
+      sequence.push({ pos: currentPos, letter: currentLetter });
+      
+      // Show current
+      grid.children[currentPos].style.background = '#3b82f6';
+      grid.children[currentPos].textContent = currentLetter;
+      
+      position++;
+      
+      SimpleGames.startQuestionTimer();
+      
+      // Auto advance
+      SimpleGames.timeouts.push(setTimeout(showNext, 2500));
+    };
+    
+    document.getElementById('nback-position').onclick = () => {
+      if (position > n && sequence[position - 1 - n].pos === currentPos) {
+        SimpleGames.addScore(25);
+        correctCount++;
+        document.getElementById('nback-correct').textContent = correctCount;
+      } else {
+        SimpleGames.loseScore(15);
+      }
+    };
+    
+    document.getElementById('nback-letter').onclick = () => {
+      if (position > n && sequence[position - 1 - n].letter === currentLetter) {
+        SimpleGames.addScore(25);
+        correctCount++;
+        document.getElementById('nback-correct').textContent = correctCount;
+      } else {
+        SimpleGames.loseScore(15);
+      }
+    };
+    
+    setTimeout(showNext, 1000);
+  },
+  
+  game_SpeedTyping: (zone) => {
+    const words = ['memory', 'brain', 'focus', 'quick', 'smart', 'think', 'learn', 'power', 'speed', 'skill'];
+    let currentWord = '';
+    let wordsTyped = 0;
+    
+    zone.innerHTML = `
+      <div class="typing-game">
+        <div class="word-display" id="word-display" style="font-size: 2.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px; letter-spacing: 5px;"></div>
+        <input type="text" id="type-input" placeholder="Type here..." style="width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #3b82f6; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center; margin-top: 20px;">
+        <div class="typing-score" style="margin-top: 15px; text-align: center;">Words: <span id="words-typed">0</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('word-display');
+    const input = document.getElementById('type-input');
+    
+    const showWord = () => {
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      display.textContent = currentWord.toUpperCase();
+      input.value = '';
+      input.focus();
+      SimpleGames.startQuestionTimer();
+    };
+    
+    input.oninput = () => {
+      if (input.value.toLowerCase() === currentWord) {
+        SimpleGames.addScore(25);
+        wordsTyped++;
+        document.getElementById('words-typed').textContent = wordsTyped;
+        showWord();
+      }
+    };
+    
+    showWord();
+  },
+  
+  game_BackwardsSpell: (zone) => {
+    const words = ['CAT', 'DOG', 'SUN', 'HAT', 'RUN', 'BOOK', 'TREE', 'STAR', 'FISH', 'BIRD'];
+    let currentWord = '';
+    
+    zone.innerHTML = `
+      <div class="backwards-game">
+        <div class="word-display" id="word-display" style="font-size: 2.5rem; text-align: center; padding: 30px; background: rgba(255,255,255,0.1); border-radius: 20px;"></div>
+        <div class="instruction" style="text-align: center; margin: 15px 0; color: rgba(255,255,255,0.7);">Spell it BACKWARDS!</div>
+        <input type="text" id="backwards-input" placeholder="Type backwards..." style="width: 100%; padding: 15px; font-size: 1.5rem; border: 2px solid #f59e0b; border-radius: 10px; background: rgba(255,255,255,0.1); color: white; text-align: center;">
+        <div class="backwards-score" style="margin-top: 15px; text-align: center;">Correct: <span id="backwards-count">0</span></div>
+      </div>
+    `;
+    
+    const display = document.getElementById('word-display');
+    const input = document.getElementById('backwards-input');
+    let correctCount = 0;
+    
+    const showWord = () => {
+      currentWord = words[Math.floor(Math.random() * words.length)];
+      display.textContent = currentWord;
+      input.value = '';
+      input.focus();
+      SimpleGames.startQuestionTimer();
+    };
+    
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        const backwards = currentWord.split('').reverse().join('');
+        if (input.value.toUpperCase() === backwards) {
+          SimpleGames.addScore(30);
+          correctCount++;
+          document.getElementById('backwards-count').textContent = correctCount;
+        } else {
+          SimpleGames.loseScore(15);
+          SimpleGames.showExplanation(backwards, `${currentWord} backwards is ${backwards}`, () => {});
+        }
+        showWord();
+      }
+    };
+    
+    showWord();
+  },
+  
+  game_ColorWordClash: (zone) => {
+    // Stroop test
+    const colors = [
+      { name: 'RED', color: '#ef4444' },
+      { name: 'BLUE', color: '#3b82f6' },
+      { name: 'GREEN', color: '#22c55e' },
+      { name: 'YELLOW', color: '#fbbf24' }
+    ];
+    
+    zone.innerHTML = `
+      <div class="stroop-game">
+        <div class="stroop-instruction" style="text-align: center; margin-bottom: 15px;">Tap the COLOR, not the word!</div>
+        <div class="stroop-word" id="stroop-word" style="font-size: 3rem; text-align: center; padding: 40px; background: rgba(255,255,255,0.1); border-radius: 20px; font-weight: bold;"></div>
+        <div class="stroop-buttons" id="stroop-buttons" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;"></div>
+        <div class="stroop-score" style="margin-top: 15px; text-align: center;">Score: <span id="stroop-count">0</span></div>
+      </div>
+    `;
+    
+    const wordDisplay = document.getElementById('stroop-word');
+    const buttons = document.getElementById('stroop-buttons');
+    let correctCount = 0;
+    let currentColor = '';
+    
+    // Create color buttons
+    colors.forEach(c => {
+      const btn = document.createElement('button');
+      btn.textContent = c.name;
+      btn.style.cssText = `padding: 20px; font-size: 1.2rem; background: ${c.color}; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer;`;
+      btn.onclick = () => checkColor(c.name);
+      buttons.appendChild(btn);
+    });
+    
+    const showWord = () => {
+      const wordColor = colors[Math.floor(Math.random() * colors.length)];
+      const textColor = colors[Math.floor(Math.random() * colors.length)];
+      
+      wordDisplay.textContent = wordColor.name;
+      wordDisplay.style.color = textColor.color;
+      currentColor = textColor.name;
+      
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const checkColor = (selected) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      if (selected === currentColor) {
+        SimpleGames.addScore(25);
+        correctCount++;
+        document.getElementById('stroop-count').textContent = correctCount;
+      } else {
+        SimpleGames.loseScore(15);
+      }
+      
+      showWord();
+    };
+    
+    showWord();
+  },
+  
+  game_SequenceBuilder: (zone) => {
+    zone.innerHTML = `
+      <div class="sequence-builder-game">
+        <div class="sequence-q" id="seq-question" style="font-size: 1.8rem; text-align: center; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px;"></div>
+        <div class="sequence-options" id="seq-options" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px;"></div>
+        <div class="sequence-score" style="margin-top: 15px; text-align: center;">Patterns: <span id="seq-count">0</span></div>
+      </div>
+    `;
+    
+    const questions = [
+      { seq: '2, 4, 6, 8, ?', answer: '10', wrong: ['9', '11', '12'] },
+      { seq: '1, 3, 5, 7, ?', answer: '9', wrong: ['8', '10', '11'] },
+      { seq: '3, 6, 9, 12, ?', answer: '15', wrong: ['13', '14', '16'] },
+      { seq: '1, 2, 4, 8, ?', answer: '16', wrong: ['10', '12', '14'] },
+      { seq: '1, 4, 9, 16, ?', answer: '25', wrong: ['20', '24', '36'] },
+    ];
+    
+    let correctCount = 0;
+    const qDisplay = document.getElementById('seq-question');
+    const options = document.getElementById('seq-options');
+    
+    const showQuestion = () => {
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      qDisplay.textContent = q.seq;
+      
+      const allAnswers = [q.answer, ...q.wrong].sort(() => Math.random() - 0.5);
+      options.innerHTML = '';
+      
+      allAnswers.forEach(ans => {
+        const btn = document.createElement('button');
+        btn.textContent = ans;
+        btn.style.cssText = 'padding: 20px; font-size: 1.5rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 12px; cursor: pointer; color: white;';
+        btn.onclick = () => checkAnswer(ans, q.answer);
+        options.appendChild(btn);
+      });
+      
+      SimpleGames.startQuestionTimer();
+    };
+    
+    const checkAnswer = (selected, correct) => {
+      if (!SimpleGames.isActive) return;
+      Sounds.tap();
+      
+      if (selected === correct) {
+        SimpleGames.addScore(25);
+        correctCount++;
+        document.getElementById('seq-count').textContent = correctCount;
+      } else {
+        SimpleGames.loseScore(15);
+      }
+      
+      showQuestion();
+    };
+    
+    showQuestion();
+  },
+  
+  game_RapidRecall: (zone) => { SimpleGames.game_WhatsMissing(zone); },
+  game_MathChains: (zone) => { SimpleGames.game_SpeedMath(zone); },
+  game_WordMorph: (zone) => { SimpleGames.game_WordChain(zone); },
+  game_GridNavigator: (zone) => { SimpleGames.game_PositionPerfect(zone); },
+  game_SymbolMatch: (zone) => { SimpleGames.game_CardMatch(zone); },
+  game_TrueFalseBlitz: (zone) => { SimpleGames.game9_TrueFalseBlitz(zone); },
+  game_RhythmRecall: (zone) => { SimpleGames.game_SoundSequence(zone); },
+  game_FlagFinder: (zone) => { SimpleGames.game2_FlagMatch(zone); },
+  game_OddOneOut: (zone) => { SimpleGames.game_PatternBreaker(zone); },
+  game_QuickCount: (zone) => { SimpleGames.game_SpeedMath(zone); },
+  
+  // PREMIUM BATCH 2: Games 31-45 (aliases)
+  game_TripleNBack: (zone) => { SimpleGames.game_DualNBack(zone); },
+  game_ReverseOrder: (zone) => { SimpleGames.game_ColorSequence(zone); },
+  game_LetterEquations: (zone) => { SimpleGames.game_BackwardsSpell(zone); },
+  game_MemoryPalace: (zone) => { SimpleGames.game_PositionPerfect(zone); },
+  game_LandmarkMemory: (zone) => { SimpleGames.game_WorldCapitals(zone); },
+  game_MentalRotation: (zone) => { SimpleGames.game_ShapeShifter(zone); },
+  game_WordRecall: (zone) => { SimpleGames.game_WordChain(zone); },
+  game_CalculationSprint: (zone) => { SimpleGames.game_SpeedMath(zone); },
+  game_EmotionalFaces: (zone) => { SimpleGames.game_FaceMemory(zone); },
+  game_SynonymSprint: (zone) => { SimpleGames.game_WordChain(zone); },
+  game_PhotoMemory: (zone) => { SimpleGames.game_WhatsMissing(zone); },
+  game_MelodyMemory: (zone) => { SimpleGames.game_SoundSequence(zone); },
+  game_SplitAttention: (zone) => { SimpleGames.game_ColorWordClash(zone); },
+  game_NumberBonds: (zone) => { SimpleGames.game_SpeedMath(zone); },
+  game_ContextSwitch: (zone) => { SimpleGames.game_ColorWordClash(zone); },
+  
+  // PREMIUM BATCH 3: Games 46-60 (aliases)
+  game_SpeedPatterns: (zone) => { SimpleGames.game_ColorSequence(zone); },
+  game_LogicChains: (zone) => { SimpleGames.game_SequenceBuilder(zone); },
+  game_CategorySort: (zone) => { SimpleGames.game_PatternBreaker(zone); },
+  game_MazeMemory: (zone) => { SimpleGames.game_PositionPerfect(zone); },
+  game_VerbalFluency: (zone) => { SimpleGames.game_WordChain(zone); },
+  game_PrimeTime: (zone) => { SimpleGames.game_SpeedMath(zone); },
+  game_VisualEquations: (zone) => { SimpleGames.game_SequenceBuilder(zone); },
+  game_AttentionFilter: (zone) => { SimpleGames.game_ColorWordClash(zone); },
+  game_StorySequence: (zone) => { SimpleGames.game_EmojiStory(zone); },
+  game_PeripheralVision: (zone) => { SimpleGames.game_ReactionTest(zone); },
+  game_EstimationMaster: (zone) => { SimpleGames.game_SpeedMath(zone); },
+  game_CodeBreaker: (zone) => { SimpleGames.game_SequenceBuilder(zone); },
+  game_AudioLocation: (zone) => { SimpleGames.game_SoundSequence(zone); },
+  game_MultiModalMatch: (zone) => { SimpleGames.game_DualNBack(zone); },
+  game_UltimateChallenge: (zone) => { SimpleGames.game10_UltimateQuiz(zone); },
+
+  // Generic game fallback
   gameGeneric: (zone, game) => {
-    const mechanic = game.id % 5;
+    const mechanic = game.id % 15;
     switch(mechanic) {
-      case 0: SimpleGames.game1_WorldCapitals(zone); break;
-      case 1: SimpleGames.game4_SpeedMath(zone); break;
-      case 2: SimpleGames.game9_TrueFalseBlitz(zone); break;
-      case 3: SimpleGames.game6_ReactionTest(zone); break;
-      case 4: SimpleGames.game7_MemorySequence(zone); break;
+      case 0: SimpleGames.game_ColorSequence(zone); break;
+      case 1: SimpleGames.game_NumberFlash(zone); break;
+      case 2: SimpleGames.game_ReactionTest(zone); break;
+      case 3: SimpleGames.game_CardMatch(zone); break;
+      case 4: SimpleGames.game_SpeedMath(zone); break;
+      case 5: SimpleGames.game_WorldCapitals(zone); break;
+      case 6: SimpleGames.game_WordChain(zone); break;
+      case 7: SimpleGames.game_WhatsMissing(zone); break;
+      case 8: SimpleGames.game_PatternBreaker(zone); break;
+      case 9: SimpleGames.game_SoundSequence(zone); break;
+      case 10: SimpleGames.game_FaceMemory(zone); break;
+      case 11: SimpleGames.game_NumberGrid(zone); break;
+      case 12: SimpleGames.game_DualNBack(zone); break;
+      case 13: SimpleGames.game_ColorWordClash(zone); break;
+      case 14: SimpleGames.game_EmojiStory(zone); break;
     }
   }
 };

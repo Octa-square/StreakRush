@@ -550,8 +550,8 @@ const Game = {
       playAgainBtn.style.display = 'none';
     }
     
-    // Check if completed game 20 - show commitment screen
-    if (results.passed && results.game.id === 20 && !user.isPremium) {
+    // Check if completed game 15 - show commitment screen
+    if (results.passed && results.game.id === 15 && !user.isPremium) {
       setTimeout(() => {
         if (typeof CommitmentScreen !== 'undefined') {
           CommitmentScreen.show();
