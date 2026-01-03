@@ -1460,8 +1460,10 @@ const SimpleGames = {
       SimpleGames.startQuestionTimer();
     };
     
+    let waitingForContinue = false;
+    
     const handleColorClick = (colorIndex) => {
-      if (!SimpleGames.isActive) return;
+      if (!SimpleGames.isActive || waitingForContinue) return;
       Sounds.click();
       
       playerSequence.push(colorIndex);
@@ -1473,9 +1475,30 @@ const SimpleGames = {
       const currentPos = playerSequence.length - 1;
       if (playerSequence[currentPos] !== sequence[currentPos]) {
         SimpleGames.loseScore(15);
-        level = Math.max(1, level - 1);
-        sequence = sequence.slice(0, level);
-        setTimeout(playSequence, 1000);
+        waitingForContinue = true;
+        grid.style.display = 'none';
+        
+        // Show what the correct sequence was
+        const correctColors = sequence.map(i => `<span style="display: inline-block; width: 30px; height: 30px; background: ${colors[i]}; border-radius: 50%; margin: 3px;"></span>`).join('');
+        
+        display.innerHTML = `
+          <div style="color: #ef4444; font-size: 1.3rem; margin-bottom: 10px;">✗ Wrong color!</div>
+          <div style="font-size: 0.9rem; color: #888; margin-bottom: 10px;">You tapped: <span style="display: inline-block; width: 25px; height: 25px; background: ${colors[colorIndex]}; border-radius: 50%; vertical-align: middle;"></span></div>
+          <div style="font-size: 1rem; margin-bottom: 10px;">Correct sequence was:</div>
+          <div style="margin-bottom: 15px;">${correctColors}</div>
+          <button id="continue-btn" style="padding: 12px 30px; background: #3b82f6; color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer;">
+            Tap to Continue
+          </button>
+        `;
+        display.style.background = 'rgba(239, 68, 68, 0.1)';
+        
+        document.getElementById('continue-btn').onclick = () => {
+          waitingForContinue = false;
+          level = Math.max(1, level - 1);
+          sequence = sequence.slice(0, level);
+          document.getElementById('seq-level').textContent = level;
+          playSequence();
+        };
         return;
       }
       
@@ -1484,6 +1507,9 @@ const SimpleGames = {
         SimpleGames.addScore(25 + (level * 5));
         level++;
         document.getElementById('seq-level').textContent = level;
+        display.innerHTML = '<div style="color: #22c55e; font-size: 2rem;">✓ Correct!</div>';
+        display.style.background = 'rgba(34, 197, 94, 0.2)';
+        grid.style.display = 'none';
         addToSequence();
         setTimeout(playSequence, 800);
       }
@@ -1534,8 +1560,10 @@ const SimpleGames = {
       SimpleGames.startQuestionTimer();
     };
     
+    let waitingForContinue = false;
+    
     input.onkeydown = (e) => {
-      if (e.key === 'Enter' && SimpleGames.isActive) {
+      if (e.key === 'Enter' && SimpleGames.isActive && !waitingForContinue) {
         const answer = input.value.trim();
         const correct = numbers.join('');
         
@@ -1543,13 +1571,32 @@ const SimpleGames = {
           SimpleGames.addScore(25 + (level * 3));
           level++;
           document.getElementById('digit-count').textContent = level;
+          // Show success briefly then continue
+          display.innerHTML = '<div style="color: #22c55e; font-size: 2rem;">✓ Correct!</div>';
+          input.style.display = 'none';
+          setTimeout(showNumbers, 800);
         } else {
           SimpleGames.loseScore(15);
-          SimpleGames.showExplanation(correct, `The sequence was ${correct}. Try chunking numbers into groups!`, () => {});
           level = Math.max(3, level - 1);
+          waitingForContinue = true;
+          input.style.display = 'none';
+          
+          // Show what the correct answer was and wait for tap
+          display.innerHTML = `
+            <div style="color: #ef4444; font-size: 1.5rem; margin-bottom: 10px;">✗ Wrong!</div>
+            <div style="font-size: 1rem; color: #888; margin-bottom: 15px;">You typed: <span style="color: #ef4444;">${answer || '(nothing)'}</span></div>
+            <div style="font-size: 1.2rem; margin-bottom: 15px;">Correct was: <span style="color: #22c55e; font-weight: bold; font-size: 2rem;">${correct}</span></div>
+            <button id="continue-btn" style="padding: 12px 30px; background: #3b82f6; color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer;">
+              Tap to Continue
+            </button>
+          `;
+          
+          document.getElementById('continue-btn').onclick = () => {
+            waitingForContinue = false;
+            document.getElementById('digit-count').textContent = level;
+            showNumbers();
+          };
         }
-        
-        setTimeout(showNumbers, 500);
       }
     };
     
