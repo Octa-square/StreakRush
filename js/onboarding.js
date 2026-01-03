@@ -45,7 +45,7 @@ const Onboarding = {
             <div class="step-text">Compete with friends worldwide</div>
           </div>
         </div>
-        <p class="onboarding-highlight">🎁 First 20 games are FREE!</p>
+        <p class="onboarding-highlight">🎁 First 15 games are FREE!</p>
       `
     },
     {
@@ -55,7 +55,12 @@ const Onboarding = {
         <div class="profile-setup">
           <div class="setup-field">
             <label for="onboarding-name">What should we call you?</label>
-            <input type="text" id="onboarding-name" placeholder="Enter your name" maxlength="20" autocomplete="off">
+            <div class="name-input-wrapper">
+              <input type="text" id="onboarding-name" placeholder="Enter your name" maxlength="15" autocomplete="off" required>
+              <span class="name-suffix" id="name-suffix"></span>
+            </div>
+            <p class="name-hint">A unique number will be added to your name</p>
+            <p class="name-error" id="name-error" style="display: none;">Please enter your name to continue</p>
           </div>
           
           <div class="setup-field">
@@ -167,10 +172,12 @@ const Onboarding = {
       Onboarding.previous();
     });
 
-    // Skip button
+    // Skip button - only skips to profile setup, can't skip name entry
     document.getElementById('onboarding-skip')?.addEventListener('click', () => {
       if (typeof Sounds !== 'undefined') Sounds.click();
-      Onboarding.complete('Player', '🧠', 'all');
+      // Jump to profile setup screen instead of completing
+      Onboarding.currentScreen = Onboarding.screens.length - 1;
+      Onboarding.renderScreen();
     });
 
     // Avatar selection
@@ -190,17 +197,64 @@ const Onboarding = {
         btn.classList.add('selected');
       });
     });
+
+    // Name input - show preview suffix and clear error
+    const nameInput = document.getElementById('onboarding-name');
+    const nameSuffix = document.getElementById('name-suffix');
+    const nameError = document.getElementById('name-error');
+    
+    if (nameInput && nameSuffix) {
+      // Generate a preview suffix
+      if (!Onboarding.previewSuffix) {
+        Onboarding.previewSuffix = Onboarding.generateSuffix();
+      }
+      
+      nameInput.addEventListener('input', () => {
+        const value = nameInput.value.trim();
+        if (value.length > 0) {
+          nameSuffix.textContent = Onboarding.previewSuffix;
+          nameSuffix.style.display = 'inline';
+          if (nameError) nameError.style.display = 'none';
+          nameInput.classList.remove('error');
+        } else {
+          nameSuffix.style.display = 'none';
+        }
+      });
+    }
+  },
+
+  // Generate random number suffix (2-4 digits)
+  generateSuffix: () => {
+    return Math.floor(Math.random() * 9000 + 1000); // 1000-9999
   },
 
   // Go to next screen
   next: () => {
     if (Onboarding.currentScreen === Onboarding.screens.length - 1) {
-      // Last screen - complete onboarding
-      const name = document.getElementById('onboarding-name')?.value.trim() || 'Player';
+      // Last screen - validate and complete onboarding
+      const nameInput = document.getElementById('onboarding-name');
+      const nameError = document.getElementById('name-error');
+      const rawName = nameInput?.value.trim();
+      
+      // Validation: name is required
+      if (!rawName || rawName.length < 2) {
+        if (nameError) nameError.style.display = 'block';
+        if (nameInput) {
+          nameInput.classList.add('error');
+          nameInput.focus();
+        }
+        if (typeof Sounds !== 'undefined') Sounds.wrong();
+        return; // Don't proceed
+      }
+      
+      // Add number suffix to name (use preview suffix if available)
+      const suffix = Onboarding.previewSuffix || Onboarding.generateSuffix();
+      const fullName = `${rawName}${suffix}`;
+      
       const avatar = document.querySelector('.avatar-btn.selected')?.dataset.avatar || '🧠';
       const goal = document.querySelector('.goal-btn.selected')?.dataset.goal || 'all';
 
-      Onboarding.complete(name, avatar, goal);
+      Onboarding.complete(fullName, avatar, goal);
     } else {
       Onboarding.currentScreen++;
       Onboarding.renderScreen();
@@ -447,6 +501,58 @@ onboardingStyles.textContent = `
 
   .setup-field input::placeholder {
     color: #666;
+  }
+
+  .setup-field input.error {
+    border-color: #ef4444;
+    animation: shake 0.3s ease;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+
+  .name-input-wrapper {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .name-input-wrapper input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    border-radius: 0;
+  }
+
+  .name-input-wrapper input:focus {
+    border: none;
+  }
+
+  .name-suffix {
+    padding: 14px 16px;
+    color: #ff6b35;
+    font-weight: 600;
+    font-size: 1.1rem;
+    background: rgba(255, 107, 53, 0.1);
+    display: none;
+  }
+
+  .name-hint {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 5px;
+  }
+
+  .name-error {
+    font-size: 0.85rem;
+    color: #ef4444;
+    margin-top: 5px;
   }
 
   .avatar-options {
