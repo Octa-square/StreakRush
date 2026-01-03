@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - GAME CONTROLLER
+// COGNIXIS - GAME CONTROLLER
 // Sequential unlock with 70% threshold
 // ========================================
 
@@ -574,6 +574,11 @@ const Game = {
     // Check for milestone celebrations (after showing results)
     if (typeof Milestones !== 'undefined' && results.passed) {
       Milestones.checkMilestones(results);
+    }
+    
+    // Update progress tracker with animation if passed
+    if (typeof Progress !== 'undefined') {
+      Progress.onGameComplete(results.game.id, results.percentage);
     }
     
     // Cleanup

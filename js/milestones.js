@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - MILESTONE CELEBRATIONS
+// COGNIXIS - MILESTONE CELEBRATIONS
 // Celebrate achievements & show progress
 // ========================================
 

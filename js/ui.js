@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - UI CONTROLLER
+// COGNIXIS - UI CONTROLLER
 // 60 Games Version
 // ========================================
 

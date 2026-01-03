@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - MAIN APPLICATION
+// COGNIXIS - MAIN APPLICATION
 // Self-improvement through structure
 // No ads. No discounts. No manipulation.
 // ========================================
@@ -176,22 +176,8 @@ const App = {
     
     App.currentGame = nextGame;
     
-    // Update progress display
-    const completedCount = Math.min(highestUnlocked - 1, user.isPremium ? 60 : 15);
-    const totalGames = user.isPremium ? 60 : 15;
-    const progressPercent = (completedCount / totalGames) * 100;
-    
-    const journeyStep = document.getElementById('journey-step');
-    const journeyFill = document.getElementById('journey-fill');
-    
-    if (journeyStep) {
-      // Show brain score and completed games instead of "Game X of Y"
-      const brainScoreData = Storage.getBrainScore ? Storage.getBrainScore() : { score: 0 };
-      journeyStep.textContent = `🧠 ${brainScoreData.score || 0} · ${completedCount} games completed`;
-    }
-    if (journeyFill) {
-      journeyFill.style.width = `${Math.min(100, progressPercent)}%`;
-    }
+    // Update progress card with dynamic system
+    Progress.updateProgressCard(false);
     
     // Update next game display
     document.getElementById('next-game-icon').textContent = nextGame.icon;
@@ -1163,6 +1149,179 @@ const App = {
   // ========================================
   // END DEV MODE FUNCTIONS
   // ========================================
+};
+
+// ========================================
+// PROGRESS TRACKER - DYNAMIC SYSTEM
+// ========================================
+const Progress = {
+  // Calculate actual completed games (70%+ pass rate)
+  getCompletedGames: () => {
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
+    return Object.values(scores).filter(score => score && score.percentage >= 70).length;
+  },
+  
+  // Get mastery count (90%+ scores)
+  getMasteryCount: () => {
+    const scores = JSON.parse(localStorage.getItem('cognixis_game_scores') || '{}');
+    return Object.values(scores).filter(score => score && score.percentage >= 90).length;
+  },
+  
+  // Get total games available
+  getTotalGames: () => {
+    const user = Storage.getUser();
+    return user.isPremium ? 60 : 15;
+  },
+  
+  // Get progress percentage
+  getProgressPercentage: () => {
+    const completed = Progress.getCompletedGames();
+    const total = 60; // Always out of 60 for consistency
+    return Math.round((completed / total) * 100);
+  },
+  
+  // Get progress level class for styling
+  getProgressLevel: (percentage) => {
+    if (percentage >= 100) return 'level-complete';
+    if (percentage >= 76) return 'level-almost';
+    if (percentage >= 51) return 'level-halfway';
+    if (percentage >= 21) return 'level-started';
+    return 'level-beginner';
+  },
+  
+  // Get milestone badge based on completed count
+  getMilestoneBadge: (completed) => {
+    if (completed >= 60) return '💎';
+    if (completed >= 45) return '🥇';
+    if (completed >= 30) return '🥈';
+    if (completed >= 15) return '🥉';
+    if (completed >= 1) return '🎉';
+    return '';
+  },
+  
+  // Update the progress card UI
+  updateProgressCard: (animate = false) => {
+    const completed = Progress.getCompletedGames();
+    const mastery = Progress.getMasteryCount();
+    const total = 60;
+    const remaining = total - completed;
+    const percentage = Progress.getProgressPercentage();
+    const level = Progress.getProgressLevel(percentage);
+    const badge = Progress.getMilestoneBadge(completed);
+    
+    // Update count
+    const countEl = document.getElementById('progress-count');
+    if (countEl) countEl.textContent = `${completed} / ${total}`;
+    
+    // Update percentage
+    const percentEl = document.getElementById('progress-percentage');
+    if (percentEl) percentEl.textContent = `${percentage}%`;
+    
+    // Update progress bar
+    const fillEl = document.getElementById('journey-fill');
+    if (fillEl) {
+      // Remove old level classes
+      fillEl.classList.remove('level-beginner', 'level-started', 'level-halfway', 'level-almost', 'level-complete');
+      // Add new level class
+      fillEl.classList.add(level);
+      
+      if (animate) {
+        const oldWidth = fillEl.style.width || '0%';
+        fillEl.style.setProperty('--old-width', oldWidth);
+        fillEl.style.setProperty('--new-width', `${percentage}%`);
+        fillEl.style.animation = 'progressIncrement 0.6s ease-out forwards';
+        setTimeout(() => {
+          fillEl.style.animation = '';
+          fillEl.style.width = `${percentage}%`;
+        }, 600);
+      } else {
+        fillEl.style.width = `${percentage}%`;
+      }
+    }
+    
+    // Update stats
+    const passedEl = document.getElementById('stat-passed');
+    const remainingEl = document.getElementById('stat-remaining');
+    const masteryEl = document.getElementById('stat-mastery');
+    
+    if (passedEl) {
+      if (animate) {
+        passedEl.classList.add('animating');
+        setTimeout(() => passedEl.classList.remove('animating'), 300);
+      }
+      passedEl.textContent = completed;
+    }
+    if (remainingEl) remainingEl.textContent = remaining;
+    if (masteryEl) masteryEl.textContent = mastery;
+    
+    // Update milestone badge
+    const badgeEl = document.getElementById('milestone-badge');
+    if (badgeEl) badgeEl.textContent = badge;
+  },
+  
+  // Check and show milestone celebration
+  checkMilestones: (newCompleted) => {
+    const milestones = [
+      { count: 1, title: 'FIRST WIN!', reward: '🎉 You\'re on your way!', icon: '🎉' },
+      { count: 15, title: 'QUARTER DONE!', reward: '🥉 Bronze Trophy Unlocked!', icon: '🥉' },
+      { count: 30, title: 'HALFWAY THERE!', reward: '🥈 Silver Trophy Unlocked!', icon: '🥈' },
+      { count: 45, title: 'ALMOST THERE!', reward: '🥇 Gold Trophy Unlocked!', icon: '🥇' },
+      { count: 60, title: 'CHAMPION!', reward: '💎 Diamond Status!', icon: '💎' }
+    ];
+    
+    const milestone = milestones.find(m => m.count === newCompleted);
+    if (milestone) {
+      const key = `cognixis_milestone_${milestone.count}_seen`;
+      if (!localStorage.getItem(key)) {
+        localStorage.setItem(key, 'true');
+        Progress.showMilestoneModal(milestone);
+      }
+    }
+  },
+  
+  // Show milestone celebration modal
+  showMilestoneModal: (milestone) => {
+    const modal = document.createElement('div');
+    modal.className = 'milestone-modal';
+    modal.innerHTML = `
+      <div class="milestone-icon">${milestone.icon}</div>
+      <h2>${milestone.title}</h2>
+      <p>${milestone.count} games mastered!</p>
+      <div class="milestone-reward">
+        <span>${milestone.reward}</span>
+      </div>
+      <button class="continue-btn">CONTINUE</button>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Play celebration sound
+    if (typeof Sounds !== 'undefined') Sounds.success();
+    
+    // Close on button click
+    modal.querySelector('.continue-btn').onclick = () => {
+      modal.style.animation = 'fadeOut 0.3s ease forwards';
+      setTimeout(() => modal.remove(), 300);
+    };
+  },
+  
+  // Called after game completion
+  onGameComplete: (gameId, scorePercentage) => {
+    const oldCompleted = Progress.getCompletedGames();
+    
+    // The score is already saved by the game system
+    // Just update the UI and check milestones
+    
+    const newCompleted = Progress.getCompletedGames();
+    
+    // If we gained a new completed game
+    if (newCompleted > oldCompleted) {
+      Progress.updateProgressCard(true);
+      Progress.checkMilestones(newCompleted);
+    } else {
+      Progress.updateProgressCard(false);
+    }
+  }
 };
 
 // Initialize when DOM is ready

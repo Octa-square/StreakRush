@@ -5968,39 +5968,253 @@ html[dir="rtl"] .back-link {
 }
 
 /* ========================================
-   JOURNEY PROGRESS
+   JOURNEY PROGRESS CARD - DYNAMIC SYSTEM
    ======================================== */
 
-/* Journey Progress - Compact */
-.journey-progress {
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  margin-bottom: 14px;
+.progress-card {
+  padding: 16px 20px;
+  background: var(--bg-secondary, rgba(255, 255, 255, 0.05));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  margin-bottom: 16px;
   max-width: 500px;
   width: 100%;
 }
 
-.journey-step {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-  text-align: center;
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.journey-bar {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+.progress-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.milestone-badge {
+  font-size: 1.2rem;
+}
+
+.progress-count {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.progress-bar-wrapper {
+  margin-bottom: 16px;
+}
+
+.progress-bar-bg {
+  height: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-card .progress-bar-fill {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.6s ease-out, background 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  position: relative;
   overflow: hidden;
 }
 
-.journey-fill {
+/* Progress bar color states */
+.progress-card .progress-bar-fill.level-beginner {
+  background: linear-gradient(90deg, #ef4444, #f97316) !important;
+}
+
+.progress-card .progress-bar-fill.level-started {
+  background: linear-gradient(90deg, #f59e0b, #eab308) !important;
+}
+
+.progress-card .progress-bar-fill.level-halfway {
+  background: linear-gradient(90deg, #3b82f6, #6366f1) !important;
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+.progress-card .progress-bar-fill.level-almost {
+  background: linear-gradient(90deg, #8b5cf6, #a855f7) !important;
+  animation: progressGradient 3s ease infinite;
+}
+
+.progress-card .progress-bar-fill.level-complete {
+  background: linear-gradient(90deg, #00ff88, #00D4FF, #8B7FFF) !important;
+  animation: progressCelebrate 2s ease infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.8); }
+}
+
+@keyframes progressGradient {
+  0%, 100% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(20deg); }
+}
+
+@keyframes progressCelebrate {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+    filter: brightness(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.8);
+    filter: brightness(1.2);
+  }
+}
+
+/* Shimmer effect on progress bar */
+.progress-card .progress-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
   height: 100%;
-  background: var(--gradient-fire);
-  border-radius: 4px;
-  transition: width 0.5s ease;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.progress-percentage {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+.progress-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.progress-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+}
+
+.progress-stat .stat-icon {
+  font-size: 1rem;
+}
+
+.progress-stat .stat-label {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.progress-stat .stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Increment animation */
+@keyframes progressIncrement {
+  0% { width: var(--old-width); }
+  50% { width: calc(var(--new-width) + 2%); }
+  100% { width: var(--new-width); }
+}
+
+/* Counter animation */
+@keyframes countUp {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.progress-stat .stat-value.animating {
+  animation: countUp 0.3s ease-out;
+}
+
+/* Milestone modal */
+.milestone-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease;
+}
+
+.milestone-modal .milestone-icon {
+  font-size: 5rem;
+  animation: bounceIn 0.5s ease;
+}
+
+.milestone-modal h2 {
+  font-size: 2rem;
+  color: var(--primary);
+  margin: 20px 0 10px;
+  text-align: center;
+}
+
+.milestone-modal p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+}
+
+.milestone-modal .milestone-reward {
+  background: linear-gradient(135deg, rgba(var(--primary-rgb), 0.2), rgba(var(--secondary-rgb), 0.2));
+  padding: 15px 30px;
+  border-radius: 12px;
+  border: 1px solid var(--primary);
+  margin-bottom: 30px;
+}
+
+.milestone-modal .continue-btn {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  border: none;
+  padding: 15px 50px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 /* ========================================

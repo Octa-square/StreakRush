@@ -26,7 +26,7 @@
         <div id="loading-screen" class="screen active">
             <div class="loader-container">
                 <img src="logo.svg" alt="CogniXis" class="loading-logo">
-                <h1 class="logo-text">COGNI<span>XIS</span></h1>
+                <h1 class="logo-text">Cogni<span>X</span>is</h1>
                 <div class="loader-bar">
                     <div class="loader-fill"></div>
                 </div>
@@ -51,11 +51,37 @@
                     <span class="streak-text" id="home-streak-text">Ready to Play!</span>
                 </div>
 
-                <!-- Progress Display -->
-                <div class="journey-progress" id="journey-progress">
-                    <div class="journey-step" id="journey-step">Game 1 of 10</div>
-                    <div class="journey-bar">
-                        <div class="journey-fill" id="journey-fill" style="width: 10%"></div>
+                <!-- Journey Progress Card -->
+                <div class="progress-card" id="progress-card">
+                    <div class="progress-header">
+                        <h3>🎯 Journey Progress <span class="milestone-badge" id="milestone-badge"></span></h3>
+                        <span class="progress-count" id="progress-count">0 / 60</span>
+                    </div>
+                    
+                    <div class="progress-bar-wrapper">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" id="journey-fill" style="width: 0%">
+                                <span class="progress-percentage" id="progress-percentage">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-stats-row">
+                        <div class="progress-stat">
+                            <span class="stat-icon">✅</span>
+                            <span class="stat-label">Passed</span>
+                            <span class="stat-value" id="stat-passed">0</span>
+                        </div>
+                        <div class="progress-stat">
+                            <span class="stat-icon">🔒</span>
+                            <span class="stat-label">Remaining</span>
+                            <span class="stat-value" id="stat-remaining">60</span>
+                        </div>
+                        <div class="progress-stat">
+                            <span class="stat-icon">🏆</span>
+                            <span class="stat-label">Mastery</span>
+                            <span class="stat-value" id="stat-mastery">0</span>
+                        </div>
                     </div>
                 </div>
 

@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - ONBOARDING FLOW
+// COGNIXIS - ONBOARDING FLOW
 // Welcome new users with 3-screen intro
 // ========================================
 

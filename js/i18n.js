@@ -1,5 +1,5 @@
 // ============================================================================
-// STREAKRUSH - INTERNATIONALIZATION (i18n) MANAGER
+// COGNIXIS - INTERNATIONALIZATION (i18n) MANAGER
 // ============================================================================
 
 const I18n = {

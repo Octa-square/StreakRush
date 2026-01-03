@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - FRIENDS HUB
+// COGNIXIS - FRIENDS HUB
 // Multiplayer party mode with room codes
 // Admin: $30, Joiners: FREE
 // ========================================

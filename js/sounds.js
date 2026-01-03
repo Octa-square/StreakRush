@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - SOUND EFFECTS
+// COGNIXIS - SOUND EFFECTS
 // ========================================
 
 const Sounds = {

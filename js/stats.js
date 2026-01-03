@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - STATS & BRAIN PROFILE
+// COGNIXIS - STATS & BRAIN PROFILE
 // Memory performance analytics
 // ========================================
 

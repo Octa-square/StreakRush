@@ -1,5 +1,5 @@
 // ============================================================================
-// STREAKRUSH - ROOM MANAGER (Multiplayer Party Mode)
+// COGNIXIS - ROOM MANAGER (Multiplayer Party Mode)
 // ============================================================================
 
 const RoomManager = {

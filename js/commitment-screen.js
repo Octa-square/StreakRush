@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - COMMITMENT SCREEN
+// COGNIXIS - COMMITMENT SCREEN
 // Shows brain improvement & premium offer
 // ========================================
 

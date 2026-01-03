@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - GAME LIMIT SYSTEM
+// COGNIXIS - GAME LIMIT SYSTEM
 // DEPRECATED: No daily limits - unlimited plays
 // Premium unlock at game 10
 // ========================================

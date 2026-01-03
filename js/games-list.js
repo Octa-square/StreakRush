@@ -1,5 +1,5 @@
 // ============================================
-// STREAKRUSH - 60 GAME DATABASE
+// COGNIXIS - 60 GAME DATABASE
 // 15 Free Games + 45 Premium Games
 // ============================================
 

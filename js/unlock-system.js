@@ -1,5 +1,5 @@
 // ========================================
-// STREAKRUSH - SEQUENTIAL UNLOCK SYSTEM
+// COGNIXIS - SEQUENTIAL UNLOCK SYSTEM
 // Must score 70%+ to unlock next game
 // Premium required after game 15
 // 60 total games (15 free + 45 premium)
