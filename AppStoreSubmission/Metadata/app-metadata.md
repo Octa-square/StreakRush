@@ -26,11 +26,13 @@ Transform your mind in just 60 seconds a day! CogniXis brings you scientifically
 ✨ WHY COGNIXIS?
 
 • 60 Unique Brain Games - From memory challenges to speed tests, pattern recognition to verbal puzzles
+• 🎧 Focus Sounds - Built-in rain, binaural beats & nature sounds for concentration
 • Quick 60-Second Sessions - Perfect for busy schedules
 • Track Your Progress - Watch your brain score grow
 • Beautiful Dark Themes - 4 stunning themes to match your style
 • No Ads in Games - Uninterrupted focus time
 • Offline Play - Train anywhere, anytime
+• 15 Free Games - Start playing immediately with no restrictions
 
 🎮 GAME CATEGORIES:
 
@@ -51,6 +53,20 @@ Spot the difference, sequence completion, and logic chains. Train your brain to 
 
 ⚡ SPEED & REFLEXES
 Reaction tests, rapid recall, and time-pressure challenges. Improve your response time and mental agility.
+🎧 FOCUS SOUNDS - ENHANCE YOUR CONCENTRATION
+
+CogniXis includes built-in ambient sounds scientifically proven to boost focus:
+
+🌧️ Rain Sounds - Gentle pink noise masks distractions and promotes calm focus
+🎵 Binaural Beats - 10Hz alpha wave frequencies enhance memory and attention
+🌲 Forest Ambience - Nature sounds lower stress and improve cognitive performance
+
+• Adjust volume with the slider
+• Sounds continue playing during games
+• Your preferences are saved automatically
+• Use headphones for best binaural beats effect
+
+
 
 📊 TRACK YOUR BRAIN SCORE
 
