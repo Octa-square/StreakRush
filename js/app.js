@@ -129,8 +129,8 @@ const App = {
     const headerBrainScore = document.getElementById('header-brain-score');
     const headerStreak = document.getElementById('header-streak');
     if (headerBrainScore) {
-      const brainScore = Storage.getBrainScore ? Storage.getBrainScore() : 0;
-      headerBrainScore.textContent = brainScore;
+      const brainScoreData = Storage.getBrainScore ? Storage.getBrainScore() : { score: 0 };
+      headerBrainScore.textContent = brainScoreData.score || 0;
     }
     if (headerStreak) {
       headerStreak.textContent = user.currentStreak || 0;
@@ -186,8 +186,8 @@ const App = {
     
     if (journeyStep) {
       // Show brain score and completed games instead of "Game X of Y"
-      const brainScore = Storage.getBrainScore ? Storage.getBrainScore() : 0;
-      journeyStep.textContent = `🧠 ${brainScore} · ${completedCount} games completed`;
+      const brainScoreData = Storage.getBrainScore ? Storage.getBrainScore() : { score: 0 };
+      journeyStep.textContent = `🧠 ${brainScoreData.score || 0} · ${completedCount} games completed`;
     }
     if (journeyFill) {
       journeyFill.style.width = `${Math.min(100, progressPercent)}%`;
